@@ -92,10 +92,26 @@ h1{font-size:clamp(2.1rem,10vw,2.5rem); line-height:1.02; margin:0 0 .5rem}
 .gallery .s{margin:0 0 .2rem}
 .strip{display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; padding:16px 4px 16px; margin:0 -4px}
 .strip button{position:relative; flex:0 0 72%; max-width:260px; scroll-snap-align:start; border:0; border-radius:8px; padding:8px 8px 15px; background:var(--c); box-shadow:inset 0 -6px 0 var(--cd); cursor:pointer}
-.strip button:nth-child(3n+1){--c:var(--red); --cd:var(--red-dk)}
-.strip button:nth-child(3n+2){--c:var(--blue); --cd:var(--blue-dk)}
-.strip button:nth-child(3n){--c:var(--yellow); --cd:var(--yellow-dk)}
-.strip img{display:block; width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:4px; background:var(--field)}
+.pgrid button{position:relative; min-width:0; border:0; border-radius:8px; padding:8px 8px 15px; background:var(--c); box-shadow:inset 0 -6px 0 var(--cd); cursor:pointer}
+.strip button:nth-child(3n+1),.pgrid button:nth-child(3n+1){--c:var(--red); --cd:var(--red-dk)}
+.strip button:nth-child(3n+2),.pgrid button:nth-child(3n+2){--c:var(--blue); --cd:var(--blue-dk)}
+.strip button:nth-child(3n),.pgrid button:nth-child(3n){--c:var(--yellow); --cd:var(--yellow-dk)}
+.strip img,.pgrid img{display:block; width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:4px; background:var(--field)}
+
+/* after-party: thank-you card + party photos replace the steps and RSVP */
+.afterparty{display:none; flex-direction:column; gap:14px; min-width:0}
+body.after .afterparty{display:flex}
+body.after main > .steps, body.after main > .rsvp, body.after .countdown{display:none}
+.ty{position:relative; padding:22px 20px 24px; border-radius:12px; background:var(--blue); color:#fff; box-shadow:inset 0 -7px 0 var(--blue-dk)}
+.ty::before,.ty::after{content:""; position:absolute; top:-11px; width:56px; height:11px; border-radius:5px 5px 0 0; background:var(--blue)}
+.ty::before{left:14%} .ty::after{right:14%}
+.ty h2{font-size:1.9rem; line-height:1.05; margin:0 0 .4rem}
+.ty p{margin:0; font-weight:700; white-space:pre-line}
+.afterparty > h2{font-size:1.9rem; margin:10px 0 0}
+.pgrid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 12px; padding-top:10px}
+.pempty{margin:0; padding:14px 16px; border-radius:8px; border:2px dashed var(--line); color:var(--soft); font-weight:700}
+.pempty[hidden]{display:none}
+main > .afterparty{order:1; margin:22px 24px 0}
 .studs{position:absolute; left:16%; right:16%; top:-9px; display:flex; justify-content:space-between; pointer-events:none}
 .studs span{width:30px; height:9px; border-radius:4px 4px 0 0; background:var(--c)}
 
@@ -231,6 +247,9 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
   footer{grid-area:foot; padding:20px clamp(24px, 4vw, 64px) 36px}
   main > .gallery{grid-area:gal; margin:36px 36px 0; padding-top:28px; border-top:2px dashed var(--line)}
   .strip button{flex:0 0 240px}
+  body.after main{grid-template-areas:"top top" "intro after" "gal gal" "foot foot"}
+  main > .afterparty{grid-area:after; align-self:start; margin:40px clamp(24px, 4vw, 64px) 0}
+  .pgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 /* ===== wide desktop: three columns, RSVP on the right ===== */
 @media (min-width: 1100px){
@@ -238,6 +257,9 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
   .steps{padding:40px 32px 0}
   footer{padding:20px 36px 36px}
   main > .rsvp{align-self:start; position:sticky; top:24px; margin:40px 36px 36px 0}
+  body.after main{grid-template-areas:"top top top" "intro after after" "gal gal gal" "foot foot foot"}
+  main > .afterparty{margin:40px 36px 0 32px}
+  .pgrid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 @media (min-width: 820px) and (max-height: 700px){
   .intro, main > .rsvp{position:static}
@@ -332,6 +354,16 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
       <div class="status" id="status" role="status"></div>
     </section>
 
+    <section class="afterparty" id="afterparty">
+      <div class="ty">
+        <h2 class="display">Thanks for building with us!</h2>
+        <p id="thanksNote"></p>
+      </div>
+      <h2 class="display">Party photos</h2>
+      <p class="pempty" id="partyEmpty">Photos from the big day are coming soon. Check back in a day or two!</p>
+      <div class="pgrid" id="partyGrid"></div>
+    </section>
+
     <section class="gallery" id="gallery" hidden="">
       <h2 class="display">Before the big day</h2>
       <p class="s">Swipe through the countdown snaps.</p>
@@ -391,6 +423,12 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
       <div class="photo-row"><span id="galleryState"></span></div>
       <div class="thumbs" id="thumbs"></div>
     </div>
+    <div id="partyField">
+      <label for="f-party">Party photos (shown after the party)</label>
+      <input id="f-party" type="file" accept="image/*" multiple="">
+      <div class="photo-row"><span id="partyState"></span><a class="link" href="?owner&amp;after" target="_blank" rel="noopener">Preview after-party page</a></div>
+      <div class="thumbs" id="partyThumbs"></div>
+    </div>
     <label for="f-name">Birthday child’s name</label><input id="f-name" autocomplete="off">
     <div class="two">
       <div><label for="f-date">Party date</label><input id="f-date" type="date"></div>
@@ -401,6 +439,7 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
     <label for="f-venue">Venue name</label><input id="f-venue" autocomplete="off">
     <label for="f-address">Address</label><input id="f-address" autocomplete="off">
     <label for="f-note">Good to know</label><textarea id="f-note"></textarea>
+    <label for="f-thanksNote">Thank-you message (shown after the party)</label><textarea id="f-thanksNote" placeholder="Thank you for building, playing and eating cake with us! Here are some snaps from the big day."></textarea>
     <label for="f-host">Hosted by</label><input id="f-host" autocomplete="off">
     <label for="f-rsvpPhone">RSVP phone number</label><input id="f-rsvpPhone" type="tel" autocomplete="off">
     <p class="err" id="editErr" role="alert"></p>
@@ -427,7 +466,7 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 </dialog>
 
 <!-- Fallback only. The real details live in Supabase and are entered through "Edit details". -->
-<script type="application/json" id="party-data">{"name":"Birthday Kid","age":7,"date":"2027-06-12","start":"16:30","end":"19:00","timezone":"Asia/Manila","venue":"Party Venue","address":"123 Example Street, Example City","note":"Come ready to build, play and eat cake. Bright colours encouraged!","rsvpBy":"2027-05-31","rsvpPhone":"0900 000 0000","host":"Host Name","photo":"","photos":[]}</script>
+<script type="application/json" id="party-data">{"name":"Birthday Kid","age":7,"date":"2027-06-12","start":"16:30","end":"19:00","timezone":"Asia/Manila","venue":"Party Venue","address":"123 Example Street, Example City","note":"Come ready to build, play and eat cake. Bright colours encouraged!","rsvpBy":"2027-05-31","rsvpPhone":"0900 000 0000","host":"Host Name","thanksNote":"","photo":"","photos":[],"partyPhotos":[]}</script>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
@@ -476,10 +515,9 @@ function render(){
   $("setNo").textContent = `BUILD SET Nº ${PARTY.age}`;
   $("ageBadge").textContent = `${PARTY.age}+`;
   $("title").textContent = `${PARTY.name}’s Birthday Build`;
-  if ($("splashName")) $("splashName").textContent = `${PARTY.name} is turning`;
   document.title = `${PARTY.name}’s ${PARTY.age}th birthday build party`;
 
-  $("lede").textContent = "1 party · 3 easy steps · countdown is on!";
+  setAfter(isAfter());
   startCountdown();
 
   $("when").textContent = fmtDate(d);
@@ -513,6 +551,17 @@ function zonedToUtc(dateStr, timeStr, tz){
     return guess - (shown - guess);
   } catch { return new Date(`${dateStr}T${timeStr || "00:00"}`).getTime(); }
 }
+// After-party mode: once the party ends (or with ?after in the link, to preview), the steps,
+// countdown and RSVP give way to a thank-you note and the party photos.
+const forceAfter = /[?&#]after\b/.test(location.search + location.hash);
+const DEFAULT_THANKS = "Thank you for building, playing and eating cake with us! Here are some snaps from the big day.";
+const isAfter = () => forceAfter || Date.now() >= zonedToUtc(PARTY.date, PARTY.end, PARTY.timezone);
+function setAfter(on){
+  document.body.classList.toggle("after", on);
+  $("lede").textContent = on ? "What a build! Thanks for coming." : "1 party · 3 easy steps · countdown is on!";
+  $("thanksNote").textContent = PARTY.thanksNote || DEFAULT_THANKS;
+  if ($("splashName")) $("splashName").textContent = on ? `${PARTY.name} turned` : `${PARTY.name} is turning`;
+}
 let cdTimer = null;
 const pad = n => String(n).padStart(2, "0");
 function setTile(id, val){
@@ -527,11 +576,13 @@ function startCountdown(){
   const end = zonedToUtc(PARTY.date, PARTY.end, PARTY.timezone);
   const step = () => {
     const now = Date.now();
-    if (now >= start) {
+    const done = forceAfter || now >= end;
+    if (done || now >= start) {
       $("countdown").hidden = true;
       $("cdDone").hidden = false;
-      $("cdDone").textContent = now < end ? "The party is on!" : "Thanks for celebrating with us!";
-      clearInterval(cdTimer);
+      $("cdDone").textContent = done ? "Set complete!" : "The party is on!";
+      // keep ticking during the party so the page switches itself when it ends
+      if (done) { clearInterval(cdTimer); if (!document.body.classList.contains("after")) setAfter(true); }
       return;
     }
     const t = Math.floor((start - now) / 1000);
@@ -705,42 +756,52 @@ function burst(n){
 splash.addEventListener("transitionend", () => burst(40), { once: true });
 document.querySelector('[data-ans="yes"]').addEventListener("click", () => burst(26));
 
-// ---------- pre-birthday gallery ----------
-let pendingPhotos = [];
-const MAX_PHOTOS = 12;
+// ---------- photo galleries: pre-birthday strip + after-party grid ----------
+// Each set: its PARTY key, its editor upload field, and how many photos it can hold
+const SETS = {
+  photos:      { input: "f-gallery", state: "galleryState", thumbs: "thumbs",      max: 12 },
+  partyPhotos: { input: "f-party",   state: "partyState",   thumbs: "partyThumbs", max: 30 }
+};
+const pending = { photos: [], partyPhotos: [] };
 const isAsset = u => typeof u === "string" && u.length > 0;
+const listOf = key => (Array.isArray(PARTY[key]) ? PARTY[key] : []).filter(isAsset);
 const lb = document.createElement("dialog");
 lb.className = "lightbox";
-const lbImg = new Image(); lbImg.alt = "Pre-birthday photo";
+const lbImg = new Image(); lbImg.alt = "Party photo";
 lb.appendChild(lbImg);
 lb.addEventListener("click", () => lb.close());
 document.body.appendChild(lb);
-function renderGallery(){
-  const list = (Array.isArray(PARTY.photos) ? PARTY.photos : []).filter(isAsset);
-  $("gallery").hidden = !list.length;
-  $("strip").replaceChildren(...list.map((u, i) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.setAttribute("aria-label", `Open photo ${i + 1}`);
-    const img = new Image(); img.src = u; img.alt = ""; img.loading = "lazy";
-    b.appendChild(img);
-    addStuds(b, 2);
-    b.addEventListener("click", () => { lbImg.src = u; lb.showModal(); });
-    return b;
-  }));
+function photoButton(u, i){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.setAttribute("aria-label", `Open photo ${i + 1}`);
+  const img = new Image(); img.src = u; img.alt = ""; img.loading = "lazy";
+  b.appendChild(img);
+  addStuds(b, 2);
+  b.addEventListener("click", () => { lbImg.src = u; lb.showModal(); });
+  return b;
 }
-function renderThumbs(){
-  $("thumbs").replaceChildren(...pendingPhotos.map((u, i) => {
+function renderGallery(){
+  const pre = listOf("photos");
+  $("gallery").hidden = !pre.length;
+  $("strip").replaceChildren(...pre.map(photoButton));
+  const party = listOf("partyPhotos");
+  $("partyGrid").replaceChildren(...party.map(photoButton));
+  $("partyEmpty").hidden = party.length > 0;
+}
+function renderThumbs(key){
+  const s = SETS[key], list = pending[key];
+  $(s.thumbs).replaceChildren(...list.map((u, i) => {
     const d = document.createElement("div");
     const img = new Image(); img.src = u; img.alt = "";
     const x = document.createElement("button");
     x.type = "button"; x.textContent = "×";
     x.setAttribute("aria-label", `Remove photo ${i + 1}`);
-    x.addEventListener("click", () => { pendingPhotos.splice(i, 1); renderThumbs(); });
+    x.addEventListener("click", () => { list.splice(i, 1); renderThumbs(key); });
     d.append(img, x);
     return d;
   }));
-  $("galleryState").textContent = pendingPhotos.length ? `${pendingPhotos.length} of ${MAX_PHOTOS} photos` : "No photos yet";
+  $(s.state).textContent = list.length ? `${list.length} of ${s.max} photos` : "No photos yet";
 }
 
 // ---------- Supabase: load, sign-in, photos, save ----------
@@ -848,15 +909,14 @@ $("signinSend").addEventListener("click", async () => {
 });
 $("s-pass").addEventListener("keydown", e => { if (e.key === "Enter") $("signinSend").click(); });
 
-const FIELDS = ["name","date","rsvpBy","start","end","venue","address","note","host","rsvpPhone"];
+const FIELDS = ["name","date","rsvpBy","start","end","venue","address","note","thanksNote","host","rsvpPhone"];
 const dlg = $("editor");
 let pendingPhoto = "", uploading = false;
 $("editBtn").addEventListener("click", () => {
   FIELDS.forEach(f => { $("f-" + f).value = PARTY[f] || ""; });
   $("editErr").textContent = "";
   pendingPhoto = PARTY.photo || "";
-  pendingPhotos = Array.isArray(PARTY.photos) ? PARTY.photos.filter(isAsset) : [];
-  renderThumbs();
+  Object.keys(SETS).forEach(key => { pending[key] = listOf(key); renderThumbs(key); });
   $("f-photo").value = "";
   showPhotoState();
   $("editSave").textContent = "Save invitation"; $("editSave").disabled = false;
@@ -880,19 +940,20 @@ $("f-photo").addEventListener("change", async e => {
     uploading = false; $("editSave").disabled = false;
   }
 });
-$("f-gallery").addEventListener("change", async e => {
-  const files = [...(e.target.files || [])].slice(0, MAX_PHOTOS - pendingPhotos.length);
+Object.entries(SETS).forEach(([key, s]) => $(s.input).addEventListener("change", async e => {
+  const list = pending[key];
+  const files = [...(e.target.files || [])].slice(0, s.max - list.length);
   if (!files.length || !session) { e.target.value = ""; return; }
   uploading = true; $("editSave").disabled = true;
   let failed = 0;
   for (const [i, f] of files.entries()) {
-    $("galleryState").textContent = `Uploading ${i + 1} of ${files.length}…`;
-    try { pendingPhotos.push(await uploadPhoto(f)); } catch { failed++; }
+    $(s.state).textContent = `Uploading ${i + 1} of ${files.length}…`;
+    try { list.push(await uploadPhoto(f)); } catch { failed++; }
   }
   uploading = false; $("editSave").disabled = false; e.target.value = "";
-  renderThumbs();
-  if (failed) $("galleryState").textContent += `. ${failed} couldn’t upload.`;
-});
+  renderThumbs(key);
+  if (failed) $(s.state).textContent += `. ${failed} couldn’t upload.`;
+}));
 $("photoRemove").addEventListener("click", () => { pendingPhoto = ""; $("f-photo").value = ""; showPhotoState(); });
 $("editCancel").addEventListener("click", () => dlg.close());
 $("editSave").addEventListener("click", async () => {
@@ -905,7 +966,8 @@ $("editSave").addEventListener("click", async () => {
   if (!next.rsvpBy) next.rsvpBy = next.date;
   if (uploading) return;
   next.photo = pendingPhoto;
-  next.photos = pendingPhotos;
+  next.photos = [...pending.photos];
+  next.partyPhotos = [...pending.partyPhotos];
   const btn = $("editSave");
   btn.disabled = true; btn.textContent = "Saving…";
   try {
