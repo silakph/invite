@@ -572,7 +572,8 @@ $("editSave").addEventListener("click", async () => {
     btn.disabled = false; btn.textContent = "Save invitation";
     $("editErr").textContent = e && e.code === "not_owner"
       ? "This account isn’t set up as the owner, so changes can’t be saved."
-      : "Couldn’t save. Check your connection and try again.";
+      : "Couldn’t save. " + ((e && (e.message || e.code)) || "Check your connection and try again.");
+    console.error("Save failed", e);
   }
 });
 
