@@ -258,13 +258,14 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 <dialog id="signin" aria-labelledby="signinTitle">
   <div class="panel">
     <h2 id="signinTitle">Owner sign-in</h2>
-    <p class="hint">We’ll email you a sign-in link. Only the owner account can sign in.</p>
-    <label for="s-email">Email</label><input id="s-email" type="email" autocomplete="email">
+    <p class="hint">Only the owner account can sign in.</p>
+    <label for="s-email">Email</label><input id="s-email" type="email" autocomplete="username">
+    <label for="s-pass">Password</label><input id="s-pass" type="password" autocomplete="current-password">
     <p class="err" id="signinErr" role="alert"></p>
   </div>
   <div class="actions">
     <button class="cancel" type="button" id="signinCancel">Cancel</button>
-    <button class="save" type="button" id="signinSend">Send link</button>
+    <button class="save" type="button" id="signinSend">Sign in</button>
   </div>
 </dialog>
 
@@ -484,15 +485,18 @@ $("signinBtn").addEventListener("click", () => { $("signinErr").textContent = ""
 $("signinCancel").addEventListener("click", () => $("signin").close());
 $("signinSend").addEventListener("click", async () => {
   const email = $("s-email").value.trim();
-  if (!email) { $("signinErr").textContent = "Enter your email."; return; }
+  const password = $("s-pass").value;
+  if (!email || !password) { $("signinErr").textContent = "Enter your email and password."; return; }
   const btn = $("signinSend"); btn.disabled = true;
-  const { error } = await sb.auth.signInWithOtp({
-    email,
-    options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname }
-  });
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
   btn.disabled = false;
-  $("signinErr").textContent = error ? "That email can’t sign in here." : "Check your email for the sign-in link.";
+  if (error) { $("signinErr").textContent = "That email and password didn’t work."; return; }
+  session = data.session;
+  $("s-pass").value = "";
+  showOwnerButtons();
+  $("signin").close();
 });
+$("s-pass").addEventListener("keydown", e => { if (e.key === "Enter") $("signinSend").click(); });
 
 const FIELDS = ["name","date","rsvpBy","start","end","venue","address","note","host","rsvpPhone"];
 const dlg = $("editor");
