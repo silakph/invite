@@ -102,6 +102,10 @@ h1{font-size:clamp(2.1rem,10vw,2.5rem); line-height:1.02; margin:0 0 .5rem}
 /* rsvp */
 .rsvp{display:flex; flex-direction:column; gap:12px; padding:20px; border-radius:12px; background:var(--field)}
 main > .rsvp{margin:22px 24px 0}
+main > .gallery{margin:28px 24px 0}
+/* phones: keep the gallery above the RSVP */
+main{display:flex; flex-direction:column}
+main > .steps{order:1} main > .gallery{order:2} main > .rsvp{order:3} main > footer{order:4}
 .rsvp h2{font-size:1.9rem; margin:0}
 .choice{display:grid; grid-template-columns:1fr 1fr; gap:8px}
 .choice button{min-height:48px; border-radius:8px; border:2px solid var(--line); background:var(--bg); color:var(--ink); font:800 1rem "Nunito",system-ui,sans-serif; cursor:pointer}
@@ -210,7 +214,7 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 }
 /* ===== desktop: intro stays in view while the details scroll ===== */
 @media (min-width: 820px){
-  main{max-width:none; width:min(100% - 48px, 1280px); margin:32px auto; display:grid; grid-template-columns:minmax(300px, 2fr) minmax(0, 3fr); grid-template-areas:"top top" "intro steps" "intro rsvp" "intro foot"}
+  main{max-width:none; width:min(100% - 48px, 1280px); margin:32px auto; display:grid; grid-template-columns:minmax(300px, 2fr) minmax(0, 3fr); grid-template-areas:"top top" "intro steps" "intro rsvp" "gal gal" "foot foot"}
   .topbar{grid-area:top; padding:16px 36px; font-size:.9rem}
   .intro{grid-area:intro; align-self:start; position:sticky; top:24px; padding:20px 12px 24px}
   .banner{padding:8px 24px 0}
@@ -219,13 +223,14 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
   .steps{grid-area:steps; min-width:0; padding:40px clamp(24px, 4vw, 64px) 0}
   main > .rsvp{grid-area:rsvp; margin:28px clamp(24px, 4vw, 64px) 0; padding:28px}
   footer{grid-area:foot; padding:20px clamp(24px, 4vw, 64px) 36px}
-  .strip button{flex:0 0 220px}
+  main > .gallery{grid-area:gal; margin:36px 36px 0; padding-top:28px; border-top:2px dashed var(--line)}
+  .strip button{flex:0 0 240px}
 }
 /* ===== wide desktop: three columns, RSVP on the right ===== */
 @media (min-width: 1100px){
-  main{width:min(100% - 48px, 1440px); grid-template-columns:minmax(300px, 1fr) minmax(0, 1.25fr) minmax(320px, 1fr); grid-template-areas:"top top top" "intro steps rsvp" "intro foot rsvp"}
+  main{width:min(100% - 48px, 1440px); grid-template-columns:minmax(300px, 1fr) minmax(0, 1.25fr) minmax(320px, 1fr); grid-template-areas:"top top top" "intro steps rsvp" "gal gal gal" "foot foot foot"}
   .steps{padding:40px 32px 0}
-  footer{padding:20px 32px 36px}
+  footer{padding:20px 36px 36px}
   main > .rsvp{align-self:start; position:sticky; top:24px; margin:40px 36px 36px 0}
 }
 @media (min-width: 820px) and (max-height: 700px){
@@ -293,11 +298,6 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
       </div>
     </div>
 
-    <section class="gallery" id="gallery" hidden="">
-      <h2 class="display">Before the big day</h2>
-      <p class="s">Swipe through the countdown snaps.</p>
-      <div class="strip" id="strip"></div>
-    </section>
 
   </div>
 
@@ -324,6 +324,12 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
       </div>
       </div>
       <div class="status" id="status" role="status"></div>
+    </section>
+
+    <section class="gallery" id="gallery" hidden="">
+      <h2 class="display">Before the big day</h2>
+      <p class="s">Swipe through the countdown snaps.</p>
+      <div class="strip" id="strip"></div>
     </section>
 
   <footer>
