@@ -103,9 +103,9 @@ h1{font-size:clamp(2.1rem,10vw,2.5rem); line-height:1.02; margin:0 0 .5rem}
 .rsvp{display:flex; flex-direction:column; gap:12px; padding:20px; border-radius:12px; background:var(--field)}
 main > .rsvp{margin:22px 24px 0}
 main > .gallery{margin:28px 24px 0}
-/* phones: keep the gallery above the RSVP */
+/* phones: RSVP comes before the photo gallery */
 main{display:flex; flex-direction:column}
-main > .steps{order:1} main > .gallery{order:2} main > .rsvp{order:3} main > footer{order:4}
+main > .steps{order:1} main > .rsvp{order:2} main > .gallery{order:3} main > footer{order:4}
 .rsvp h2{font-size:1.9rem; margin:0}
 .choice{display:grid; grid-template-columns:1fr 1fr; gap:8px}
 .choice button{min-height:48px; border-radius:8px; border:2px solid var(--line); background:var(--bg); color:var(--ink); font:800 1rem "Nunito",system-ui,sans-serif; cursor:pointer}
