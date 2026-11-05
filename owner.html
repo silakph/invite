@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="only light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Party HQ</title>
+<meta name="theme-color" content="#0055BF">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&amp;family=Nunito:wght@500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#DA291C; --red-dk:#A11E14; --blue:#0055BF; --blue-dk:#003C88; --yellow:#FFD100; --yellow-dk:#CCA700;
+  --bg:#FFFFFF; --ink:#16181C; --soft:#5C6370; --line:#E6E8EC; --field:#F5F6F8; --page:#F5F6F8;
+  color-scheme:only light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
+body{margin:0; background:var(--page); color:var(--ink); font:600 1rem/1.5 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.display{font-family:"Lilita One","Arial Rounded MT Bold",sans-serif; font-weight:400}
+[hidden]{display:none !important}
+button,input,textarea,select{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+
+/* header + tabs */
+header{background:var(--blue); color:#fff; padding:14px 16px 0; padding-top:calc(14px + env(safe-area-inset-top,0px))}
+.hbar{max-width:64rem; margin:0 auto; display:flex; align-items:center; gap:12px}
+.hbar h1{margin:0; font-size:1.6rem; flex:1}
+.hbar a,.hbar button{color:#fff; font-weight:800; font-size:.92rem; background:transparent; border:2px solid rgba(255,255,255,.55); border-radius:8px; padding:.35rem .75rem; text-decoration:none; cursor:pointer; min-height:40px; display:inline-flex; align-items:center}
+.tabs{max-width:64rem; margin:12px auto 0; display:flex; gap:6px}
+.tabs button{flex:1; max-width:11rem; border:0; border-radius:10px 10px 0 0; padding:.6rem .5rem; background:var(--blue-dk); color:#fff; font-weight:800; cursor:pointer; min-height:46px}
+.tabs button[aria-selected="true"]{background:var(--page); color:var(--ink)}
+main{max-width:64rem; margin:0 auto; padding:20px 16px 48px}
+.card{background:var(--bg); border-radius:12px; padding:18px; box-shadow:0 2px 10px rgba(22,24,28,.06)}
+.card + .card{margin-top:16px}
+h2{font-size:1.45rem; margin:0 0 .2rem}
+.hint{margin:0; color:var(--soft); font-size:.92rem; font-weight:700}
+
+/* totals as bricks */
+.totals{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:10px 0 18px}
+.tot{position:relative; border-radius:8px; padding:12px 4px 12px; text-align:center; background:var(--c); color:#fff; box-shadow:inset 0 -5px 0 var(--cd); font-weight:800; font-size:.7rem; letter-spacing:1px}
+.tot::before,.tot::after{content:""; position:absolute; top:-7px; width:26%; height:7px; border-radius:4px 4px 0 0; background:var(--c)}
+.tot::before{left:14%} .tot::after{right:14%}
+.tot b{display:block; font-family:"Lilita One",sans-serif; font-weight:400; font-size:1.9rem; line-height:1; letter-spacing:0; margin-bottom:2px}
+.tot.r{--c:var(--red); --cd:var(--red-dk)} .tot.u{--c:var(--blue); --cd:var(--blue-dk)}
+.tot.y{--c:var(--yellow); --cd:var(--yellow-dk); color:#16181C} .tot.n{--c:#8A919C; --cd:#6B727C}
+@media (max-width:520px){ .totals{grid-template-columns:repeat(3,minmax(0,1fr))} }
+
+/* add family + filters */
+.addrow{display:flex; gap:8px; margin-top:12px}
+.addrow input{flex:1; min-width:0}
+input,textarea,select{width:100%; min-height:46px; padding:.55rem .8rem; border:2px solid var(--line); border-radius:8px; background:var(--field)}
+textarea{min-height:84px; resize:vertical}
+.btn{min-height:46px; padding:.5rem 1.1rem; border-radius:8px; border:0; background:var(--blue); color:#fff; font-weight:800; cursor:pointer; box-shadow:inset 0 -4px 0 var(--blue-dk); white-space:nowrap}
+.btn.red{background:var(--red); box-shadow:inset 0 -4px 0 var(--red-dk)}
+.btn:disabled{opacity:.6; cursor:default}
+.filters{display:flex; flex-wrap:wrap; gap:6px; margin:16px 0 4px}
+.filters button{min-height:38px; padding:.25rem .9rem; border-radius:999px; border:2px solid var(--line); background:var(--bg); font-weight:800; font-size:.9rem; cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:#fff}
+
+/* guest rows */
+.glist{list-style:none; margin:0; padding:0}
+.g{display:grid; grid-template-columns:1fr auto; gap:6px 12px; align-items:center; padding:12px 0; border-top:2px solid var(--line)}
+.g .who{min-width:0}
+.g .who b{display:block; font-size:1.06rem; overflow-wrap:anywhere}
+.g .who span{color:var(--soft); font-size:.9rem; font-weight:700}
+.tag{justify-self:end; font-weight:800; font-size:.8rem; padding:3px 10px; border-radius:999px; color:#fff; background:var(--blue)}
+.tag.no{background:#8A919C} .tag.wait{background:var(--yellow); color:#16181C}
+.acts{grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:6px}
+.acts button,.acts select{min-height:38px; width:auto; padding:.25rem .75rem; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:800; font-size:.88rem; cursor:pointer}
+.acts .copy{border-color:var(--blue); color:var(--blue)}
+.acts .danger[data-armed="1"]{background:var(--red); border-color:var(--red); color:#fff}
+.rename{grid-column:1 / -1; display:flex; gap:6px}
+.rename input{min-height:40px}
+.rename button{min-height:40px; padding:.25rem .8rem; border-radius:8px; border:0; background:var(--blue); color:#fff; font-weight:800; cursor:pointer}
+.group-h{font-family:"Lilita One",sans-serif; font-weight:400; font-size:1.15rem; margin:22px 0 2px}
+.empty{color:var(--soft); font-weight:700; padding:12px 0; border-top:2px solid var(--line); margin:0}
+.msg{min-height:1.4em; margin:.6rem 0 0; font-weight:800; color:var(--soft)}
+.msg.bad{color:var(--red)}
+@media (min-width:720px){
+  .g{grid-template-columns:minmax(0,1fr) auto auto; }
+  .acts{grid-column:auto; justify-content:flex-end}
+  .tag{order:0}
+}
+
+/* details form */
+label{display:block; font-weight:800; font-size:.9rem; margin:14px 0 4px}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:0 12px}
+.formgrid{display:grid; grid-template-columns:1fr; gap:0 24px}
+@media (min-width:760px){ .formgrid{grid-template-columns:1fr 1fr} }
+.savebar{display:flex; align-items:center; gap:12px; margin-top:18px}
+
+/* photos */
+.photos{display:grid; grid-template-columns:1fr; gap:16px}
+@media (min-width:900px){ .photos{grid-template-columns:repeat(3,minmax(0,1fr))} .photos .card + .card{margin-top:0} }
+.thumbs{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:10px}
+.thumbs div{position:relative}
+.thumbs img{display:block; width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px; background:var(--field)}
+.thumbs button{position:absolute; top:3px; right:3px; width:30px; height:30px; border-radius:50%; border:0; background:rgba(0,0,0,.72); color:#fff; font-weight:800; cursor:pointer}
+.header-prev{display:block; width:100%; max-width:220px; aspect-ratio:1; object-fit:cover; border-radius:10px; margin-top:10px; background:var(--field)}
+input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
+.link{display:inline-block; margin-top:10px; font-weight:800; color:var(--blue); text-decoration:underline; text-underline-offset:3px}
+
+/* sign-in */
+.signin{max-width:24rem; margin:10vh auto 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="hbar">
+    <h1 class="display">Party HQ</h1>
+    <a href="./" target="_blank" rel="noopener">View invite</a>
+    <button type="button" id="signOut" hidden="">Sign out</button>
+  </div>
+  <div class="tabs" role="tablist" id="tabs" hidden="">
+    <button role="tab" id="tab-guests" aria-controls="guests" aria-selected="true">Guests</button>
+    <button role="tab" id="tab-details" aria-controls="details" aria-selected="false">Details</button>
+    <button role="tab" id="tab-photos" aria-controls="photos" aria-selected="false">Photos</button>
+  </div>
+</header>
+
+<main>
+  <!-- sign-in -->
+  <section class="card signin" id="signin" hidden="">
+    <h2 class="display">Owner sign-in</h2>
+    <p class="hint">Only the owner account can sign in.</p>
+    <label for="s-email">Email</label><input id="s-email" type="email" autocomplete="username">
+    <label for="s-pass">Password</label><input id="s-pass" type="password" autocomplete="current-password">
+    <div class="savebar"><button class="btn" type="button" id="signinBtn">Sign in</button></div>
+    <p class="msg bad" id="signinErr" role="alert"></p>
+  </section>
+  <p class="msg bad" id="noConfig" hidden="">Supabase isn’t set up for this page yet (config.js).</p>
+
+  <!-- guests -->
+  <section id="guests" role="tabpanel" aria-labelledby="tab-guests" hidden="">
+    <div class="card">
+      <div class="totals">
+        <div class="tot u"><b id="t-fam">0</b>COMING</div>
+        <div class="tot r"><b id="t-adults">0</b>ADULTS</div>
+        <div class="tot y"><b id="t-kids">0</b>KIDS</div>
+        <div class="tot n"><b id="t-no">0</b>CAN’T</div>
+        <div class="tot y"><b id="t-wait">0</b>WAITING</div>
+      </div>
+      <h2 class="display">Guest list</h2>
+      <p class="hint">Each family gets its own link. Everyone who opens it shares one reply. The family sees its own name on the invite, e.g. “Hi, Family A!”</p>
+      <div class="addrow">
+        <input id="famLabel" maxlength="60" autocomplete="off" placeholder="Add a family, e.g. Family A" aria-label="New family name">
+        <button class="btn" type="button" id="famAdd">Add family</button>
+      </div>
+      <div class="filters" role="group" aria-label="Show">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="yes" aria-pressed="false">Coming</button>
+        <button type="button" data-f="no" aria-pressed="false">Can’t</button>
+        <button type="button" data-f="wait" aria-pressed="false">Waiting</button>
+        <button type="button" id="refresh" style="margin-left:auto">Refresh</button>
+      </div>
+      <ul class="glist" id="famList"></ul>
+      <div id="otherBox">
+        <h3 class="group-h" id="otherTitle">Replied without a family link</h3>
+        <p class="hint">From the plain invite link. Use “Move to…” to file a reply under a family.</p>
+        <ul class="glist" id="otherList" style="margin-top:6px"></ul>
+      </div>
+      <p class="msg" id="guestMsg" role="status"></p>
+    </div>
+  </section>
+
+  <!-- details -->
+  <section id="details" role="tabpanel" aria-labelledby="tab-details" hidden="">
+    <div class="card">
+      <h2 class="display">Party details</h2>
+      <p class="hint">Saving updates the invitation for everyone with the link.</p>
+      <div class="formgrid">
+        <div>
+          <label for="f-name">Birthday child’s name</label><input id="f-name" autocomplete="off">
+          <div class="two">
+            <div><label for="f-date">Party date</label><input id="f-date" type="date"></div>
+            <div><label for="f-rsvpBy">Reply by</label><input id="f-rsvpBy" type="date"></div>
+            <div><label for="f-start">Starts</label><input id="f-start" type="time"></div>
+            <div><label for="f-end">Ends</label><input id="f-end" type="time"></div>
+          </div>
+          <label for="f-venue">Venue name</label><input id="f-venue" autocomplete="off">
+          <label for="f-address">Address</label><input id="f-address" autocomplete="off">
+        </div>
+        <div>
+          <label for="f-note">Good to know</label><textarea id="f-note"></textarea>
+          <label for="f-thanksNote">Thank-you message (shown after the party)</label>
+          <textarea id="f-thanksNote" placeholder="Thank you for building, playing and eating cake with us! Here are some snaps from the big day."></textarea>
+          <label for="f-host">Hosted by</label><input id="f-host" autocomplete="off">
+          <label for="f-rsvpPhone">RSVP phone number</label><input id="f-rsvpPhone" type="tel" autocomplete="off">
+        </div>
+      </div>
+      <div class="savebar"><button class="btn red" type="button" id="saveDetails">Save details</button><span class="msg" id="detailsMsg" role="status" style="margin:0"></span></div>
+    </div>
+  </section>
+
+  <!-- photos -->
+  <section id="photos" role="tabpanel" aria-labelledby="tab-photos" hidden="">
+    <p class="hint" style="margin:0 0 12px">Photos save as soon as they upload. Removing one takes it off the invite straight away.</p>
+    <div class="photos">
+      <div class="card">
+        <h2 class="display">Header</h2>
+        <p class="hint">Optional. Without a photo, the invite shows the brick cake.</p>
+        <img class="header-prev" id="headerPrev" alt="Current header">
+        <input id="p-header" type="file" accept="image/*" aria-label="Upload a header photo">
+        <button class="btn" type="button" id="headerReset" style="margin-top:10px" hidden="">Use the cake graphic</button>
+        <p class="msg" id="headerMsg" role="status"></p>
+      </div>
+      <div class="card">
+        <h2 class="display">Before the big day</h2>
+        <p class="hint">Up to 12. Shown on the invite now.</p>
+        <input id="p-photos" type="file" accept="image/*" multiple="" aria-label="Upload pre-party photos">
+        <div class="thumbs" id="thumbs-photos"></div>
+        <p class="msg" id="msg-photos" role="status"></p>
+      </div>
+      <div class="card">
+        <h2 class="display">Party photos</h2>
+        <p class="hint">Up to 30. Shown once the party ends.</p>
+        <input id="p-partyPhotos" type="file" accept="image/*" multiple="" aria-label="Upload party photos">
+        <div class="thumbs" id="thumbs-partyPhotos"></div>
+        <p class="msg" id="msg-partyPhotos" role="status"></p>
+        <a class="link" href="./?after" target="_blank" rel="noopener">Preview the after-party page</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const configured = window.supabase && typeof window.SUPABASE_URL === "string" && !/YOUR_/.test(window.SUPABASE_URL + window.SUPABASE_ANON_KEY);
+const sb = configured ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
+const CAKE = "assets/cake-header.webp";
+let PARTY = {}, session = null;
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const shortDate = s => new Date(s).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+function say(id, text, bad){ $(id).textContent = text || ""; $(id).classList.toggle("bad", !!bad); }
+
+// ---------- tabs (remembered in the address bar, e.g. owner.html#photos) ----------
+const TABS = ["guests", "details", "photos"];
+function showTab(name){
+  if (!TABS.includes(name)) name = "guests";
+  TABS.forEach(t => { $(t).hidden = t !== name; $("tab-" + t).setAttribute("aria-selected", t === name); });
+  if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+}
+TABS.forEach(t => $("tab-" + t).addEventListener("click", () => showTab(t)));
+window.addEventListener("hashchange", () => { if (session) showTab(location.hash.slice(1)); });
+
+// ---------- party data ----------
+async function loadParty(){
+  const { data, error } = await sb.from("party").select("data").eq("id", 1).maybeSingle();
+  if (!error && data && data.data) PARTY = data.data;
+}
+async function saveParty(patch){
+  const next = { ...PARTY, ...patch };
+  const { data, error } = await sb.from("party").update({ data: next, updated_at: new Date().toISOString() }).eq("id", 1).select("id");
+  if (error) throw error;
+  if (!data || !data.length) throw { message: "This account isn’t set up as the owner, so changes can’t be saved." };
+  PARTY = next;
+}
+const errText = e => (e && (e.message || e.code)) || "Check your connection and try again.";
+
+// ---------- guests ----------
+let DATA = { rows: [], families: [], hasFamilies: true }, filter = "all";
+async function fetchAll(){
+  const cols = "id,created_at,name,attending,adults,kids,device_id,family_code";
+  let { data, error } = await sb.from("rsvps").select(cols).order("created_at", { ascending: false });
+  if (error && /family_code/.test(error.message || "")) ({ data, error } = await sb.from("rsvps").select(cols.replace(",family_code", "")).order("created_at", { ascending: false }));
+  if (error && /device_id/.test(error.message || "")) ({ data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids").order("created_at", { ascending: false }));
+  if (error) throw error;
+  const fam = await sb.from("families").select("code,label,created_at").order("created_at", { ascending: true });
+  // newest reply per family (or per device on the plain link), counting changes
+  const latest = new Map();
+  (data || []).forEach(r => {
+    const key = r.family_code ? "f:" + r.family_code : r.device_id ? "d:" + r.device_id : "id:" + r.id;
+    if (!latest.has(key)) latest.set(key, { ...r, changes: 0 }); else latest.get(key).changes++;
+  });
+  DATA = { rows: [...latest.values()], families: fam.error ? [] : (fam.data || []), hasFamilies: !fam.error };
+}
+async function loadGuests(){
+  try { await fetchAll(); if ($("guestMsg").classList.contains("bad")) say("guestMsg", ""); }
+  catch (e) { say("guestMsg", "Couldn’t load guests. " + errText(e), true); return; }
+  renderGuests();
+}
+const replyText = r => r.attending ? `${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")}` : "Can’t make it";
+const statusOf = r => !r ? "wait" : r.attending ? "yes" : "no";
+function tag(st){
+  const t = document.createElement("span");
+  t.className = "tag" + (st === "no" ? " no" : st === "wait" ? " wait" : "");
+  t.textContent = st === "yes" ? "Coming" : st === "no" ? "Can’t" : "Waiting";
+  return t;
+}
+function el(tagName, cls, text){ const e = document.createElement(tagName); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function armed(btn, idle, run){
+  // two taps to confirm anything destructive
+  btn.addEventListener("click", () => {
+    if (btn.dataset.armed !== "1") {
+      btn.dataset.armed = "1"; btn.textContent = "Tap again to confirm";
+      setTimeout(() => { btn.dataset.armed = ""; btn.textContent = idle; }, 3000);
+      return;
+    }
+    btn.dataset.armed = ""; run();
+  });
+}
+function renderGuests(){
+  const { rows, families } = DATA;
+  const byFam = new Map(rows.filter(r => r.family_code).map(r => [r.family_code, r]));
+  const known = new Set(families.map(f => f.code));
+  const others = rows.filter(r => !r.family_code || !known.has(r.family_code));
+  const yes = rows.filter(r => r.attending);
+  $("t-fam").textContent = yes.length;
+  $("t-adults").textContent = yes.reduce((s, r) => s + (r.adults || 0), 0);
+  $("t-kids").textContent = yes.reduce((s, r) => s + (r.kids || 0), 0);
+  $("t-no").textContent = rows.length - yes.length;
+  $("t-wait").textContent = families.filter(f => !byFam.has(f.code)).length;
+
+  const show = st => filter === "all" || filter === st;
+  const famItems = families.filter(f => show(statusOf(byFam.get(f.code)))).map(f => familyRow(f, byFam.get(f.code)));
+  if (!families.length) famItems.push(el("li", "empty", DATA.hasFamilies ? "No families yet. Add one above to get their link." : "Family links need families.sql run in Supabase."));
+  else if (!famItems.length) famItems.push(el("li", "empty", "No families match this filter."));
+  $("famList").replaceChildren(...famItems);
+
+  const otherShown = filter === "wait" ? [] : others.filter(r => show(statusOf(r)));
+  $("otherBox").hidden = !otherShown.length;
+  $("otherTitle").textContent = `Replied without a family link (${otherShown.length})`;
+  $("otherList").replaceChildren(...otherShown.map(otherRow));
+}
+function familyRow(f, r){
+  const li = el("li", "g");
+  const who = el("div", "who");
+  const name = el("b", "", f.label);
+  const meta = el("span", "", r
+    ? `${replyText(r)} · sent by ${r.name} · ${shortDate(r.created_at)}${r.changes ? " · updated" : ""}`
+    : "No reply yet");
+  who.append(name, meta);
+  const acts = el("div", "acts");
+  const copy = el("button", "copy", "Copy link"); copy.type = "button";
+  copy.addEventListener("click", () => shareLink(copy, f));
+  const ren = el("button", "", "Rename"); ren.type = "button";
+  ren.addEventListener("click", () => startRename(li, f));
+  acts.append(copy, ren);
+  if (r) {
+    const clr = el("button", "danger", "Clear reply"); clr.type = "button";
+    armed(clr, "Clear reply", async () => {
+      const { error } = await sb.from("rsvps").delete().eq("family_code", f.code);
+      if (error) return say("guestMsg", "Couldn’t clear. " + errText(error), true);
+      say("guestMsg", `Cleared ${f.label}’s reply. Their link still works.`); loadGuests();
+    });
+    acts.append(clr);
+  }
+  const del = el("button", "danger", "Delete"); del.type = "button";
+  armed(del, "Delete", async () => {
+    const { error } = await sb.from("families").delete().eq("code", f.code);
+    if (error) return say("guestMsg", "Couldn’t delete. " + errText(error), true);
+    say("guestMsg", `Deleted ${f.label}. Their link no longer works${r ? "; their reply moved to “Replied without a family link”" : ""}.`); loadGuests();
+  });
+  acts.append(del);
+  li.append(who, tag(statusOf(r)), acts);
+  return li;
+}
+function startRename(li, f){
+  if (li.querySelector(".rename")) return;
+  const box = el("div", "rename");
+  const inp = el("input"); inp.value = f.label; inp.maxLength = 60; inp.setAttribute("aria-label", `New name for ${f.label}`);
+  const ok = el("button", "", "Save"); ok.type = "button";
+  const go = async () => {
+    const label = inp.value.trim().slice(0, 60);
+    if (!label || label === f.label) { box.remove(); return; }
+    ok.disabled = true;
+    const { error } = await sb.from("families").update({ label }).eq("code", f.code);
+    if (error) { ok.disabled = false; return say("guestMsg", "Couldn’t rename. " + errText(error), true); }
+    say("guestMsg", "Renamed. The link stays the same."); loadGuests();
+  };
+  ok.addEventListener("click", go);
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); if (e.key === "Escape") box.remove(); });
+  box.append(inp, ok);
+  li.append(box); inp.focus(); inp.select();
+}
+function otherRow(r){
+  const li = el("li", "g");
+  const who = el("div", "who");
+  who.append(el("b", "", r.name), el("span", "", `${r.attending ? replyText(r) + " · " : ""}${shortDate(r.created_at)}${r.changes ? " · updated" : ""}`));
+  const acts = el("div", "acts");
+  if (DATA.families.length) {
+    const sel = el("select"); sel.setAttribute("aria-label", `Move ${r.name}’s reply to a family`);
+    sel.append(new Option("Move to…", ""), ...DATA.families.map(f => new Option(f.label, f.code)));
+    sel.addEventListener("change", () => sel.value && moveReply(r, sel.value, sel));
+    acts.append(sel);
+  }
+  const del = el("button", "danger", "Delete"); del.type = "button";
+  armed(del, "Delete", async () => {
+    const q = sb.from("rsvps").delete();
+    const { error } = r.device_id ? await q.eq("device_id", r.device_id) : await q.eq("id", r.id);
+    if (error) return say("guestMsg", "Couldn’t delete. " + errText(error), true);
+    loadGuests();
+  });
+  acts.append(del);
+  li.append(who, tag(statusOf(r)), acts);
+  return li;
+}
+// File a plain-link reply under a family: save it again with the family attached, then remove the old copy
+async function moveReply(r, code, sel){
+  sel.disabled = true;
+  const copy = { name: r.name, attending: r.attending, adults: r.adults, kids: r.kids, family_code: code };
+  if (r.device_id) copy.device_id = r.device_id;
+  const ins = await sb.from("rsvps").insert(copy);
+  if (ins.error) { sel.disabled = false; sel.value = ""; return say("guestMsg", "Couldn’t move. " + errText(ins.error), true); }
+  const q = sb.from("rsvps").delete().is("family_code", null);
+  const { error } = r.device_id ? await q.eq("device_id", r.device_id) : await q.eq("id", r.id);
+  if (error) say("guestMsg", "Moved, but the old copy couldn’t be removed. " + errText(error), true);
+  else say("guestMsg", "Moved.");
+  loadGuests();
+}
+document.querySelectorAll(".filters [data-f]").forEach(b => b.addEventListener("click", () => {
+  filter = b.dataset.f;
+  document.querySelectorAll(".filters [data-f]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  renderGuests();
+}));
+$("refresh").addEventListener("click", loadGuests);
+document.addEventListener("visibilitychange", () => { if (!document.hidden && session) loadGuests(); });
+
+// family links
+const famLink = code => new URL("./", location.href).href + "?f=" + code;
+function newCode(){
+  const abc = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return [...crypto.getRandomValues(new Uint8Array(10))].map(x => abc[x % abc.length]).join("");
+}
+async function shareLink(btn, f){
+  const url = famLink(f.code);
+  const text = `You’re invited to ${PARTY.name || "our"}’s birthday build party! Tap to see the details and RSVP:`;
+  if (navigator.share && matchMedia("(pointer: coarse)").matches) {
+    try { await navigator.share({ title: "Birthday invite", text, url }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  try { await navigator.clipboard.writeText(url); btn.textContent = "Copied!"; }
+  catch { say("guestMsg", `Link for ${f.label}: ${url}`); }
+  setTimeout(() => { btn.textContent = "Copy link"; }, 1800);
+}
+$("famAdd").addEventListener("click", async () => {
+  const label = $("famLabel").value.trim().slice(0, 60);
+  if (!label) { say("guestMsg", "Type a family name first.", true); $("famLabel").focus(); return; }
+  if (DATA.families.some(f => f.label.toLowerCase() === label.toLowerCase())) { say("guestMsg", `There’s already a family called ${label}.`, true); return; }
+  $("famAdd").disabled = true;
+  const { error } = await sb.from("families").insert({ code: newCode(), label });
+  $("famAdd").disabled = false;
+  if (error) return say("guestMsg", "Couldn’t add. " + errText(error), true);
+  $("famLabel").value = ""; $("famLabel").focus();
+  say("guestMsg", `Added ${label}. Tap Copy link to send it.`);
+  if (filter !== "all") document.querySelector('.filters [data-f="all"]').click();
+  loadGuests();
+});
+$("famLabel").addEventListener("keydown", e => { if (e.key === "Enter") $("famAdd").click(); });
+
+// ---------- details ----------
+const FIELDS = ["name","date","rsvpBy","start","end","venue","address","note","thanksNote","host","rsvpPhone"];
+function fillDetails(){ FIELDS.forEach(f => { $("f-" + f).value = PARTY[f] || ""; }); }
+$("saveDetails").addEventListener("click", async () => {
+  const patch = {};
+  FIELDS.forEach(f => { patch[f] = $("f-" + f).value.trim(); });
+  if (!patch.name || !patch.date || !patch.start || !patch.end) return say("detailsMsg", "Add the name, date and start and end times to save.", true);
+  if (!patch.rsvpBy) patch.rsvpBy = patch.date;
+  const btn = $("saveDetails"); btn.disabled = true; say("detailsMsg", "Saving…");
+  try { await saveParty(patch); say("detailsMsg", "Saved. The invite is updated."); }
+  catch (e) { say("detailsMsg", "Couldn’t save. " + errText(e), true); }
+  btn.disabled = false;
+});
+
+// ---------- photos ----------
+const SETS = { photos: 12, partyPhotos: 30 };
+const listOf = key => (Array.isArray(PARTY[key]) ? PARTY[key] : []).filter(u => typeof u === "string" && u);
+async function shrink(file){
+  try {
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    return await new Promise(r => c.toBlob(b => r(b || file), "image/jpeg", 0.85));
+  } catch { return file; }
+}
+async function uploadPhoto(file){
+  const blob = await shrink(file);
+  const type = blob.type || "image/jpeg";
+  const ext = type === "image/png" ? "png" : type === "image/webp" ? "webp" : "jpg";
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await sb.storage.from("photos").upload(path, blob, { contentType: type });
+  if (error) throw error;
+  return sb.storage.from("photos").getPublicUrl(path).data.publicUrl;
+}
+function renderPhotos(){
+  $("headerPrev").src = PARTY.photo || CAKE;
+  $("headerReset").hidden = !PARTY.photo;
+  Object.keys(SETS).forEach(key => {
+    const list = listOf(key);
+    $("thumbs-" + key).replaceChildren(...list.map((u, i) => {
+      const d = el("div");
+      const img = new Image(); img.src = u; img.alt = ""; img.loading = "lazy";
+      const x = el("button", "", "×"); x.type = "button"; x.setAttribute("aria-label", `Remove photo ${i + 1}`);
+      x.addEventListener("click", async () => {
+        x.disabled = true;
+        try { await saveParty({ [key]: list.filter((_, j) => j !== i) }); say("msg-" + key, "Removed."); }
+        catch (e) { say("msg-" + key, "Couldn’t remove. " + errText(e), true); }
+        renderPhotos();
+      });
+      d.append(img, x); return d;
+    }));
+    if (!$("msg-" + key).classList.contains("bad")) say("msg-" + key, list.length ? `${list.length} of ${SETS[key]} photos` : "No photos yet");
+  });
+}
+Object.keys(SETS).forEach(key => $("p-" + key).addEventListener("change", async e => {
+  const room = SETS[key] - listOf(key).length;
+  const files = [...(e.target.files || [])].slice(0, room);
+  e.target.disabled = true;
+  if (!files.length) { say("msg-" + key, room ? "" : `That’s the limit of ${SETS[key]}. Remove one to add more.`, !room); e.target.disabled = false; e.target.value = ""; return; }
+  const added = []; let failed = 0;
+  for (const [i, f] of files.entries()) {
+    say("msg-" + key, `Uploading ${i + 1} of ${files.length}…`);
+    try { added.push(await uploadPhoto(f)); } catch { failed++; }
+  }
+  try {
+    if (added.length) await saveParty({ [key]: [...listOf(key), ...added] });
+    say("msg-" + key, `Added ${added.length}${failed ? `. ${failed} couldn’t upload. Try smaller JPG or PNG files.` : "."}`, !!failed);
+  } catch (err) { say("msg-" + key, "Uploaded, but couldn’t save. " + errText(err), true); }
+  e.target.disabled = false; e.target.value = "";
+  renderPhotos();
+}));
+$("p-header").addEventListener("change", async e => {
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  e.target.disabled = true; say("headerMsg", "Uploading…");
+  try { await saveParty({ photo: await uploadPhoto(file) }); say("headerMsg", "Header updated."); }
+  catch (err) { say("headerMsg", "Couldn’t upload that photo. " + errText(err), true); }
+  e.target.disabled = false; e.target.value = "";
+  renderPhotos();
+});
+$("headerReset").addEventListener("click", async () => {
+  try { await saveParty({ photo: "" }); say("headerMsg", "Back to the cake graphic."); }
+  catch (e) { say("headerMsg", "Couldn’t change it. " + errText(e), true); }
+  renderPhotos();
+});
+
+// ---------- sign-in ----------
+async function enter(){
+  $("signin").hidden = true; $("tabs").hidden = false; $("signOut").hidden = false;
+  showTab(location.hash.slice(1));
+  await loadParty();
+  fillDetails(); renderPhotos();
+  loadGuests();
+}
+function leave(){
+  $("signin").hidden = false; $("tabs").hidden = true; $("signOut").hidden = true;
+  TABS.forEach(t => { $(t).hidden = true; });
+}
+$("signinBtn").addEventListener("click", async () => {
+  const email = $("s-email").value.trim(), password = $("s-pass").value;
+  if (!email || !password) return say("signinErr", "Enter your email and password.", true);
+  $("signinBtn").disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  $("signinBtn").disabled = false;
+  if (error) return say("signinErr", "That email and password didn’t work.", true);
+  $("s-pass").value = ""; session = data.session; enter();
+});
+$("s-pass").addEventListener("keydown", e => { if (e.key === "Enter") $("signinBtn").click(); });
+$("signOut").addEventListener("click", async () => { await sb.auth.signOut(); session = null; leave(); });
+
+(async () => {
+  if (!sb) { $("noConfig").hidden = false; return; }
+  const { data } = await sb.auth.getSession();
+  session = data.session;
+  if (session) enter(); else { leave(); $("s-email").focus(); }
+})();
+</script>
+</body></html>

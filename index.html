@@ -170,29 +170,6 @@ footer{padding:20px 24px 28px; display:flex; align-items:center; gap:12px; color
 .confetti .b{position:absolute; top:-30px; animation:fall var(--t) cubic-bezier(.25,.6,.45,1) var(--d) forwards}
 @keyframes fall{to{transform:translateY(112vh) rotate(var(--rot))}}
 
-/* owner editor */
-.edit-fab{position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); z-index:20; min-height:48px; padding:.6rem 1.1rem; border:0; border-radius:999px; cursor:pointer; font:800 1rem "Nunito",system-ui,sans-serif; background:var(--ink); color:var(--bg)}
-.edit-fab[hidden]{display:none}
-.edit-fab.second{bottom:calc(76px + env(safe-area-inset-bottom,0px)); background:var(--blue); color:#fff}
-.totals{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:1rem 0 .5rem; text-align:center}
-.totals div{border-radius:8px; padding:8px 2px; background:var(--field); font-weight:800; font-size:.72rem; letter-spacing:.5px; color:var(--soft)}
-.totals b{display:block; font-family:"Lilita One",sans-serif; font-weight:400; font-size:1.6rem; line-height:1.1; color:var(--ink)}
-.rlist{list-style:none; margin:0; padding:0}
-.rlist li{display:flex; align-items:center; gap:10px; padding:10px 0; border-top:2px solid var(--line)}
-.rlist .who{flex:1; min-width:0}
-.rlist .who b{display:block; overflow-wrap:anywhere}
-.rlist .who span{color:var(--soft); font-size:.9rem; font-weight:700}
-.rlist .tag{flex:none; font-weight:800; font-size:.8rem; padding:3px 8px; border-radius:999px; color:#fff; background:var(--blue)}
-.rlist .tag.no{background:var(--soft)}
-.rlist .del{flex:none; width:40px; height:40px; border-radius:8px; border:2px solid var(--line); background:transparent; color:var(--ink); font:800 1.1rem/1 "Nunito",sans-serif; cursor:pointer}
-.empty{color:var(--soft); font-weight:700; margin:.5rem 0 0}
-.rlist .tag.wait{background:var(--yellow); color:#16181C}
-.sub-h{font-family:"Lilita One",sans-serif; font-weight:400; font-size:1.2rem; margin:1.2rem 0 .3rem}
-.sub-h[hidden],#pendingBox[hidden]{display:none}
-.addrow{display:flex; gap:8px; margin-top:.4rem}
-.addrow input{flex:1; min-width:0}
-.addrow button{flex:none; min-height:48px; padding:.5rem 1rem; border-radius:8px; border:0; background:var(--blue); color:#fff; font:800 1rem "Nunito",sans-serif; cursor:pointer; box-shadow:inset 0 -4px 0 var(--blue-dk)}
-.rlist .copy{flex:none; min-height:40px; padding:.3rem .8rem; border-radius:8px; border:2px solid var(--blue); background:transparent; color:var(--blue); font:800 .92rem "Nunito",sans-serif; cursor:pointer}
 .fam-hello{margin:0; padding:10px 12px; border-radius:8px; background:var(--bg); font-weight:800}
 .fam-hello[hidden]{display:none}
 dialog.thanks{width:min(100% - 2rem,22rem); text-align:center; overflow:visible}
@@ -215,25 +192,6 @@ dialog.thanks::backdrop{background:rgba(0,0,0,.35)}
 dialog{width:min(100% - 1.5rem,28rem); max-height:90vh; border:0; border-radius:12px; padding:0; background:var(--bg); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(0,0,0,.5)}
 .panel{padding:1.3rem 1.3rem 1rem}
-.panel h2{font-family:"Lilita One","Arial Rounded MT Bold",sans-serif; font-weight:400; font-size:1.6rem; margin:0 0 .2rem}
-.panel .hint{margin:0; color:var(--soft); font-size:.95rem}
-.panel label{margin:1rem 0 .3rem}
-.panel input{background:var(--field); border-color:transparent}
-.panel textarea{min-height:80px; resize:vertical; background:var(--field); border-color:transparent}
-.two{display:grid; grid-template-columns:1fr 1fr; gap:0 .6rem}
-.err{color:var(--red); font-weight:700; min-height:1.3em; margin:.6rem 0 0}
-.actions{display:flex; flex-wrap:wrap; gap:.6rem; justify-content:flex-end; padding:.9rem 1.3rem; border-top:2px solid var(--line); position:sticky; bottom:0; background:var(--bg)}
-.actions button{min-height:46px; padding:.5rem 1.1rem; border-radius:8px; cursor:pointer; font:800 1rem "Nunito",system-ui,sans-serif}
-.actions .cancel{background:transparent; color:var(--ink); border:2px solid var(--line)}
-.actions .save{background:var(--blue); color:#fff; border:0; box-shadow:inset 0 -4px 0 var(--blue-dk)}
-.photo-row{display:flex; align-items:center; justify-content:space-between; gap:.6rem; margin-top:.4rem; color:var(--soft); font-weight:700; font-size:.92rem}
-.mini{min-height:40px; padding:.35rem .8rem; border-radius:8px; border:2px solid var(--line); background:transparent; color:var(--ink); font:800 .92rem "Nunito",system-ui,sans-serif; cursor:pointer}
-.mini[hidden]{display:none}
-input[type=file]{padding:.5rem; min-height:auto}
-.thumbs{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:.5rem}
-.thumbs div{position:relative}
-.thumbs img{display:block; width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px}
-.thumbs button{position:absolute; top:3px; right:3px; width:28px; height:28px; border-radius:50%; border:0; background:rgba(0,0,0,.72); color:#fff; font:800 1rem/1 "Nunito",system-ui,sans-serif; cursor:pointer}
 dialog.lightbox{width:auto; max-width:94vw; padding:0; background:transparent; box-shadow:none}
 dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 .lightbox img{display:block; max-width:94vw; max-height:86vh; border-radius:8px}
@@ -386,7 +344,6 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
   </footer>
 </main>
 
-<button class="edit-fab second" id="rsvpBtn" type="button" hidden="">RSVPs</button>
 <dialog class="thanks" id="thanks" aria-labelledby="thanksTitle">
   <div class="panel">
     <div class="stack" aria-hidden="true"><span class="b y"></span><span class="b u"></span><span class="b r"></span></div>
@@ -397,99 +354,6 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
       <a id="thanksCal" target="_blank" rel="noopener">Add to calendar</a>
       <button type="button" id="thanksClose">Done</button>
     </div>
-  </div>
-</dialog>
-<dialog id="rsvpList" aria-labelledby="rsvpTitle">
-  <div class="panel">
-    <h2 id="rsvpTitle">RSVPs</h2>
-    <p class="hint">Only you can see this list.</p>
-    <div class="totals">
-      <div><b id="t-fam">0</b>COMING</div>
-      <div><b id="t-adults">0</b>ADULTS</div>
-      <div><b id="t-kids">0</b>KIDS</div>
-      <div><b id="t-no">0</b>CAN’T</div>
-    </div>
-    <ul class="rlist" id="rlist"></ul>
-    <div id="pendingBox" hidden="">
-      <h3 class="sub-h" id="pendingTitle">Not replied yet</h3>
-      <ul class="rlist" id="plist"></ul>
-    </div>
-    <p class="err" id="rsvpErr" role="alert"></p>
-  </div>
-  <div class="actions">
-    <button class="cancel" type="button" id="rsvpRefresh">Refresh</button>
-    <button class="cancel" type="button" id="famOpen">Family links</button>
-    <button class="save" type="button" id="rsvpClose">Close</button>
-  </div>
-</dialog>
-<dialog id="famList" aria-labelledby="famTitle">
-  <div class="panel">
-    <h2 id="famTitle">Family links</h2>
-    <p class="hint">Each family gets its own link. Everyone who opens it sees the same reply and can change it. The family sees its own name, e.g. “Hi, Family A!”</p>
-    <label for="famLabel">Family name</label>
-    <div class="addrow"><input id="famLabel" maxlength="60" autocomplete="off" placeholder="e.g. Family A"><button type="button" id="famAdd">Add</button></div>
-    <ul class="rlist" id="flist" style="margin-top:1rem"></ul>
-    <p class="err" id="famErr" role="alert"></p>
-  </div>
-  <div class="actions">
-    <button class="save" type="button" id="famClose">Done</button>
-  </div>
-</dialog>
-<button class="edit-fab" id="editBtn" type="button" hidden="">Edit details</button>
-<dialog id="editor" aria-labelledby="editTitle">
-  <div class="panel">
-    <h2 id="editTitle">Party details</h2>
-    <p class="hint">Only you see this button. Saving updates the invitation for everyone with the link.</p>
-    <div id="photoField">
-      <label for="f-photo">Header photo (optional)</label>
-      <input id="f-photo" type="file" accept="image/*">
-      <div class="photo-row"><span id="photoState"></span><button class="mini" type="button" id="photoRemove" hidden="">Use the cake graphic</button></div>
-    </div>
-    <div id="galleryField">
-      <label for="f-gallery">Pre-birthday photos</label>
-      <input id="f-gallery" type="file" accept="image/*" multiple="">
-      <div class="photo-row"><span id="galleryState"></span></div>
-      <div class="thumbs" id="thumbs"></div>
-    </div>
-    <div id="partyField">
-      <label for="f-party">Party photos (shown after the party)</label>
-      <input id="f-party" type="file" accept="image/*" multiple="">
-      <div class="photo-row"><span id="partyState"></span><a class="link" href="?owner&amp;after" target="_blank" rel="noopener">Preview after-party page</a></div>
-      <div class="thumbs" id="partyThumbs"></div>
-    </div>
-    <label for="f-name">Birthday child’s name</label><input id="f-name" autocomplete="off">
-    <div class="two">
-      <div><label for="f-date">Party date</label><input id="f-date" type="date"></div>
-      <div><label for="f-rsvpBy">Reply by</label><input id="f-rsvpBy" type="date"></div>
-      <div><label for="f-start">Starts</label><input id="f-start" type="time"></div>
-      <div><label for="f-end">Ends</label><input id="f-end" type="time"></div>
-    </div>
-    <label for="f-venue">Venue name</label><input id="f-venue" autocomplete="off">
-    <label for="f-address">Address</label><input id="f-address" autocomplete="off">
-    <label for="f-note">Good to know</label><textarea id="f-note"></textarea>
-    <label for="f-thanksNote">Thank-you message (shown after the party)</label><textarea id="f-thanksNote" placeholder="Thank you for building, playing and eating cake with us! Here are some snaps from the big day."></textarea>
-    <label for="f-host">Hosted by</label><input id="f-host" autocomplete="off">
-    <label for="f-rsvpPhone">RSVP phone number</label><input id="f-rsvpPhone" type="tel" autocomplete="off">
-    <p class="err" id="editErr" role="alert"></p>
-  </div>
-  <div class="actions">
-    <button class="cancel" type="button" id="editCancel">Cancel</button>
-    <button class="save" type="button" id="editSave">Save invitation</button>
-  </div>
-</dialog>
-
-<button class="edit-fab" id="signinBtn" type="button" hidden="">Owner sign-in</button>
-<dialog id="signin" aria-labelledby="signinTitle">
-  <div class="panel">
-    <h2 id="signinTitle">Owner sign-in</h2>
-    <p class="hint">Only the owner account can sign in.</p>
-    <label for="s-email">Email</label><input id="s-email" type="email" autocomplete="username">
-    <label for="s-pass">Password</label><input id="s-pass" type="password" autocomplete="current-password">
-    <p class="err" id="signinErr" role="alert"></p>
-  </div>
-  <div class="actions">
-    <button class="cancel" type="button" id="signinCancel">Cancel</button>
-    <button class="save" type="button" id="signinSend">Sign in</button>
   </div>
 </dialog>
 
@@ -508,7 +372,6 @@ const HEADER_ART_PNG = "assets/cake-header.png";
 
 const configured = window.supabase && typeof window.SUPABASE_URL === "string" && !/YOUR_/.test(window.SUPABASE_URL + window.SUPABASE_ANON_KEY);
 const sb = configured ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
-let session = null;
 
 // Build the "7" from bricks, dropping in from the bottom up
 const shape = ["XXXXX","....X","...X.","...X.","..X..","..X..","..X.."];
@@ -768,7 +631,6 @@ $("smsBtn").addEventListener("click", async () => {
       if (FAMILY) FAMILY.reply = { ...row, created_at: new Date().toISOString() };
       showThanks(name, yes, row.adults, row.kids, updating);
       showMine();
-      if (session && $("rsvpList").open) loadRsvps();
       return;
     }
     console.error("RSVP save failed", error);
@@ -807,12 +669,6 @@ splash.addEventListener("transitionend", () => burst(40), { once: true });
 document.querySelector('[data-ans="yes"]').addEventListener("click", () => burst(26));
 
 // ---------- photo galleries: pre-birthday strip + after-party grid ----------
-// Each set: its PARTY key, its editor upload field, and how many photos it can hold
-const SETS = {
-  photos:      { input: "f-gallery", state: "galleryState", thumbs: "thumbs",      max: 12 },
-  partyPhotos: { input: "f-party",   state: "partyState",   thumbs: "partyThumbs", max: 30 }
-};
-const pending = { photos: [], partyPhotos: [] };
 const isAsset = u => typeof u === "string" && u.length > 0;
 const listOf = key => (Array.isArray(PARTY[key]) ? PARTY[key] : []).filter(isAsset);
 const lb = document.createElement("dialog");
@@ -839,20 +695,6 @@ function renderGallery(){
   $("partyGrid").replaceChildren(...party.map(photoButton));
   $("partyEmpty").hidden = party.length > 0;
 }
-function renderThumbs(key){
-  const s = SETS[key], list = pending[key];
-  $(s.thumbs).replaceChildren(...list.map((u, i) => {
-    const d = document.createElement("div");
-    const img = new Image(); img.src = u; img.alt = "";
-    const x = document.createElement("button");
-    x.type = "button"; x.textContent = "×";
-    x.setAttribute("aria-label", `Remove photo ${i + 1}`);
-    x.addEventListener("click", () => { list.splice(i, 1); renderThumbs(key); });
-    d.append(img, x);
-    return d;
-  }));
-  $(s.state).textContent = list.length ? `${list.length} of ${s.max} photos` : "No photos yet";
-}
 
 // ---------- Supabase: load, sign-in, photos, save ----------
 async function loadParty(){
@@ -862,284 +704,15 @@ async function loadParty(){
     if (!error && data && data.data) PARTY = { ...FALLBACK, ...data.data };
   } catch {}
 }
-async function shrink(file){
-  try {
-    const bmp = await createImageBitmap(file);
-    const k = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
-    const c = document.createElement("canvas");
-    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
-    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
-    return await new Promise(r => c.toBlob(b => r(b || file), "image/jpeg", 0.85));
-  } catch { return file; }
-}
-async function uploadPhoto(file){
-  const blob = await shrink(file);
-  const type = blob.type || "image/jpeg";
-  const ext = type === "image/png" ? "png" : type === "image/webp" ? "webp" : "jpg";
-  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const { error } = await sb.storage.from("photos").upload(path, blob, { contentType: type });
-  if (error) throw error;
-  return sb.storage.from("photos").getPublicUrl(path).data.publicUrl;
-}
-
-const ownerMode = /[?&#]owner\b/.test(location.search + location.hash);
-// Replies + families, fetched together. Falls back cleanly if families.sql hasn't been run yet.
-async function fetchReplies(){
-  let { data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids,device_id,family_code").order("created_at", { ascending: false });
-  if (error && /family_code/.test(error.message || "")) ({ data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids,device_id").order("created_at", { ascending: false }));
-  if (error && /device_id/.test(error.message || "")) ({ data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids").order("created_at", { ascending: false }));
-  if (error) return { error };
-  const fam = await sb.from("families").select("code,label,created_at").order("created_at", { ascending: true });
-  const families = fam.error ? null : (fam.data || []);
-  // Keep only each family's (or device's) latest reply, newest first, and count the changes
-  const latest = new Map();
-  (data || []).forEach(r => {
-    const key = r.family_code ? "f:" + r.family_code : r.device_id ? "d:" + r.device_id : "id:" + r.id;
-    if (!latest.has(key)) latest.set(key, { ...r, changes: 0 }); else latest.get(key).changes++;
-  });
-  return { rows: [...latest.values()], families, labels: new Map((families || []).map(f => [f.code, f.label])) };
-}
-async function loadRsvps(){
-  $("rsvpErr").textContent = "";
-  const res = await fetchReplies();
-  if (res.error) { $("rsvpErr").textContent = "Couldn’t load RSVPs. " + (res.error.message || ""); return; }
-  const { rows, families, labels } = res;
-  $("famOpen").hidden = !families;
-  // Families with a link but no reply yet
-  const replied = new Set(rows.map(r => r.family_code).filter(Boolean));
-  const waiting = (families || []).filter(f => !replied.has(f.code));
-  $("pendingBox").hidden = !waiting.length;
-  $("pendingTitle").textContent = `Not replied yet (${waiting.length})`;
-  $("plist").replaceChildren(...waiting.map(f => {
-    const li = document.createElement("li");
-    const who = document.createElement("div"); who.className = "who";
-    const n = document.createElement("b"); n.textContent = f.label;
-    who.append(n);
-    const tag = document.createElement("span"); tag.className = "tag wait"; tag.textContent = "Waiting";
-    li.append(who, tag);
-    return li;
-  }));
-  const yes = rows.filter(r => r.attending);
-  $("t-fam").textContent = yes.length;
-  $("t-adults").textContent = yes.reduce((s, r) => s + (r.adults || 0), 0);
-  $("t-kids").textContent = yes.reduce((s, r) => s + (r.kids || 0), 0);
-  $("t-no").textContent = rows.length - yes.length;
-  if (!rows.length) { const p = document.createElement("li"); p.className = "empty"; p.textContent = "No replies yet."; $("rlist").replaceChildren(p); return; }
-  $("rlist").replaceChildren(...rows.map(r => {
-    const li = document.createElement("li");
-    const who = document.createElement("div"); who.className = "who";
-    const n = document.createElement("b"); n.textContent = r.name;
-    const meta = document.createElement("span");
-    const when = new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    const changed = r.changes ? " · updated" : "";
-    const famLabel = r.family_code && labels.get(r.family_code) ? labels.get(r.family_code) + " · " : "";
-    meta.textContent = famLabel + (r.attending ? `${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")} · ` : "") + when + changed;
-    who.append(n, meta);
-    const tag = document.createElement("span"); tag.className = "tag" + (r.attending ? "" : " no"); tag.textContent = r.attending ? "Coming" : "Can’t";
-    const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "×";
-    del.setAttribute("aria-label", `Delete reply from ${r.name}`);
-    del.addEventListener("click", async () => {
-      if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = "✓"; del.setAttribute("aria-label", `Confirm delete of ${r.name}`); setTimeout(() => { del.dataset.armed = ""; del.textContent = "×"; }, 3000); return; }
-      const { error } = r.family_code
-        ? await sb.from("rsvps").delete().eq("family_code", r.family_code)
-        : r.device_id
-        ? await sb.from("rsvps").delete().eq("device_id", r.device_id)
-        : await sb.from("rsvps").delete().eq("id", r.id);
-      if (error) { $("rsvpErr").textContent = "Couldn’t delete. " + (error.message || ""); return; }
-      loadRsvps();
-    });
-    li.append(who, tag, del);
-    return li;
-  }));
-}
-$("rsvpBtn").addEventListener("click", () => { $("rsvpList").showModal(); loadRsvps(); });
-$("rsvpRefresh").addEventListener("click", loadRsvps);
-$("rsvpClose").addEventListener("click", () => $("rsvpList").close());
-
-// ---------- family links (owner) ----------
-const famLink = code => `${location.origin}${location.pathname}?f=${code}`;
-function newCode(){
-  const abc = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  return [...crypto.getRandomValues(new Uint8Array(10))].map(x => abc[x % abc.length]).join("");
-}
-function armDelete(btn, label, run){
-  btn.addEventListener("click", async () => {
-    if (btn.dataset.armed !== "1") {
-      btn.dataset.armed = "1"; btn.textContent = "✓"; btn.setAttribute("aria-label", `Confirm delete of ${label}`);
-      setTimeout(() => { btn.dataset.armed = ""; btn.textContent = "×"; btn.setAttribute("aria-label", `Delete ${label}`); }, 3000);
-      return;
-    }
-    run();
-  });
-}
-async function shareLink(btn, f){
-  const url = famLink(f.code);
-  const text = `You’re invited to ${PARTY.name}’s birthday build party! Tap to see the details and RSVP:`;
-  if (navigator.share && matchMedia("(pointer: coarse)").matches) {
-    try { await navigator.share({ title: document.title, text, url }); return; } catch (e) { if (e && e.name === "AbortError") return; }
-  }
-  try { await navigator.clipboard.writeText(url); btn.textContent = "Copied!"; }
-  catch { $("famErr").textContent = `Copy this link for ${f.label}: ${url}`; }
-  setTimeout(() => { btn.textContent = "Copy link"; }, 1800);
-}
-async function loadFamilies(){
-  $("famErr").textContent = "";
-  const res = await fetchReplies();
-  if (res.error || !res.families) { $("famErr").textContent = "Couldn’t load families. " + ((res.error && res.error.message) || "Run families.sql in Supabase first."); return; }
-  const byFam = new Map(res.rows.filter(r => r.family_code).map(r => [r.family_code, r]));
-  if (!res.families.length) { const p = document.createElement("li"); p.className = "empty"; p.textContent = "No families yet. Add one above."; $("flist").replaceChildren(p); return; }
-  $("flist").replaceChildren(...res.families.map(f => {
-    const li = document.createElement("li");
-    const who = document.createElement("div"); who.className = "who";
-    const n = document.createElement("b"); n.textContent = f.label;
-    const meta = document.createElement("span");
-    const r = byFam.get(f.code);
-    meta.textContent = !r ? "No reply yet" : r.attending ? `Coming · ${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")}` : "Can’t make it";
-    who.append(n, meta);
-    const copy = document.createElement("button"); copy.type = "button"; copy.className = "copy"; copy.textContent = "Copy link";
-    copy.addEventListener("click", () => shareLink(copy, f));
-    const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "×";
-    del.setAttribute("aria-label", `Delete ${f.label}`);
-    armDelete(del, f.label, async () => {
-      const { error } = await sb.from("families").delete().eq("code", f.code);
-      if (error) { $("famErr").textContent = "Couldn’t delete. " + (error.message || ""); return; }
-      loadFamilies();
-    });
-    li.append(who, copy, del);
-    return li;
-  }));
-}
-$("famOpen").addEventListener("click", () => { $("famList").showModal(); $("famLabel").value = ""; loadFamilies(); });
-$("famClose").addEventListener("click", () => { $("famList").close(); if ($("rsvpList").open) loadRsvps(); });
-$("famAdd").addEventListener("click", async () => {
-  const label = $("famLabel").value.trim().slice(0, 60);
-  if (!label) { $("famErr").textContent = "Type a family name first."; $("famLabel").focus(); return; }
-  const btn = $("famAdd"); btn.disabled = true;
-  const { error } = await sb.from("families").insert({ code: newCode(), label });
-  btn.disabled = false;
-  if (error) { $("famErr").textContent = "Couldn’t add. " + (error.message || ""); return; }
-  $("famLabel").value = "";
-  loadFamilies();
-  $("famLabel").focus();
-});
-$("famLabel").addEventListener("keydown", e => { if (e.key === "Enter") $("famAdd").click(); });
-
-function showOwnerButtons(){
-  $("editBtn").hidden = !session;
-  $("rsvpBtn").hidden = !session;
-  $("signinBtn").hidden = !!session || !ownerMode || !sb;
-}
-async function initOwner(){
-  if (!sb) return;
-  const { data } = await sb.auth.getSession();
-  session = data.session;
-  sb.auth.onAuthStateChange((_e, s) => { session = s; showOwnerButtons(); });
-  showOwnerButtons();
-}
-$("signinBtn").addEventListener("click", () => { $("signinErr").textContent = ""; $("signin").showModal(); $("s-email").focus(); });
-$("signinCancel").addEventListener("click", () => $("signin").close());
-$("signinSend").addEventListener("click", async () => {
-  const email = $("s-email").value.trim();
-  const password = $("s-pass").value;
-  if (!email || !password) { $("signinErr").textContent = "Enter your email and password."; return; }
-  const btn = $("signinSend"); btn.disabled = true;
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  btn.disabled = false;
-  if (error) { $("signinErr").textContent = "That email and password didn’t work."; return; }
-  session = data.session;
-  $("s-pass").value = "";
-  showOwnerButtons();
-  $("signin").close();
-});
-$("s-pass").addEventListener("keydown", e => { if (e.key === "Enter") $("signinSend").click(); });
-
-const FIELDS = ["name","date","rsvpBy","start","end","venue","address","note","thanksNote","host","rsvpPhone"];
-const dlg = $("editor");
-let pendingPhoto = "", uploading = false;
-$("editBtn").addEventListener("click", () => {
-  FIELDS.forEach(f => { $("f-" + f).value = PARTY[f] || ""; });
-  $("editErr").textContent = "";
-  pendingPhoto = PARTY.photo || "";
-  Object.keys(SETS).forEach(key => { pending[key] = listOf(key); renderThumbs(key); });
-  $("f-photo").value = "";
-  showPhotoState();
-  $("editSave").textContent = "Save invitation"; $("editSave").disabled = false;
-  dlg.showModal();
-  $("f-name").focus();
-});
-function showPhotoState(msg){
-  $("photoState").textContent = msg || (pendingPhoto ? "Your photo is set" : "Showing the cake graphic");
-  $("photoRemove").hidden = !pendingPhoto;
-}
-$("f-photo").addEventListener("change", async e => {
-  const file = e.target.files && e.target.files[0];
-  if (!file || !session) return;
-  uploading = true; $("editSave").disabled = true; showPhotoState("Uploading photo…");
-  try {
-    pendingPhoto = await uploadPhoto(file);
-    showPhotoState("Photo ready. Save to show it.");
-  } catch {
-    showPhotoState("Couldn’t upload that photo. Try a smaller JPG or PNG.");
-  } finally {
-    uploading = false; $("editSave").disabled = false;
-  }
-});
-Object.entries(SETS).forEach(([key, s]) => $(s.input).addEventListener("change", async e => {
-  const list = pending[key];
-  const files = [...(e.target.files || [])].slice(0, s.max - list.length);
-  if (!files.length || !session) { e.target.value = ""; return; }
-  uploading = true; $("editSave").disabled = true;
-  let failed = 0;
-  for (const [i, f] of files.entries()) {
-    $(s.state).textContent = `Uploading ${i + 1} of ${files.length}…`;
-    try { list.push(await uploadPhoto(f)); } catch { failed++; }
-  }
-  uploading = false; $("editSave").disabled = false; e.target.value = "";
-  renderThumbs(key);
-  if (failed) $(s.state).textContent += `. ${failed} couldn’t upload.`;
-}));
-$("photoRemove").addEventListener("click", () => { pendingPhoto = ""; $("f-photo").value = ""; showPhotoState(); });
-$("editCancel").addEventListener("click", () => dlg.close());
-$("editSave").addEventListener("click", async () => {
-  const next = { ...PARTY };
-  FIELDS.forEach(f => { next[f] = $("f-" + f).value.trim(); });
-  if (!next.name || !next.date || !next.start || !next.end) {
-    $("editErr").textContent = "Add the name, date and start and end times to save.";
-    return;
-  }
-  if (!next.rsvpBy) next.rsvpBy = next.date;
-  if (uploading) return;
-  next.photo = pendingPhoto;
-  next.photos = [...pending.photos];
-  next.partyPhotos = [...pending.partyPhotos];
-  const btn = $("editSave");
-  btn.disabled = true; btn.textContent = "Saving…";
-  try {
-    const { data, error } = await sb.from("party")
-      .update({ data: next, updated_at: new Date().toISOString() })
-      .eq("id", 1).select("id");
-    if (error) throw error;
-    if (!data || !data.length) throw { code: "not_owner" };
-    PARTY = next;
-    render();
-    btn.textContent = "Saved";
-    setTimeout(() => dlg.close(), 600);
-  } catch (e) {
-    btn.disabled = false; btn.textContent = "Save invitation";
-    $("editErr").textContent = e && e.code === "not_owner"
-      ? "This account isn’t set up as the owner, so changes can’t be saved."
-      : "Couldn’t save. " + ((e && (e.message || e.code)) || "Check your connection and try again.");
-    console.error("Save failed", e);
-  }
-});
-
+// The owner tools live on their own page now; old ?owner links (e.g. in RSVP emails) go there
+const toOwner = /[?&#]owner\b/.test(location.search + location.hash);
+if (toOwner) location.replace("owner.html");
 // ---------- start ----------
-(async () => {
+if (!toOwner) (async () => {
   await Promise.race([Promise.all([loadParty(), loadFamily()]), new Promise(r => setTimeout(r, 3000))]);
   render();
   update();
   showMine();
   setTimeout(hideSplash, calm ? 1500 : 2700);
-  initOwner();
 })();
 </script></body></html>
