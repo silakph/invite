@@ -88,6 +88,7 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.9rem, 8vw, 2.
 @keyframes sparkle{0%,100%{opacity:.15; transform:scale(.5) rotate(0deg)} 50%{opacity:1; transform:scale(1) rotate(45deg)}}
 .menu-art .shine{opacity:.75; animation:shine 3.5s ease-in-out infinite alternate}
 @keyframes shine{to{opacity:.95}}
+.sec-sub{margin:4px 0 0; text-align:center; font-weight:700; color:var(--soft); white-space:pre-line}
 .menu-list{list-style:none; margin:12px 0 0; padding:0}
 .menu-list li{display:flex; gap:12px; align-items:baseline; padding:11px 2px; border-bottom:1px dashed #DCD3C3}
 .menu-list li::before{content:""; flex:none; width:10px; height:10px; border-radius:50%; background:var(--dot); transform:translateY(-1px)}
@@ -284,6 +285,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
         <circle cx="303" cy="91" r="3.2" fill="#D7263D"></circle>
       </svg>
       <h2 class="serif" id="menuTitle">What’s on our menu</h2>
+      <p class="sec-sub" id="menuSub"></p>
       <ul class="menu-list" id="menuList"></ul>
     </section>
 
@@ -292,6 +294,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
         <div class="lights" id="lights" aria-hidden="true"></div>
         <h2 class="serif" id="progTitle">Program</h2>
       </div>
+      <p class="sec-sub" id="progSub"></p>
       <ol class="prog" id="progList"></ol>
       <div class="soon" id="progSoon" hidden=""><p class="script">Program coming soon</p><span>We’re still wrapping it up. Check back closer to the party!</span></div>
     </section>
@@ -383,6 +386,14 @@ function startCountdown(){
 
 // ---------- menu ("Dish - brought by") and program ("6:30 PM - Dinner"), edited in owner.html ----------
 const lines = v => String(v || "").split("\n").map(x => x.trim()).filter(Boolean);
+// the line of text under each heading: whatever the owner typed in Christmas HQ, else a friendly default
+const SUBS = {
+  menu: "A little taste of what’s waiting on the table.",
+  program: "Here’s how the night will unfold.",
+  photosNone: "Snaps from the night show up here after the party.",
+  photosSome: "Tap a photo to see it big. Swipe for the next one."
+};
+const subText = (key, fallback) => (typeof EV[key] === "string" && EV[key].trim()) ? EV[key].trim() : fallback;
 const pair = l => { const m = l.match(/^(.*?)\s+[-–—|]\s+(.*)$/); return m ? [m[1].trim(), m[2].trim()] : [l, ""]; };
 function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
 function renderLists(){
@@ -390,6 +401,8 @@ function renderLists(){
   $("menuList").replaceChildren(...menu.map(([dish, by]) => { const li = el("li"); li.append(el("span", "dish", dish)); if (by) li.append(el("span", "by", by)); return li; }));
   // a program line with no " - " is just an activity, with no time
   $("progList").replaceChildren(...prog.map(([a, b]) => { const li = el("li"); li.append(el("span", "t", b ? a : ""), el("span", "what", b || a)); return li; }));
+  $("menuSub").textContent = subText("menuNote", SUBS.menu);
+  $("progSub").textContent = subText("programNote", SUBS.program);
   $("menuBlock").hidden = !menu.length;
   // "Program coming soon" while the owner keeps it hidden (Christmas HQ → Program)
   const soon = !!EV.programHidden;
@@ -488,7 +501,7 @@ function photoButton(item, i, list){
   b.type = "button";
   b.setAttribute("aria-label", `Open photo ${i + 1}`);
   const img = new Image(); img.referrerPolicy = "no-referrer"; img.alt = ""; img.loading = "lazy";
-  img.onerror = () => { item.bad = true; b.remove(); if (!$("grid").children.length) $("photosSub").textContent = "Snaps from the night show up here after the party."; };
+  img.onerror = () => { item.bad = true; b.remove(); if (!$("grid").children.length) $("photosSub").textContent = subText("photosNote", SUBS.photosNone); };
   img.src = item.thumb;
   b.appendChild(img);
   b.addEventListener("click", () => openViewer(list, item));
@@ -499,7 +512,7 @@ function renderGallery(){
     ...listOf("photos").map(u => ({ thumb: u, full: u, dl: supaDownload(u) })),
     ...DRIVE.map(id => ({ thumb: driveImg(id, 800), full: driveImg(id, 2000), dl: `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}` }))];
   $("grid").replaceChildren(...items.map((it, i) => photoButton(it, i, items)));
-  $("photosSub").textContent = items.length ? "Tap a photo to see it big. Swipe for the next one." : "Snaps from the night show up here after the party.";
+  $("photosSub").textContent = subText("photosNote", items.length ? SUBS.photosSome : SUBS.photosNone);
 }
 
 // ---------- start ----------

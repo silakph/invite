@@ -128,6 +128,8 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
     <div class="card">
       <h2 class="serif">What’s on our menu</h2>
       <p class="hint">One row per dish. “Brought by” is optional. Leave the list empty to hide the menu on the invite.</p>
+      <label for="f-menuNote">Text under “What’s on our menu”</label>
+      <input id="f-menuNote" autocomplete="off" maxlength="160" placeholder="A little taste of what’s waiting on the table.">
       <div class="rows" id="menuRows"></div>
       <div class="savebar">
         <button class="btn ghost" type="button" id="menuAdd">+ Add a dish</button>
@@ -141,6 +143,8 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
     <div class="card">
       <h2 class="serif">Program</h2>
       <p class="hint">One row per item, in the order it happens. The time is optional. Leave the list empty to hide the program on the invite.</p>
+      <label for="f-programNote">Text under “Program”</label>
+      <input id="f-programNote" autocomplete="off" maxlength="160" placeholder="Here’s how the night will unfold.">
       <label class="switch" for="progHide">
         <input type="checkbox" id="progHide">
         <span><b>Keep the program under wraps</b><br>Guests see “Program coming soon” until you turn this off. You can still edit and save the list.</span>
@@ -161,6 +165,9 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
       <div class="card">
         <h2 class="serif">Party photos</h2>
         <p class="hint">Up to 60. They save as soon as they upload and show on the invite right away.</p>
+        <label for="f-photosNote">Text under “Party photos”</label>
+        <div class="savebar" style="margin-top:0"><input id="f-photosNote" autocomplete="off" maxlength="160" placeholder="Snaps from the night show up here after the party." style="flex:1; min-width:12rem"><button class="btn" type="button" id="photosNoteSave">Save text</button></div>
+        <p class="msg" id="photosNoteMsg" role="status"></p>
         <input id="p-photos" type="file" accept="image/*" multiple="" aria-label="Upload party photos">
         <div class="thumbs" id="thumbs"></div>
         <p class="msg" id="photosMsg" role="status"></p>
@@ -227,13 +234,13 @@ function to24(t){
 const to12 = t => { if (!t) return ""; const [h, m] = t.split(":").map(Number); return new Date(2000, 0, 1, h, m).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
 const LISTS = {
   menu: {
-    box: "menuRows", msg: "menuMsg", empty: "No dishes yet. Tap “Add a dish”.", cls: "",
+    box: "menuRows", msg: "menuMsg", note: "menuNote", empty: "No dishes yet. Tap “Add a dish”.", cls: "",
     a: { ph: "Dish, e.g. Glazed ham", label: "Dish" }, b: { ph: "Brought by (optional)", label: "Brought by" },
     load: v => lines(v).map(pair),
     save: rows => rows.filter(([a]) => a).map(([a, b]) => b ? `${a} - ${b}` : a).join("\n")
   },
   program: {
-    box: "progRows", msg: "progMsg", empty: "No program items yet. Tap “Add an item”.", cls: "prog", time: true,
+    box: "progRows", msg: "progMsg", note: "programNote", empty: "No program items yet. Tap “Add an item”.", cls: "prog", time: true,
     a: { label: "Time" }, b: { ph: "What’s happening, e.g. Dinner", label: "Activity" },
     // a line with a time looks like "6:30 PM - Dinner"; without one it's just the activity
     load: v => lines(v).map(pair).map(([x, y]) => y && to24(x) ? [to24(x), y] : ["", y ? `${x} - ${y}` : x]),
@@ -267,7 +274,15 @@ function drawRows(key){
   }));
 }
 function dirty(key){ say(LISTS[key].msg, "Unsaved changes"); }
-function fillLists(){ Object.keys(LISTS).forEach(key => { listRows[key] = LISTS[key].load(EV[key]); drawRows(key); say(LISTS[key].msg, ""); }); }
+function fillLists(){ Object.keys(LISTS).forEach(key => { listRows[key] = LISTS[key].load(EV[key]); drawRows(key); $("f-" + LISTS[key].note).value = EV[LISTS[key].note] || ""; say(LISTS[key].msg, ""); }); }
+["menu", "program"].forEach(key => $("f-" + LISTS[key].note).addEventListener("input", () => dirty(key)));
+// empty text = the invite uses its friendly default
+$("photosNoteSave").addEventListener("click", async e => {
+  const btn = e.currentTarget; btn.disabled = true; say("photosNoteMsg", "Saving…");
+  try { await saveEvent({ photosNote: $("f-photosNote").value.trim() }); say("photosNoteMsg", "Saved. The invite is updated."); }
+  catch (err) { say("photosNoteMsg", "Couldn’t save. " + errText(err), true); }
+  btn.disabled = false;
+});
 function addRow(key){
   listRows[key].push(["", ""]); drawRows(key);
   const ins = $(LISTS[key].box).querySelectorAll(LISTS[key].time ? ".row:last-child .b" : ".row:last-child .a");
@@ -276,7 +291,7 @@ function addRow(key){
 async function saveList(key, btn){
   btn.disabled = true; say(LISTS[key].msg, "Saving…");
   try {
-    await saveEvent({ [key]: LISTS[key].save(listRows[key]) });
+    await saveEvent({ [key]: LISTS[key].save(listRows[key]), [LISTS[key].note]: $("f-" + LISTS[key].note).value.trim() });
     listRows[key] = LISTS[key].load(EV[key]); drawRows(key);
     say(LISTS[key].msg, "Saved. The invite is updated.");
   } catch (e) { say(LISTS[key].msg, "Couldn’t save. " + errText(e), true); }
@@ -420,6 +435,7 @@ async function enter(){
   try { await loadEvent(); } catch (e) { say("detailsMsg", errText(e), true); say("photosMsg", errText(e), true); return; }
   fillDetails(); fillLists(); renderPhotos();
   $("progHide").checked = !!EV.programHidden;
+  $("f-photosNote").value = EV.photosNote || "";
 }
 function leave(){
   $("signin").hidden = false; $("tabs").hidden = true; $("signOut").hidden = true;
