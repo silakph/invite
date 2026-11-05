@@ -64,6 +64,9 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
 .row .tools button{width:40px; height:40px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:800; cursor:pointer}
 .row .tools button:disabled{opacity:.35; cursor:default}
 .row .tools .x{color:var(--red-dk)}
+.switch{display:flex; gap:12px; align-items:flex-start; margin:14px 0 0; padding:12px 14px; border-radius:10px; border:2px solid var(--line); font-weight:700; font-size:.95rem; cursor:pointer}
+.switch input{flex:none; width:22px; height:22px; min-height:0; margin:2px 0 0; accent-color:var(--green); cursor:pointer}
+.switch span{color:var(--soft)} .switch b{color:var(--ink)}
 .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 @media (max-width:560px){
   .row,.row.prog{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"a tools" "b tools"}
@@ -138,6 +141,11 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
     <div class="card">
       <h2 class="serif">Program</h2>
       <p class="hint">One row per item, in the order it happens. The time is optional. Leave the list empty to hide the program on the invite.</p>
+      <label class="switch" for="progHide">
+        <input type="checkbox" id="progHide">
+        <span><b>Keep the program under wraps</b><br>Guests see “Program coming soon” until you turn this off. You can still edit and save the list.</span>
+      </label>
+      <p class="msg" id="progHideMsg" role="status" style="margin:6px 0 0"></p>
       <div class="rows" id="progRows"></div>
       <div class="savebar">
         <button class="btn ghost" type="button" id="progAdd">+ Add an item</button>
@@ -276,6 +284,14 @@ async function saveList(key, btn){
 }
 $("menuAdd").addEventListener("click", () => addRow("menu"));
 $("progAdd").addEventListener("click", () => addRow("program"));
+// hide the program for now: the invite shows "Program coming soon"; saves straight away
+$("progHide").addEventListener("change", async e => {
+  const box = e.currentTarget, on = box.checked;
+  box.disabled = true; say("progHideMsg", "Saving…");
+  try { await saveEvent({ programHidden: on }); say("progHideMsg", on ? "Hidden. Guests see “Program coming soon”." : "Showing. Guests can see the program."); }
+  catch (err) { box.checked = !on; say("progHideMsg", "Couldn’t save. " + errText(err), true); }
+  box.disabled = false;
+});
 
 // A typical family Christmas party, timed from the party's start (6:00 PM if none is set yet)
 const SAMPLE_PROGRAM = [
@@ -403,6 +419,7 @@ async function enter(){
   showTab(location.hash.slice(1));
   try { await loadEvent(); } catch (e) { say("detailsMsg", errText(e), true); say("photosMsg", errText(e), true); return; }
   fillDetails(); fillLists(); renderPhotos();
+  $("progHide").checked = !!EV.programHidden;
 }
 function leave(){
   $("signin").hidden = false; $("tabs").hidden = true; $("signOut").hidden = true;

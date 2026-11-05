@@ -102,6 +102,9 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.9rem, 8vw, 2.
 .prog li{display:grid; grid-template-columns:5.6rem minmax(0,1fr); gap:12px; align-items:baseline; padding:11px 2px; border-bottom:1px dashed #DCD3C3}
 .prog .t{font-weight:800; color:var(--green); white-space:nowrap}
 .prog .what{font-weight:700}
+.soon{margin:14px 0 0; padding:22px 16px 24px; text-align:center; border:2px dashed #DCD3C3; border-radius:12px}
+.soon p{margin:0; font-size:2.2rem; line-height:1.1; color:var(--green)}
+.soon span{display:block; margin-top:6px; font-weight:700; color:var(--soft)}
 
 /* photos, below all three */
 .photos{padding:28px 22px 6px; border-top:2px dashed var(--rule)}
@@ -263,6 +266,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
         <h2 class="serif" id="progTitle">Program</h2>
       </div>
       <ol class="prog" id="progList"></ol>
+      <div class="soon" id="progSoon" hidden=""><p class="script">Program coming soon</p><span>We’re still wrapping it up. Check back closer to the party!</span></div>
     </section>
   </div>
 
@@ -360,7 +364,11 @@ function renderLists(){
   // a program line with no " - " is just an activity, with no time
   $("progList").replaceChildren(...prog.map(([a, b]) => { const li = el("li"); li.append(el("span", "t", b ? a : ""), el("span", "what", b || a)); return li; }));
   $("menuBlock").hidden = !menu.length;
-  $("progBlock").hidden = !prog.length;
+  // "Program coming soon" while the owner keeps it hidden (Christmas HQ → Program)
+  const soon = !!EV.programHidden;
+  $("progList").hidden = soon;
+  $("progSoon").hidden = !soon;
+  $("progBlock").hidden = !soon && !prog.length;
   hangLights();
 }
 // Christmas lights across the Program header: one bulb per ~44px, rebuilt when the width changes
