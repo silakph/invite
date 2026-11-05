@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Red, blue and green Christmas baubles over a candy-cane border">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#D7263D">
+<meta name="theme-color" content="#0E1B33">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,8 +30,22 @@
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
 body{margin:0; min-height:100vh; color:var(--ink); font:600 1rem/1.5 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
-  background:repeating-linear-gradient(45deg, var(--red) 0 14px, #FFFFFF 14px 28px) fixed; padding:14px;
-  padding-top:calc(14px + env(safe-area-inset-top,0px)); padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+  background:#0E1B33; padding:0 14px 14px;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+
+/* a string of Christmas lights across the top of the page */
+.lights{display:flex; justify-content:space-between; height:58px; margin:0 -14px; padding:0 10px; overflow:hidden}
+.bulb{position:relative; flex:1; display:flex; justify-content:center}
+.bulb::before{content:""; position:absolute; top:-12px; left:0; right:0; height:24px; border-bottom:2px solid #3E5A48; border-radius:0 0 50% 50%}
+.bulb i{position:relative; margin-top:12px; width:14px; height:22px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c);
+  box-shadow:0 0 10px 2px var(--c), 0 0 22px 6px var(--glow); animation:twinkle 2.6s ease-in-out infinite; animation-delay:var(--d)}
+.bulb i::before{content:""; position:absolute; top:-6px; left:3px; width:8px; height:7px; border-radius:2px; background:#56705F}
+.bulb:nth-child(4n+1){--c:#FF4D5E; --glow:rgba(255,77,94,.35)}
+.bulb:nth-child(4n+2){--c:#3DDC84; --glow:rgba(61,220,132,.32)}
+.bulb:nth-child(4n+3){--c:#4C9BFF; --glow:rgba(76,155,255,.35)}
+.bulb:nth-child(4n){--c:#FFD25E; --glow:rgba(255,210,94,.35)}
+@keyframes twinkle{0%,100%{opacity:1} 50%{opacity:.45; box-shadow:0 0 4px 1px var(--c)}}
+@media (prefers-reduced-motion: reduce){ .bulb i{animation:none} }
 .serif{font-family:"Playfair Display", Georgia, serif}
 .script{font-family:"Great Vibes", "Segoe Script", cursive; font-weight:400}
 [hidden]{display:none !important}
@@ -39,8 +53,10 @@ a{color:#0B5CC4; font-weight:800; text-underline-offset:3px}
 a:hover{color:#084391}
 :focus-visible{outline:3px solid var(--blue); outline-offset:2px}
 
-.card{max-width:32rem; margin:0 auto; background:var(--card); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; min-height:calc(100vh - 28px); box-shadow:0 10px 40px rgba(0,0,0,.18)}
-.baubles{display:block; width:100%; height:auto}
+.card{max-width:32rem; margin:6px auto 0; background:var(--card); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.intro,.details{min-width:0}
+.details{display:flex; flex-direction:column}
+.baubles{display:block; width:100%; max-width:460px; height:auto; margin:0 auto}
 .orn{transform-box:view-box; animation:swing 4.5s ease-in-out infinite alternate}
 .orn:nth-of-type(2n){animation-duration:5.5s; animation-direction:alternate-reverse}
 @keyframes swing{from{transform:rotate(-3deg)} to{transform:rotate(3deg)}}
@@ -49,7 +65,7 @@ a:hover{color:#084391}
 .head{padding:0 24px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px}
 .greet{margin:0; font-size:2.6rem; line-height:1; color:var(--red-dk)}
 .kicker{margin:6px 0 0; font-weight:800; font-size:.78rem; letter-spacing:4px; color:var(--green)}
-h1{margin:0; font-weight:800; font-size:clamp(2.1rem, 9vw, 2.6rem); line-height:1.08; color:var(--navy)}
+h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(2.1rem, 9vw, 2.6rem); line-height:1.08; color:var(--navy)}
 
 .ticket{margin:22px 22px 0; border:2px solid var(--line); border-radius:6px}
 .ticket .row{display:grid; grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -97,14 +113,41 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 @media (prefers-reduced-motion: reduce){ .vstage img{transition:none} }
 
 @media (min-width:700px){
-  body{padding:40px 24px}
-  .card{min-height:0}
   .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+/* computers: full width, invitation on the left, details on the right, photos across the bottom */
+@media (min-width:900px){
+  body{padding-left:24px; padding-right:24px}
+  .lights{margin:0 -24px; height:66px}
+  .card{max-width:none; width:100%; max-width:1800px; margin-top:10px; display:grid; grid-template-columns:minmax(340px, 1fr) minmax(0, 1.25fr);
+    grid-template-areas:"intro details" "photos photos" "foot foot"}
+  .intro{grid-area:intro; padding:10px 0 34px; border-right:2px dashed #E3DCCF}
+  .card{grid-template-areas:"intro details" "intro more" "photos photos" "foot foot"}
+  .details{grid-area:details; justify-content:flex-end; padding:40px clamp(24px, 4vw, 64px) 0}
+  .details .ticket{margin:0}
+  .more{grid-area:more; padding:4px clamp(24px, 4vw, 64px) 34px}
+  .more .note,.more .sign{margin-left:0; margin-right:0}
+  .photos{grid-area:photos; padding:8px clamp(24px, 3vw, 48px) 0; border-top:2px dashed #E3DCCF}
+  .foot{grid-area:foot}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr)); margin-left:0; margin-right:0}
+  .photos-h,.photos-sub{margin-left:0; margin-right:0}
+  .ticket .val{font-size:1.45rem}
+}
+/* wide screens: three columns, the details split into the ticket and the note */
+@media (min-width:1280px){
+  .card{grid-template-columns:minmax(360px, 1fr) minmax(0, 1fr) minmax(300px, .8fr); grid-template-areas:"intro details more" "photos photos photos" "foot foot foot"}
+  .details{justify-content:center; padding:36px 28px 34px clamp(24px, 3vw, 48px)}
+  .more{grid-area:more; display:flex; flex-direction:column; justify-content:center; padding:36px 48px 34px 28px}
+  .more .note{margin:0; text-align:left; font-size:1.08rem}
+  .more .sign{text-align:left}
+  .grid{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
 </style>
 </head>
 <body>
+<div class="lights" id="lights" aria-hidden="true"></div>
 <main class="card">
+  <div class="intro">
   <svg class="baubles" aria-hidden="true" viewBox="0 0 362 150">
     <path d="M0 6 Q90 26 181 10 T362 8" stroke="#13774A" stroke-width="3" fill="none"></path>
     <g class="orn" style="transform-origin:36px 12px">
@@ -144,7 +187,9 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
     <p class="kicker">JOIN US FOR</p>
     <h1 class="serif" id="title">Our Christmas Party</h1>
   </header>
+  </div>
 
+  <div class="details">
   <section class="ticket" aria-label="Party details">
     <div class="row">
       <div class="cell"><p class="lab">DATE</p><p class="val serif" id="date"></p></div>
@@ -156,10 +201,13 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
     <a id="calBtn" target="_blank" rel="noopener">Add to calendar</a>
     <a id="mapBtn" target="_blank" rel="noopener">Open map</a>
   </div>
-  <p class="note" id="note"></p>
-  <p class="sign script" id="sign"></p>
+  </div>
+  <div class="more">
+    <p class="note" id="note"></p>
+    <p class="sign script" id="sign"></p>
+  </div>
 
-  <section aria-labelledby="photosTitle">
+  <section class="photos" aria-labelledby="photosTitle">
     <div class="photos-h"><span aria-hidden="true"></span><h2 class="serif" id="photosTitle">Party photos</h2><span aria-hidden="true"></span></div>
     <p class="photos-sub" id="photosSub">Snaps from the night show up here after the party.</p>
     <div class="grid" id="grid"></div>
@@ -179,6 +227,20 @@ const FALLBACK = JSON.parse($("event-data").textContent);
 let EV = { ...FALLBACK };
 const configured = window.supabase && typeof window.SUPABASE_URL === "string" && !/YOUR_/.test(window.SUPABASE_URL + window.SUPABASE_ANON_KEY);
 const sb = configured ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
+
+// Christmas lights: one bulb per ~54px of screen width, rebuilt when the width changes
+function hangLights(){
+  const n = Math.max(6, Math.round(innerWidth / 54));
+  const box = $("lights");
+  if (box.children.length === n) return;
+  box.replaceChildren(...Array.from({ length: n }, (_, i) => {
+    const b = document.createElement("span"); b.className = "bulb";
+    const g = document.createElement("i"); g.style.setProperty("--d", `${((i * 7) % 11) * -0.37}s`);
+    b.appendChild(g); return b;
+  }));
+}
+hangLights();
+let lightsT; addEventListener("resize", () => { clearTimeout(lightsT); lightsT = setTimeout(hangLights, 150); });
 
 // old ?owner links go to the owner page
 if (/[?&#]owner\b/.test(location.search + location.hash)) location.replace("owner.html");
