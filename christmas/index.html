@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="only light">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You’re invited to our Christmas party!</title>
+<meta name="description" content="Food, family and a gift exchange. Tap to see the details.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://silakph.github.io/invite/christmas/">
+<meta property="og:title" content="You’re invited to our Christmas party!">
+<meta property="og:description" content="Food, family and a gift exchange. Tap to see the details.">
+<meta property="og:image" content="https://silakph.github.io/invite/christmas/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Red, blue and green Christmas baubles over a candy-cane border">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#D7263D">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;family=Playfair+Display:wght@700;800&amp;family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#D7263D; --red-dk:#B3172B; --green:#13774A; --green-2:#169055; --blue:#1F6FE5; --navy:#0B2E5C;
+  --card:#FFFDF8; --ink:#1A1C22; --soft:#4A4D57; --line:#0B2E5C; --ph:#EFE7DA;
+  color-scheme:only light;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
+body{margin:0; min-height:100vh; color:var(--ink); font:600 1rem/1.5 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background:repeating-linear-gradient(45deg, var(--red) 0 14px, #FFFFFF 14px 28px) fixed; padding:14px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px)); padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+.serif{font-family:"Playfair Display", Georgia, serif}
+.script{font-family:"Great Vibes", "Segoe Script", cursive; font-weight:400}
+[hidden]{display:none !important}
+a{color:#0B5CC4; font-weight:800; text-underline-offset:3px}
+a:hover{color:#084391}
+:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+
+.card{max-width:32rem; margin:0 auto; background:var(--card); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; min-height:calc(100vh - 28px); box-shadow:0 10px 40px rgba(0,0,0,.18)}
+.baubles{display:block; width:100%; height:auto}
+.orn{transform-box:view-box; animation:swing 4.5s ease-in-out infinite alternate}
+.orn:nth-of-type(2n){animation-duration:5.5s; animation-direction:alternate-reverse}
+@keyframes swing{from{transform:rotate(-3deg)} to{transform:rotate(3deg)}}
+@media (prefers-reduced-motion: reduce){ .orn{animation:none} }
+
+.head{padding:0 24px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:4px}
+.greet{margin:0; font-size:2.6rem; line-height:1; color:var(--red-dk)}
+.kicker{margin:6px 0 0; font-weight:800; font-size:.78rem; letter-spacing:4px; color:var(--green)}
+h1{margin:0; font-weight:800; font-size:clamp(2.1rem, 9vw, 2.6rem); line-height:1.08; color:var(--navy)}
+
+.ticket{margin:22px 22px 0; border:2px solid var(--line); border-radius:6px}
+.ticket .row{display:grid; grid-template-columns:repeat(2,minmax(0,1fr))}
+.ticket .cell{padding:14px; text-align:center; display:flex; flex-direction:column; gap:2px}
+.ticket .row .cell:first-child{border-right:2px solid var(--line)}
+.ticket .place{border-top:2px solid var(--line)}
+.lab{margin:0; font-size:.7rem; font-weight:800; letter-spacing:2px; color:var(--green)}
+.val{margin:0; font-weight:700; font-size:1.25rem; line-height:1.25}
+.sub{margin:0; font-size:.9rem; font-weight:700; color:var(--soft)}
+.links{display:flex; justify-content:center; flex-wrap:wrap; gap:4px 22px; margin-top:12px}
+.links a{display:inline-flex; align-items:center; min-height:44px}
+.note{margin:10px 28px 0; text-align:center; font-weight:700; line-height:1.5; color:#33363F; white-space:pre-line}
+.sign{margin:8px 0 0; text-align:center; font-size:1.7rem; color:var(--navy)}
+
+.photos-h{margin:30px 22px 0; display:flex; align-items:center; gap:12px}
+.photos-h span{flex:1; height:2px; background:var(--green)}
+.photos-h h2{margin:0; font-weight:800; font-size:1.65rem; color:var(--red-dk)}
+.photos-sub{margin:6px 22px 0; text-align:center; font-weight:700; color:var(--soft)}
+.grid{margin:20px 22px 0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px 14px}
+.grid button{position:relative; display:block; width:100%; border:0; padding:6px; background:#FFFFFF; box-shadow:0 3px 10px rgba(0,0,0,.14); cursor:pointer}
+.grid button::before{content:""; position:absolute; z-index:1; top:-9px; left:50%; width:54px; height:16px; margin-left:-27px; background:var(--tape); opacity:.85; transform:rotate(var(--tilt))}
+.grid button:nth-child(3n+1){--tape:var(--red); --tilt:-4deg}
+.grid button:nth-child(3n+2){--tape:var(--green); --tilt:3deg}
+.grid button:nth-child(3n){--tape:var(--blue); --tilt:-2deg}
+.grid img{display:block; width:100%; aspect-ratio:4/5; object-fit:cover; background:var(--ph)}
+.foot{margin:auto 0 0; padding:28px 0 26px; text-align:center; font-size:1.9rem; color:var(--green)}
+
+/* photo viewer */
+dialog.viewer{width:100vw; height:100vh; height:100dvh; max-width:none; max-height:none; margin:0; padding:0; border:0; border-radius:0; background:rgba(10,12,16,.96); color:#fff; overflow:hidden}
+dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
+.vstage{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:calc(64px + env(safe-area-inset-top,0px)) 12px calc(84px + env(safe-area-inset-bottom,0px)); touch-action:pan-y pinch-zoom; user-select:none; -webkit-user-select:none}
+.vstage img{display:block; max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; transition:opacity .2s ease}
+.vstage img.loading{opacity:.2}
+.vmsg{position:absolute; inset:0; margin:0; display:flex; align-items:center; justify-content:center; font-weight:800; color:#C9CDD3; pointer-events:none}
+.vbtn{position:absolute; z-index:2; width:52px; height:52px; border-radius:50%; border:0; background:rgba(255,255,255,.16); color:#fff; font:800 1.9rem/1 "Nunito",sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center}
+.vbtn:hover{background:rgba(255,255,255,.26)}
+.vclose{top:calc(12px + env(safe-area-inset-top,0px)); right:12px; font-size:1.6rem}
+.vprev,.vnext{top:50%; transform:translateY(-50%)}
+.vprev{left:12px} .vnext{right:12px}
+.vbar{position:absolute; z-index:2; left:0; right:0; bottom:calc(16px + env(safe-area-inset-bottom,0px)); display:flex; justify-content:center; align-items:center; gap:14px; font-weight:800}
+.vcount{min-width:5.5em; text-align:center}
+.vdl{display:inline-flex; align-items:center; min-height:44px; padding:.4rem 1.1rem; border-radius:8px; background:#FFFFFF; color:var(--red-dk); text-decoration:none}
+.vdl:hover{color:var(--red-dk)}
+@media (max-width:600px){ .vprev,.vnext{width:44px; height:44px; font-size:1.6rem; background:rgba(255,255,255,.12)} .vprev{left:6px} .vnext{right:6px} }
+@media (prefers-reduced-motion: reduce){ .vstage img{transition:none} }
+
+@media (min-width:700px){
+  body{padding:40px 24px}
+  .card{min-height:0}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="card">
+  <svg class="baubles" aria-hidden="true" viewBox="0 0 362 150">
+    <path d="M0 6 Q90 26 181 10 T362 8" stroke="#13774A" stroke-width="3" fill="none"></path>
+    <g class="orn" style="transform-origin:36px 12px">
+      <line x1="36" y1="12" x2="36" y2="62" stroke="#9AA39D" stroke-width="2"></line>
+      <rect x="29" y="58" width="14" height="10" rx="2" fill="#C9A227"></rect>
+      <circle cx="36" cy="88" r="22" fill="#D7263D"></circle>
+      <path d="M18 84 Q36 76 54 84" stroke="#FFFFFF" stroke-width="3" fill="none" opacity=".75"></path>
+    </g>
+    <g class="orn" style="transform-origin:104px 20px">
+      <line x1="104" y1="20" x2="104" y2="40" stroke="#9AA39D" stroke-width="2"></line>
+      <rect x="97" y="36" width="14" height="10" rx="2" fill="#C9A227"></rect>
+      <circle cx="104" cy="64" r="18" fill="#1F6FE5"></circle>
+      <circle cx="98" cy="58" r="4" fill="#FFFFFF" opacity=".6"></circle>
+    </g>
+    <g class="orn" style="transform-origin:181px 10px">
+      <line x1="181" y1="10" x2="181" y2="84" stroke="#9AA39D" stroke-width="2"></line>
+      <rect x="173" y="80" width="16" height="11" rx="2" fill="#C9A227"></rect>
+      <circle cx="181" cy="116" r="27" fill="#13774A"></circle>
+      <path d="M156 110 L206 110 M156 122 L206 122" stroke="#FFFFFF" stroke-width="5"></path>
+    </g>
+    <g class="orn" style="transform-origin:258px 14px">
+      <line x1="258" y1="14" x2="258" y2="44" stroke="#9AA39D" stroke-width="2"></line>
+      <rect x="251" y="40" width="14" height="10" rx="2" fill="#C9A227"></rect>
+      <circle cx="258" cy="69" r="19" fill="#D7263D"></circle>
+      <circle cx="252" cy="63" r="4" fill="#FFFFFF" opacity=".6"></circle>
+    </g>
+    <g class="orn" style="transform-origin:326px 9px">
+      <line x1="326" y1="9" x2="326" y2="72" stroke="#9AA39D" stroke-width="2"></line>
+      <rect x="319" y="68" width="14" height="10" rx="2" fill="#C9A227"></rect>
+      <circle cx="326" cy="98" r="22" fill="#1F6FE5"></circle>
+      <path d="M308 94 Q326 86 344 94" stroke="#FFFFFF" stroke-width="3" fill="none" opacity=".75"></path>
+    </g>
+  </svg>
+
+  <header class="head">
+    <p class="greet script" id="greeting">Merry Christmas</p>
+    <p class="kicker">JOIN US FOR</p>
+    <h1 class="serif" id="title">Our Christmas Party</h1>
+  </header>
+
+  <section class="ticket" aria-label="Party details">
+    <div class="row">
+      <div class="cell"><p class="lab">DATE</p><p class="val serif" id="date"></p></div>
+      <div class="cell"><p class="lab">TIME</p><p class="val serif" id="time"></p></div>
+    </div>
+    <div class="cell place"><p class="lab">PLACE</p><p class="val serif" id="venue"></p><p class="sub" id="address"></p></div>
+  </section>
+  <div class="links">
+    <a id="calBtn" target="_blank" rel="noopener">Add to calendar</a>
+    <a id="mapBtn" target="_blank" rel="noopener">Open map</a>
+  </div>
+  <p class="note" id="note"></p>
+  <p class="sign script" id="sign"></p>
+
+  <section aria-labelledby="photosTitle">
+    <div class="photos-h"><span aria-hidden="true"></span><h2 class="serif" id="photosTitle">Party photos</h2><span aria-hidden="true"></span></div>
+    <p class="photos-sub" id="photosSub">Snaps from the night show up here after the party.</p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <p class="foot script">Happy Holidays</p>
+</main>
+
+<!-- Fallback only. The real details live in Supabase and are entered in owner.html. -->
+<script type="application/json" id="event-data">{"title":"The Family Clan Christmas Party","greeting":"Merry Christmas","date":"2026-12-20","start":"18:00","end":"","timezone":"Asia/Manila","venue":"Party Venue","address":"123 Example Street, Example City","note":"Bring a dish to share and a wrapped gift for the exchange. Festive outfits encouraged.","signoff":"with love,","host":"Host Name","photos":[],"driveFeed":""}</script>
+<script src="../config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SLUG = "christmas";
+const $ = id => document.getElementById(id);
+const FALLBACK = JSON.parse($("event-data").textContent);
+let EV = { ...FALLBACK };
+const configured = window.supabase && typeof window.SUPABASE_URL === "string" && !/YOUR_/.test(window.SUPABASE_URL + window.SUPABASE_ANON_KEY);
+const sb = configured ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
+
+// old ?owner links go to the owner page
+if (/[?&#]owner\b/.test(location.search + location.hash)) location.replace("owner.html");
+
+const hm = t => String(t || "").split(":").map(Number);
+const fmtTime = t => { const [h, m] = hm(t); return new Date(2000, 0, 1, h, m || 0).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
+const pad = n => String(n).padStart(2, "0");
+function stamp(dateStr, timeStr, addHours){
+  const [y, mo, d] = dateStr.split("-").map(Number), [h, m] = hm(timeStr);
+  const t = new Date(Date.UTC(y, mo - 1, d, h || 0, m || 0) + (addHours || 0) * 3600e3);
+  return `${t.getUTCFullYear()}${pad(t.getUTCMonth() + 1)}${pad(t.getUTCDate())}T${pad(t.getUTCHours())}${pad(t.getUTCMinutes())}00`;
+}
+
+function render(){
+  const d = new Date(EV.date + "T00:00:00");
+  $("greeting").textContent = EV.greeting || "Merry Christmas";
+  $("title").textContent = EV.title || "Our Christmas Party";
+  document.title = `${EV.title || "Christmas party"}: you’re invited!`;
+  $("date").textContent = isNaN(d) ? "" : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  $("time").textContent = EV.end ? `${fmtTime(EV.start)} – ${fmtTime(EV.end)}` : fmtTime(EV.start);
+  $("venue").textContent = EV.venue || "";
+  $("address").textContent = EV.address || "";
+  $("note").textContent = EV.note || "";
+  $("sign").textContent = [EV.signoff, EV.host].filter(Boolean).join(" ");
+
+  // end time: the one entered, else 4 hours after the start (handles parties that run past midnight)
+  let end = EV.end ? stamp(EV.date, EV.end) : stamp(EV.date, EV.start, 4);
+  if (EV.end && end <= stamp(EV.date, EV.start)) end = stamp(EV.date, EV.end, 24);
+  $("calBtn").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+    + "&text=" + encodeURIComponent(EV.title || "Christmas party")
+    + "&dates=" + stamp(EV.date, EV.start) + "/" + end
+    + "&ctz=" + encodeURIComponent(EV.timezone || "Asia/Manila")
+    + "&location=" + encodeURIComponent([EV.venue, EV.address].filter(Boolean).join(", "))
+    + "&details=" + encodeURIComponent(EV.note || "");
+  $("mapBtn").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([EV.venue, EV.address].filter(Boolean).join(" "));
+  $("mapBtn").hidden = !(EV.venue || EV.address);
+  renderGallery();
+}
+
+// ---------- photo viewer: swipe or arrows, counter, download ----------
+const V = { list: [], i: 0 };
+const lb = document.createElement("dialog");
+lb.className = "viewer";
+lb.setAttribute("aria-label", "Photo viewer");
+lb.innerHTML = `<div class="vstage"><img alt=""><p class="vmsg" hidden>Couldn’t load this photo.</p></div>
+  <button type="button" class="vbtn vclose" aria-label="Close">×</button>
+  <button type="button" class="vbtn vprev" aria-label="Previous photo">‹</button>
+  <button type="button" class="vbtn vnext" aria-label="Next photo">›</button>
+  <div class="vbar"><span class="vcount" aria-live="polite"></span><a class="vdl" target="_blank" rel="noopener">Download</a></div>`;
+document.body.appendChild(lb);
+const vImg = lb.querySelector(".vstage img"), vMsg = lb.querySelector(".vmsg");
+vImg.referrerPolicy = "no-referrer";
+vImg.onload = () => vImg.classList.remove("loading");
+vImg.onerror = () => { vImg.classList.remove("loading"); vImg.style.visibility = "hidden"; vMsg.hidden = false; };
+let swiped = false;
+function showPhoto(i){
+  const n = V.list.length;
+  V.i = (i + n) % n;
+  const it = V.list[V.i];
+  vMsg.hidden = true; vImg.style.visibility = "";
+  vImg.classList.add("loading");
+  vImg.alt = `Photo ${V.i + 1} of ${n}`;
+  vImg.src = it.full;
+  lb.querySelector(".vcount").textContent = `${V.i + 1} of ${n}`;
+  lb.querySelector(".vdl").href = it.dl;
+  lb.querySelector(".vprev").hidden = lb.querySelector(".vnext").hidden = n < 2;
+  if (n > 1) [V.i + 1, V.i - 1].forEach(k => { const p = new Image(); p.referrerPolicy = "no-referrer"; p.src = V.list[(k + n) % n].full; });
+}
+function openViewer(list, item){
+  V.list = list.filter(x => !x.bad);
+  if (!V.list.length) return;
+  lb.showModal();
+  showPhoto(Math.max(0, V.list.indexOf(item)));
+}
+lb.querySelector(".vclose").addEventListener("click", () => lb.close());
+lb.querySelector(".vprev").addEventListener("click", () => showPhoto(V.i - 1));
+lb.querySelector(".vnext").addEventListener("click", () => showPhoto(V.i + 1));
+lb.querySelector(".vstage").addEventListener("click", e => { if (e.target !== vImg && !swiped) lb.close(); });
+lb.addEventListener("keydown", e => {
+  if (e.key === "ArrowRight") { e.preventDefault(); showPhoto(V.i + 1); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); showPhoto(V.i - 1); }
+});
+let sx = null, sy = 0;
+lb.addEventListener("touchstart", e => { if (e.touches.length !== 1) { sx = null; return; } sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+lb.addEventListener("touchend", e => {
+  if (sx === null) return;
+  const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+  sx = null;
+  if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3 && V.list.length > 1) {
+    swiped = true; setTimeout(() => { swiped = false; }, 400);
+    showPhoto(V.i + (dx < 0 ? 1 : -1));
+  }
+});
+
+// ---------- gallery: uploaded photos + an optional Google Drive folder ----------
+const listOf = key => (Array.isArray(EV[key]) ? EV[key] : []).filter(u => typeof u === "string" && u);
+const supaDownload = u => /\/storage\/v1\/object\/public\//.test(u) ? u + (u.includes("?") ? "&" : "?") + "download=" : u;
+const isFeed = u => typeof u === "string" && /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u);
+const driveImg = (id, w) => `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w}`;
+let DRIVE = [];
+async function loadDrive(){
+  if (!isFeed(EV.driveFeed)) return;
+  try {
+    const j = await (await fetch(EV.driveFeed)).json();
+    if (j && j.ok && Array.isArray(j.photos)) {
+      DRIVE = j.photos.map(p => p && p.id).filter(id => typeof id === "string" && /^[\w-]{10,}$/.test(id));
+      renderGallery();
+    }
+  } catch {}
+}
+function photoButton(item, i, list){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.setAttribute("aria-label", `Open photo ${i + 1}`);
+  const img = new Image(); img.referrerPolicy = "no-referrer"; img.alt = ""; img.loading = "lazy";
+  img.onerror = () => { item.bad = true; b.remove(); if (!$("grid").children.length) $("photosSub").hidden = false; };
+  img.src = item.thumb;
+  b.appendChild(img);
+  b.addEventListener("click", () => openViewer(list, item));
+  return b;
+}
+function renderGallery(){
+  const items = [
+    ...listOf("photos").map(u => ({ thumb: u, full: u, dl: supaDownload(u) })),
+    ...DRIVE.map(id => ({ thumb: driveImg(id, 800), full: driveImg(id, 2000), dl: `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}` }))];
+  $("grid").replaceChildren(...items.map((it, i) => photoButton(it, i, items)));
+  $("photosSub").textContent = items.length ? "Tap a photo to see it big. Swipe for the next one." : "Snaps from the night show up here after the party.";
+  $("photosSub").hidden = false;
+}
+
+// ---------- start ----------
+async function loadEvent(){
+  if (!sb) return;
+  try {
+    const { data, error } = await sb.from("events").select("data").eq("slug", SLUG).maybeSingle();
+    if (!error && data && data.data) EV = { ...FALLBACK, ...data.data };
+  } catch {}
+}
+(async () => {
+  await Promise.race([loadEvent(), new Promise(r => setTimeout(r, 3000))]);
+  render();
+  loadDrive();
+})();
+</script>
+</body></html>
