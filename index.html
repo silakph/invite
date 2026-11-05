@@ -192,9 +192,25 @@ dialog.thanks::backdrop{background:rgba(0,0,0,.35)}
 dialog{width:min(100% - 1.5rem,28rem); max-height:90vh; border:0; border-radius:12px; padding:0; background:var(--bg); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(0,0,0,.5)}
 .panel{padding:1.3rem 1.3rem 1rem}
-dialog.lightbox{width:auto; max-width:94vw; padding:0; background:transparent; box-shadow:none}
-dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
-.lightbox img{display:block; max-width:94vw; max-height:86vh; border-radius:8px}
+/* photo viewer: full screen, swipe or arrows, counter, download */
+dialog.viewer{width:100vw; height:100vh; height:100dvh; max-width:none; max-height:none; margin:0; padding:0; border-radius:0; background:rgba(10,12,16,.96); color:#fff; box-shadow:none; overflow:hidden}
+dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
+.vstage{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:calc(64px + env(safe-area-inset-top,0px)) 12px calc(84px + env(safe-area-inset-bottom,0px)); touch-action:pan-y pinch-zoom; user-select:none; -webkit-user-select:none}
+.vstage img{display:block; max-width:100%; max-height:100%; object-fit:contain; border-radius:6px; transition:opacity .2s ease}
+.vstage img.loading{opacity:.2}
+.vmsg{position:absolute; inset:0; margin:0; display:flex; align-items:center; justify-content:center; font-weight:800; color:#C9CDD3; pointer-events:none}
+.vmsg[hidden]{display:none}
+.vbtn{position:absolute; z-index:2; width:52px; height:52px; border-radius:50%; border:0; background:rgba(255,255,255,.16); color:#fff; font:800 1.9rem/1 "Nunito",sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center}
+.vbtn[hidden]{display:none}
+.vbtn:hover{background:rgba(255,255,255,.26)}
+.vclose{top:calc(12px + env(safe-area-inset-top,0px)); right:12px; font-size:1.6rem}
+.vprev,.vnext{top:50%; transform:translateY(-50%)}
+.vprev{left:12px} .vnext{right:12px}
+.vbar{position:absolute; z-index:2; left:0; right:0; bottom:calc(16px + env(safe-area-inset-bottom,0px)); display:flex; justify-content:center; align-items:center; gap:14px; font-weight:800}
+.vcount{min-width:5.5em; text-align:center; letter-spacing:.5px}
+.vdl{display:inline-flex; align-items:center; min-height:44px; padding:.4rem 1.1rem; border-radius:8px; background:var(--yellow); color:#16181C; text-decoration:none; box-shadow:inset 0 -4px 0 var(--yellow-dk)}
+@media (max-width:600px){ .vprev,.vnext{width:44px; height:44px; font-size:1.6rem; background:rgba(255,255,255,.12)} .vprev{left:6px} .vnext{right:6px} }
+@media (prefers-reduced-motion: reduce){ .vstage img{transition:none} }
 
 /* ===== tablet: invite as a card on a soft background ===== */
 @media (min-width: 600px){
@@ -672,26 +688,79 @@ document.querySelector('[data-ans="yes"]').addEventListener("click", () => burst
 // ---------- photo galleries: pre-birthday strip + after-party grid ----------
 const isAsset = u => typeof u === "string" && u.length > 0;
 const listOf = key => (Array.isArray(PARTY[key]) ? PARTY[key] : []).filter(isAsset);
+// Full-screen viewer: swipe or arrow keys to move through a gallery, with a counter and download
+const V = { list: [], i: 0 };
 const lb = document.createElement("dialog");
-lb.className = "lightbox";
-const lbImg = new Image(); lbImg.alt = "Party photo";
-lb.appendChild(lbImg);
-lb.addEventListener("click", () => lb.close());
+lb.className = "viewer";
+lb.setAttribute("aria-label", "Photo viewer");
+lb.innerHTML = `<div class="vstage"><img alt=""><p class="vmsg" hidden>Couldn’t load this photo.</p></div>
+  <button type="button" class="vbtn vclose" aria-label="Close">×</button>
+  <button type="button" class="vbtn vprev" aria-label="Previous photo">‹</button>
+  <button type="button" class="vbtn vnext" aria-label="Next photo">›</button>
+  <div class="vbar"><span class="vcount" aria-live="polite"></span><a class="vdl" target="_blank" rel="noopener">Download</a></div>`;
 document.body.appendChild(lb);
-function photoButton(u, i, full){
+const vImg = lb.querySelector(".vstage img"), vMsg = lb.querySelector(".vmsg");
+vImg.referrerPolicy = "no-referrer";
+vImg.onload = () => vImg.classList.remove("loading");
+vImg.onerror = () => { vImg.classList.remove("loading"); vImg.style.visibility = "hidden"; vMsg.hidden = false; };
+let swiped = false;
+function showPhoto(i){
+  const n = V.list.length;
+  V.i = (i + n) % n;
+  const it = V.list[V.i];
+  vMsg.hidden = true; vImg.style.visibility = "";
+  vImg.classList.add("loading");
+  vImg.alt = `Photo ${V.i + 1} of ${n}`;
+  vImg.src = it.full;
+  lb.querySelector(".vcount").textContent = `${V.i + 1} of ${n}`;
+  lb.querySelector(".vdl").href = it.dl;
+  lb.querySelector(".vprev").hidden = lb.querySelector(".vnext").hidden = n < 2;
+  // warm up the neighbours so swiping feels instant
+  if (n > 1) [V.i + 1, V.i - 1].forEach(k => { const p = new Image(); p.referrerPolicy = "no-referrer"; p.src = V.list[(k + n) % n].full; });
+}
+function openViewer(list, item){
+  V.list = list.filter(x => !x.bad);
+  if (!V.list.length) return;
+  lb.showModal();
+  showPhoto(Math.max(0, V.list.indexOf(item)));
+}
+lb.querySelector(".vclose").addEventListener("click", () => lb.close());
+lb.querySelector(".vprev").addEventListener("click", () => showPhoto(V.i - 1));
+lb.querySelector(".vnext").addEventListener("click", () => showPhoto(V.i + 1));
+// tapping the dark area around the photo closes it, as before
+lb.querySelector(".vstage").addEventListener("click", e => { if (e.target !== vImg && !swiped) lb.close(); });
+lb.addEventListener("keydown", e => {
+  if (e.key === "ArrowRight") { e.preventDefault(); showPhoto(V.i + 1); }
+  if (e.key === "ArrowLeft") { e.preventDefault(); showPhoto(V.i - 1); }
+});
+let sx = null, sy = 0;
+lb.addEventListener("touchstart", e => { if (e.touches.length !== 1) { sx = null; return; } sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+lb.addEventListener("touchend", e => {
+  if (sx === null) return;
+  const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+  sx = null;
+  if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3 && V.list.length > 1) {
+    swiped = true; setTimeout(() => { swiped = false; }, 400);
+    showPhoto(V.i + (dx < 0 ? 1 : -1));
+  }
+});
+// Download link: Supabase forces a download with ?download; Drive serves the original file
+const supaDownload = u => /\/storage\/v1\/object\/public\//.test(u) ? u + (u.includes("?") ? "&" : "?") + "download=" : u;
+function photoButton(item, i, list){
   const b = document.createElement("button");
   b.type = "button";
   b.setAttribute("aria-label", `Open photo ${i + 1}`);
   const img = new Image(); img.referrerPolicy = "no-referrer"; img.alt = ""; img.loading = "lazy";
   // a photo that can't load just drops out; if none are left, show the empty note again
   img.onerror = () => {
+    item.bad = true;
     const box = b.parentElement; b.remove();
     if (box && !box.children.length) { if (box.id === "partyGrid") $("partyEmpty").hidden = false; else $("gallery").hidden = true; }
   };
-  img.src = u;
+  img.src = item.thumb;
   b.appendChild(img);
   addStuds(b, 2);
-  b.addEventListener("click", () => { lbImg.referrerPolicy = "no-referrer"; lbImg.src = full || u; lb.showModal(); });
+  b.addEventListener("click", () => openViewer(list, item));
   return b;
 }
 // Party photos can also come from a Google Drive folder, listed by an Apps Script web app (see drive-photos.gs)
@@ -712,12 +781,15 @@ async function loadDrive(){
 function renderGallery(){
   const pre = listOf("photos");
   $("gallery").hidden = !pre.length;
-  $("strip").replaceChildren(...pre.map((u, i) => photoButton(u, i)));
-  const party = listOf("partyPhotos");
-  $("partyGrid").replaceChildren(
-    ...party.map((u, i) => photoButton(u, i)),
-    ...DRIVE.map((id, k) => photoButton(driveImg(id, 800), party.length + k, driveImg(id, 2000))));
-  $("partyEmpty").hidden = party.length + DRIVE.length > 0;
+  const own = u => ({ thumb: u, full: u, dl: supaDownload(u) });
+  const preItems = pre.map(own);
+  $("strip").replaceChildren(...preItems.map((it, i) => photoButton(it, i, preItems)));
+  const partyItems = [
+    ...listOf("partyPhotos").map(own),
+    ...DRIVE.map(id => ({ thumb: driveImg(id, 800), full: driveImg(id, 2000),
+      dl: `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}` }))];
+  $("partyGrid").replaceChildren(...partyItems.map((it, i) => photoButton(it, i, partyItems)));
+  $("partyEmpty").hidden = partyItems.length > 0;
 }
 
 // ---------- Supabase: load, sign-in, photos, save ----------
