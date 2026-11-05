@@ -77,6 +77,17 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.9rem, 8vw, 2.
 /* 2 · menu */
 .col h2{margin:6px 0 0; text-align:center; font-weight:800; font-size:1.65rem; color:var(--red-dk)}
 .menu-art{display:block; width:100%; max-width:400px; height:auto; margin:0 auto}
+/* menu header animation: rising steam, flickering candles, twinkling sparkles */
+.menu-art .steam{opacity:0; animation:steam 3s ease-out infinite; animation-delay:var(--st,0s)}
+@keyframes steam{0%{opacity:0; transform:translateY(8px)} 30%{opacity:.85} 100%{opacity:0; transform:translateY(-14px)}}
+.menu-art .flame{transform-box:fill-box; transform-origin:50% 100%; animation:flicker 1.1s ease-in-out infinite alternate; animation-delay:var(--fd,0s)}
+@keyframes flicker{0%{transform:scale(1,1) rotate(-2deg)} 40%{transform:scale(.92,1.08) rotate(2deg)} 100%{transform:scale(1.05,.94) rotate(-1deg)}}
+.menu-art .glow{opacity:.16; animation:glow 1.6s ease-in-out infinite alternate; animation-delay:var(--gd,0s)}
+@keyframes glow{to{opacity:.3}}
+.menu-art .spark{transform-box:fill-box; transform-origin:center; animation:sparkle 2.4s ease-in-out infinite; animation-delay:var(--sd,0s)}
+@keyframes sparkle{0%,100%{opacity:.15; transform:scale(.5) rotate(0deg)} 50%{opacity:1; transform:scale(1) rotate(45deg)}}
+.menu-art .shine{opacity:.75; animation:shine 3.5s ease-in-out infinite alternate}
+@keyframes shine{to{opacity:.95}}
 .menu-list{list-style:none; margin:12px 0 0; padding:0}
 .menu-list li{display:flex; gap:12px; align-items:baseline; padding:11px 2px; border-bottom:1px dashed #DCD3C3}
 .menu-list li::before{content:""; flex:none; width:10px; height:10px; border-radius:50%; background:var(--dot); transform:translateY(-1px)}
@@ -138,7 +149,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 .vdl{display:inline-flex; align-items:center; min-height:44px; padding:.4rem 1.1rem; border-radius:8px; background:#FFFFFF; color:var(--red-dk); text-decoration:none; font-weight:800}
 @media (max-width:600px){ .vprev,.vnext{width:44px; height:44px; font-size:1.6rem; background:rgba(255,255,255,.12)} .vprev{left:6px} .vnext{right:6px} }
 
-@media (prefers-reduced-motion: reduce){ .orn,.bulb i{animation:none} .vstage img{transition:none} }
+@media (prefers-reduced-motion: reduce){ .orn,.bulb i,.menu-art *{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
 
 @media (min-width:700px){ .grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
 /* laptops: invitation across the top, menu and program side by side under it */
@@ -227,34 +238,50 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
     </section>
 
     <section class="col menu" id="menuBlock" aria-labelledby="menuTitle">
-      <svg class="menu-art" aria-hidden="true" viewBox="0 0 360 92">
-        <line x1="10" y1="84" x2="350" y2="84" stroke="#13774A" stroke-width="2.5" stroke-linecap="round"></line>
-        <path d="M30 82 L30 32 A12 12 0 0 1 54 32 L54 40" stroke="#E3DCCF" stroke-width="14" fill="none" stroke-linecap="round"></path>
-        <path d="M30 82 L30 32 A12 12 0 0 1 54 32 L54 40" stroke="#FFFFFF" stroke-width="10" fill="none" stroke-linecap="round"></path>
-        <path d="M30 82 L30 32 A12 12 0 0 1 54 32 L54 40" stroke="#D7263D" stroke-width="10" fill="none" stroke-dasharray="7 7"></path>
-        <g fill="#B5763A" stroke="#B5763A" stroke-linecap="round">
-          <circle cx="110" cy="27" r="11" stroke="none"></circle>
-          <rect x="97" y="37" width="26" height="28" rx="10" stroke="none"></rect>
-          <line x1="99" y1="45" x2="87" y2="55" stroke-width="10"></line><line x1="121" y1="45" x2="133" y2="55" stroke-width="10"></line>
-          <line x1="104" y1="62" x2="99" y2="80" stroke-width="10"></line><line x1="116" y1="62" x2="121" y2="80" stroke-width="10"></line>
+      <svg class="menu-art" role="img" aria-label="A warm glazed Christmas ham with pineapple rings, lit candles and leche flan" viewBox="0 0 360 150">
+        <defs><clipPath id="hamclip"><path d="M112 126 C110 80 142 56 180 56 C220 56 248 82 246 126 Z"></path></clipPath></defs>
+        <!-- sparkles -->
+        <path class="spark" style="--sd:0s" d="M24 40 l2.5 -7 2.5 7 7 2.5 -7 2.5 -2.5 7 -2.5 -7 -7 -2.5 z" fill="#F2B92E"></path>
+        <path class="spark" style="--sd:.9s" d="M118 22 l2 -5.5 2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 z" fill="#F2B92E"></path>
+        <path class="spark" style="--sd:1.6s" d="M262 26 l2 -5.5 2 5.5 5.5 2 -5.5 2 -2 5.5 -2 -5.5 -5.5 -2 z" fill="#F2B92E"></path>
+        <path class="spark" style="--sd:.4s" d="M336 52 l2.5 -7 2.5 7 7 2.5 -7 2.5 -2.5 7 -2.5 -7 -7 -2.5 z" fill="#F2B92E"></path>
+        <!-- candles -->
+        <circle class="glow" cx="56" cy="58" r="18" fill="#F2B92E"></circle>
+        <circle class="glow" style="--gd:.7s" cx="76" cy="74" r="15" fill="#F2B92E"></circle>
+        <rect x="50" y="68" width="12" height="58" rx="2" fill="#D7263D"></rect>
+        <path class="flame" d="M56 48 C61 55 61 61 56 64 C51 61 51 55 56 48 Z" fill="#F2B92E"></path>
+        <path class="flame" style="--fd:.35s" d="M56 54 C58.5 58 58.5 61 56 62.5 C53.5 61 53.5 58 56 54 Z" fill="#FFF3C4"></path>
+        <rect x="70" y="84" width="12" height="42" rx="2" fill="#FFFFFF" stroke="#DCD3C3" stroke-width="2"></rect>
+        <path class="flame" style="--fd:.2s" d="M76 64 C81 71 81 77 76 80 C71 77 71 71 76 64 Z" fill="#F2B92E"></path>
+        <path class="flame" style="--fd:.55s" d="M76 70 C78.5 74 78.5 77 76 78.5 C73.5 77 73.5 74 76 70 Z" fill="#FFF3C4"></path>
+        <ellipse cx="58" cy="126" rx="12" ry="5" fill="#13774A" transform="rotate(-18 58 126)"></ellipse>
+        <ellipse cx="80" cy="127" rx="12" ry="5" fill="#169055" transform="rotate(16 80 127)"></ellipse>
+        <circle cx="68" cy="124" r="3.5" fill="#D7263D"></circle><circle cx="73" cy="127" r="3.5" fill="#B3172B"></circle>
+        <!-- steam over the ham -->
+        <path class="steam" d="M160 48 q-6 -8 0 -16 q6 -8 0 -16" stroke="#C9C1B3" stroke-width="3" fill="none" stroke-linecap="round"></path>
+        <path class="steam" style="--st:1s" d="M182 44 q-6 -8 0 -16 q6 -8 0 -16" stroke="#C9C1B3" stroke-width="3" fill="none" stroke-linecap="round"></path>
+        <path class="steam" style="--st:2s" d="M204 48 q-6 -8 0 -16 q6 -8 0 -16" stroke="#C9C1B3" stroke-width="3" fill="none" stroke-linecap="round"></path>
+        <!-- ham on a platter -->
+        <ellipse cx="180" cy="130" rx="94" ry="13" fill="#FFFFFF" stroke="#DCD3C3" stroke-width="3"></ellipse>
+        <path d="M112 126 C110 80 142 56 180 56 C220 56 248 82 246 126 Z" fill="#C8662E"></path>
+        <path class="shine" d="M126 102 C132 76 156 64 182 64 C206 64 226 76 234 96 C214 86 196 82 180 82 C160 82 140 88 126 102 Z" fill="#E08A4C"></path>
+        <g clip-path="url(#hamclip)" stroke="#A24A1C" stroke-width="1.8" opacity=".55">
+          <line x1="120" y1="122" x2="170" y2="62"></line><line x1="148" y1="128" x2="205" y2="60"></line>
+          <line x1="178" y1="128" x2="232" y2="66"></line><line x1="206" y1="128" x2="250" y2="80"></line>
+          <line x1="128" y1="76" x2="182" y2="130"></line><line x1="156" y1="60" x2="222" y2="128"></line>
+          <line x1="188" y1="56" x2="250" y2="120"></line><line x1="116" y1="98" x2="148" y2="130"></line>
         </g>
-        <circle cx="106" cy="25" r="1.8" fill="#FFFFFF"></circle><circle cx="114" cy="25" r="1.8" fill="#FFFFFF"></circle>
-        <path d="M106 30 Q110 33 114 30" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
-        <circle cx="110" cy="45" r="2.6" fill="#D7263D"></circle><circle cx="110" cy="54" r="2.6" fill="#13774A"></circle>
-        <ellipse cx="180" cy="80" rx="34" ry="5" fill="#E3DCCF"></ellipse>
-        <path d="M152 78 A28 28 0 0 1 208 78 Z" fill="#6B3A1E"></path>
-        <path d="M156 60 Q164 50 180 50 Q196 50 204 60 Q199 65 195 60 Q190 67 184 61 Q178 68 172 61 Q166 66 162 61 Q158 64 156 60 Z" fill="#FFF6E5"></path>
-        <ellipse cx="171" cy="45" rx="9" ry="4.5" fill="#13774A" transform="rotate(-25 171 45)"></ellipse>
-        <ellipse cx="189" cy="45" rx="9" ry="4.5" fill="#169055" transform="rotate(25 189 45)"></ellipse>
-        <circle cx="177" cy="48" r="3.6" fill="#D7263D"></circle><circle cx="184" cy="48" r="3.6" fill="#B3172B"></circle><circle cx="180.5" cy="43" r="3.6" fill="#D7263D"></circle>
-        <polygon points="250,30 255.9,45.9 272.8,46.6 259.5,57.1 264.1,73.4 250,64 235.9,73.4 240.5,57.1 227.2,46.6 244.1,45.9" fill="#E0A93B" stroke="#C98D22" stroke-width="2" stroke-linejoin="round"></polygon>
-        <circle cx="250" cy="54" r="3" fill="#FFFFFF"></circle><circle cx="243" cy="51" r="1.6" fill="#FFFFFF"></circle><circle cx="257" cy="51" r="1.6" fill="#FFFFFF"></circle>
-        <path d="M313 36 q-4 -6 0 -12 q4 -6 0 -12 M325 36 q-4 -6 0 -12 q4 -6 0 -12" stroke="#B9B2A6" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
-        <path d="M335 54 h5 a8 8 0 0 1 0 16 h-5" stroke="#1F6FE5" stroke-width="5" fill="none"></path>
-        <rect x="303" y="44" width="33" height="38" rx="5" fill="#1F6FE5"></rect>
-        <rect x="303" y="60" width="33" height="6" fill="#FFFFFF" opacity=".75"></rect>
-        <ellipse cx="319.5" cy="45" rx="15" ry="3.5" fill="#6B3A1E"></ellipse>
-        <rect x="311" y="40" width="6" height="5" rx="1" fill="#FFFFFF"></rect><rect x="320" y="39" width="6" height="5" rx="1" fill="#FFFFFF"></rect>
+        <circle cx="152" cy="94" r="10" fill="#F6C744"></circle><circle cx="152" cy="94" r="4.2" fill="#C8662E"></circle><circle cx="152" cy="94" r="3.2" fill="#D7263D"></circle>
+        <circle cx="182" cy="82" r="10" fill="#F6C744"></circle><circle cx="182" cy="82" r="4.2" fill="#C8662E"></circle><circle cx="182" cy="82" r="3.2" fill="#D7263D"></circle>
+        <circle cx="212" cy="96" r="10" fill="#F6C744"></circle><circle cx="212" cy="96" r="4.2" fill="#C8662E"></circle><circle cx="212" cy="96" r="3.2" fill="#D7263D"></circle>
+        <ellipse cx="251" cy="110" rx="7" ry="10" fill="#FFF6E5" stroke="#DCD3C3" stroke-width="2"></ellipse>
+        <!-- leche flan -->
+        <ellipse cx="305" cy="130" rx="36" ry="6" fill="#FFFFFF" stroke="#DCD3C3" stroke-width="2"></ellipse>
+        <path d="M282 127 L288 102 L322 102 L328 127 Z" fill="#F4C76A"></path>
+        <path d="M289 102 L321 102 L319 95 L291 95 Z" fill="#A85A1E"></path>
+        <path d="M292 102 L292 109 M304 102 L304 112 M316 102 L316 108" stroke="#A85A1E" stroke-width="3" stroke-linecap="round"></path>
+        <ellipse cx="296" cy="90" rx="8" ry="4" fill="#13774A" transform="rotate(-25 296 90)"></ellipse>
+        <circle cx="303" cy="91" r="3.2" fill="#D7263D"></circle>
       </svg>
       <h2 class="serif" id="menuTitle">What’s on our menu</h2>
       <ul class="menu-list" id="menuList"></ul>
