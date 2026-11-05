@@ -2,6 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="only light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>You’re invited to a 7th birthday build party!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,12 +14,8 @@
   --blue:#0055BF; --blue-dk:#003C88;
   --yellow:#FFD100; --yellow-dk:#CCA700;
   --bg:#FFFFFF; --ink:#16181C; --soft:#5C6370; --line:#E6E8EC; --field:#F5F6F8; --linkc:#0055BF;
-  color-scheme:light;
+  color-scheme:only light;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --bg:#121418; --ink:#F4F5F7; --soft:#A3AAB6; --line:#2A2E35; --field:#1C1F25; --linkc:#6FA8FF; color-scheme:dark; }
-}
-:root[data-theme="dark"]{ --bg:#121418; --ink:#F4F5F7; --soft:#A3AAB6; --line:#2A2E35; --field:#1C1F25; --linkc:#6FA8FF; color-scheme:dark; }
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0; background:var(--bg); color:var(--ink); font:600 1.0625rem/1.5 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -38,6 +35,21 @@ main{max-width:28rem; margin:0 auto; padding:0 0 5rem}
 .hero{padding:4px 24px 0; text-align:center}
 h1{font-size:clamp(2.1rem,10vw,2.5rem); line-height:1.02; margin:0 0 .5rem}
 .lede{margin:0; color:var(--soft); font-weight:700}
+
+/* live countdown */
+.countdown{margin:22px 0 0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
+.countdown[hidden]{display:none}
+.tile{position:relative; border-radius:6px; padding:12px 4px 12px; background:var(--c); box-shadow:inset 0 -6px 0 var(--cd); color:#fff; display:flex; flex-direction:column; align-items:center; gap:2px}
+.tile.y{color:#16181C}
+.tile::before,.tile::after{content:""; position:absolute; top:-8px; width:28%; height:8px; border-radius:4px 4px 0 0; background:var(--c)}
+.tile::before{left:12%} .tile::after{right:12%}
+.tile b{font-family:"Lilita One",sans-serif; font-weight:400; font-size:clamp(1.8rem,9vw,2.3rem); line-height:1; font-variant-numeric:tabular-nums}
+.tile small{font-weight:800; font-size:.68rem; letter-spacing:1.5px}
+.tile b.tick{animation:tick .35s ease}
+@keyframes tick{0%{transform:translateY(-6px); opacity:.3} 100%{transform:none; opacity:1}}
+.cd-done{margin:22px 0 0; display:inline-block; padding:12px 20px; border-radius:6px; background:var(--red); color:#fff; box-shadow:inset 0 -5px 0 var(--red-dk); font-family:"Lilita One",sans-serif; font-size:1.5rem}
+.cd-done[hidden]{display:none}
+@media (prefers-reduced-motion: reduce){ .tile b.tick{animation:none} }
 
 /* steps */
 .steps{padding:28px 24px 0; display:flex; flex-direction:column; gap:22px}
@@ -150,6 +162,13 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
   <section class="hero">
     <h1 class="display" id="title">Come build with us!</h1>
     <p class="lede" id="lede"></p>
+    <div class="countdown" id="countdown" role="timer" aria-label="Time until the party">
+      <div class="tile r"><b id="cd-d">0</b><small>DAYS</small></div>
+      <div class="tile u"><b id="cd-h">00</b><small>HOURS</small></div>
+      <div class="tile y"><b id="cd-m">00</b><small>MINS</small></div>
+      <div class="tile r"><b id="cd-s">00</b><small>SECS</small></div>
+    </div>
+    <p class="cd-done" id="cdDone" hidden=""></p>
   </section>
 
   <div class="steps">
@@ -320,10 +339,8 @@ function render(){
   if ($("splashName")) $("splashName").textContent = `${PARTY.name} is turning`;
   document.title = `${PARTY.name}’s ${PARTY.age}th birthday build party`;
 
-  const today = new Date(); today.setHours(0,0,0,0);
-  const days = Math.round((d - today) / 86400000);
-  const cd = days > 1 ? `${days} days to go` : days === 1 ? "tomorrow!" : days === 0 ? "it’s party day!" : "thanks for celebrating with us!";
-  $("lede").textContent = `1 party · 3 easy steps · ${cd}`;
+  $("lede").textContent = "1 party · 3 easy steps · countdown is on!";
+  startCountdown();
 
   $("when").textContent = fmtDate(d);
   $("time").textContent = `${fmtTime(PARTY.start)} to ${fmtTime(PARTY.end)}`;
@@ -341,6 +358,51 @@ function render(){
     + "&location=" + encodeURIComponent(`${PARTY.venue}, ${PARTY.address}`);
   $("mapBtn").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(`${PARTY.venue} ${PARTY.address}`);
   renderGallery();
+}
+
+// Live countdown to the party start, in the party's own time zone
+function zonedToUtc(dateStr, timeStr, tz){
+  const [y, mo, da] = dateStr.split("-").map(Number);
+  const [h, mi] = String(timeStr || "00:00").split(":").map(Number);
+  const guess = Date.UTC(y, mo - 1, da, h, mi);
+  try {
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23",
+      year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" })
+      .formatToParts(new Date(guess)).map(x => [x.type, x.value]));
+    const shown = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute);
+    return guess - (shown - guess);
+  } catch { return new Date(`${dateStr}T${timeStr || "00:00"}`).getTime(); }
+}
+let cdTimer = null;
+const pad = n => String(n).padStart(2, "0");
+function setTile(id, val){
+  const el = $(id);
+  if (el.textContent === val) return;
+  el.textContent = val;
+  el.classList.remove("tick"); void el.offsetWidth; el.classList.add("tick");
+}
+function startCountdown(){
+  clearInterval(cdTimer);
+  const start = zonedToUtc(PARTY.date, PARTY.start, PARTY.timezone);
+  const end = zonedToUtc(PARTY.date, PARTY.end, PARTY.timezone);
+  const step = () => {
+    const now = Date.now();
+    if (now >= start) {
+      $("countdown").hidden = true;
+      $("cdDone").hidden = false;
+      $("cdDone").textContent = now < end ? "The party is on!" : "Thanks for celebrating with us!";
+      clearInterval(cdTimer);
+      return;
+    }
+    const t = Math.floor((start - now) / 1000);
+    $("countdown").hidden = false; $("cdDone").hidden = true;
+    setTile("cd-d", String(Math.floor(t / 86400)));
+    setTile("cd-h", pad(Math.floor(t % 86400 / 3600)));
+    setTile("cd-m", pad(Math.floor(t % 3600 / 60)));
+    setTile("cd-s", pad(t % 60));
+  };
+  step();
+  cdTimer = setInterval(step, 1000);
 }
 
 // Splash: name, then the brick 7 drops in, then fade to the invitation (tap to skip)
