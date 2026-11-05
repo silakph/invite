@@ -5,6 +5,20 @@
 <meta name="color-scheme" content="only light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>You’re invited to a 7th birthday build party!</title>
+<meta name="description" content="Come build, play and eat cake with us! Tap to see the details and RSVP.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://silakph.github.io/invite/">
+<meta property="og:title" content="You’re invited to a 7th birthday build party!">
+<meta property="og:description" content="Come build, play and eat cake with us! Tap to see the details and RSVP.">
+<meta property="og:image" content="https://silakph.github.io/invite/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Brick birthday cake with a big 7">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0055BF">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/cake-header.webp" as="image" type="image/webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&amp;family=Nunito:wght@500;700;800&amp;display=swap" rel="stylesheet">
@@ -98,6 +112,12 @@ input:disabled{opacity:.5}
 .btn.primary{background:var(--red); border-color:var(--red); color:#fff; box-shadow:inset 0 -4px 0 var(--red-dk)}
 .btn:active{transform:translateY(1px)}
 .status{min-height:1.4em; font-weight:700; color:var(--soft)}
+.status:empty{min-height:0}
+.rform{display:flex; flex-direction:column; gap:12px}
+.rform[hidden],.replied[hidden]{display:none}
+.replied{display:flex; flex-direction:column; gap:10px; padding:14px 16px; border-radius:8px; background:var(--bg); border:2px solid var(--blue)}
+.replied p{margin:0; font-weight:800}
+.replied button{align-self:flex-start; min-height:44px; padding:.4rem 1rem; border-radius:8px; border:2px solid var(--ink); background:transparent; color:var(--ink); font:800 1rem "Nunito",sans-serif; cursor:pointer}
 :focus-visible{outline:3px solid var(--blue); outline-offset:2px}
 
 /* footer */
@@ -248,18 +268,24 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
     <section class="rsvp">
       <h2 class="display">RSVP</h2>
       <p class="s" id="rsvpBy"></p>
+      <div class="replied" id="replied" hidden="">
+        <p id="repliedText"></p>
+        <button type="button" id="changeReply">Change my reply</button>
+      </div>
+      <div class="rform" id="rsvpForm">
       <div class="choice" role="group" aria-label="Can you come?">
         <button type="button" data-ans="yes" aria-pressed="true">We’ll be there</button>
         <button type="button" data-ans="no" aria-pressed="false">Can’t make it</button>
       </div>
       <label for="guest">Your name</label>
-      <input id="guest" autocomplete="name" placeholder="e.g. Alex">
+      <input id="guest" autocomplete="name" placeholder="e.g. Alex" maxlength="60">
       <label for="adults">How many adults are coming?</label>
       <input id="adults" type="number" inputmode="numeric" min="0" max="10" value="1">
       <label for="count">How many kids are coming?</label>
       <input id="count" type="number" inputmode="numeric" min="0" max="10" value="1">
       <div class="btns">
         <button class="btn primary" type="button" id="smsBtn">Send RSVP</button>
+      </div>
       </div>
       <div class="status" id="status" role="status"></div>
     </section>
@@ -361,7 +387,8 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 const FALLBACK = JSON.parse(document.getElementById("party-data").textContent);
 let PARTY = { ...FALLBACK };
 const $ = id => document.getElementById(id);
-const HEADER_ART = "assets/cake-header.png";
+const HEADER_ART = "assets/cake-header.webp";
+const HEADER_ART_PNG = "assets/cake-header.png";
 
 const configured = window.supabase && typeof window.SUPABASE_URL === "string" && !/YOUR_/.test(window.SUPABASE_URL + window.SUPABASE_ANON_KEY);
 const sb = configured ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
@@ -391,6 +418,8 @@ function render(){
     img.src = PARTY.photo; img.className = "photo"; img.alt = `${PARTY.name} at their birthday`;
     img.onerror = () => { img.onerror = null; img.className = ""; img.src = HEADER_ART; img.alt = "Brick birthday cake with a big 7"; };
   } else {
+    img.onerror = () => { img.onerror = null; img.src = HEADER_ART_PNG; };
+    img.width = 640; img.height = 640;
     img.src = HEADER_ART; img.alt = "Brick birthday cake with a big 7 and a waving builder";
   }
   $("banner").replaceChildren(img);
@@ -502,7 +531,7 @@ async function copyMsg(){
     $("status").textContent = `Send this to ${PARTY.rsvpPhone}: ${message()}`;
   }
 }
-function showThanks(name, yes, adults, kids){
+function showThanks(name, yes, adults, kids, updating){
   const dlgT = $("thanks");
   const first = name.split(/\s+/)[0];
   const d = new Date(PARTY.date + "T00:00:00");
@@ -510,7 +539,7 @@ function showThanks(name, yes, adults, kids){
     const parts = [];
     if (adults) parts.push(plural(adults, "adult", "adults"));
     if (kids) parts.push(plural(kids, "kid", "kids"));
-    $("thanksTitle").textContent = `You’re in, ${first}!`;
+    $("thanksTitle").textContent = updating ? `All updated, ${first}!` : `You’re in, ${first}!`;
     $("thanksSum").textContent = parts.length ? `RSVP saved for ${parts.join(" and ")}.` : "Your RSVP is saved.";
     $("thanksSub").textContent = `See you ${fmtDate(d)} at ${fmtTime(PARTY.start)}. Come ready to build!`;
     $("thanksCal").href = $("calBtn").href;
@@ -530,21 +559,64 @@ function showThanks(name, yes, adults, kids){
 $("thanksClose").addEventListener("click", () => $("thanks").close());
 $("thanks").addEventListener("click", e => { if (e.target === $("thanks")) $("thanks").close(); });
 
+// This device's own reply, so a family can see and change it instead of sending duplicates
+const MY_KEY = "rsvp-mine-v1";
+const mine = {
+  get(){ try { return JSON.parse(localStorage.getItem(MY_KEY) || "null"); } catch { return null; } },
+  set(v){ try { localStorage.setItem(MY_KEY, JSON.stringify(v)); } catch {} }
+};
+function deviceId(){
+  const m = mine.get();
+  if (m && m.device) return m.device;
+  const id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+  return id.slice(0, 40);
+}
+function showMine(){
+  const m = mine.get();
+  if (!m || !m.name) { $("replied").hidden = true; $("rsvpForm").hidden = false; $("smsBtn").textContent = "Send RSVP"; return; }
+  const parts = [];
+  if (m.adults) parts.push(plural(m.adults, "adult", "adults"));
+  if (m.kids) parts.push(plural(m.kids, "kid", "kids"));
+  $("repliedText").textContent = m.attending
+    ? `You replied as ${m.name}: coming${parts.length ? ", " + parts.join(" and ") : ""}.`
+    : `You replied as ${m.name}: can’t make it.`;
+  $("replied").hidden = false; $("rsvpForm").hidden = true;
+}
+$("changeReply").addEventListener("click", () => {
+  const m = mine.get() || {};
+  $("guest").value = m.name || "";
+  $("adults").value = m.attending ? (m.adults ?? 1) : 1;
+  $("count").value = m.attending ? (m.kids ?? 1) : 1;
+  document.querySelector(`[data-ans="${m.attending === false ? "no" : "yes"}"]`).click();
+  $("replied").hidden = true; $("rsvpForm").hidden = false;
+  $("smsBtn").textContent = "Update RSVP";
+  $("guest").focus();
+});
+
 let rsvpSending = false;
 $("smsBtn").addEventListener("click", async () => {
   const name = $("guest").value.trim();
+  const yes = answer === "yes";
+  if (yes && num("adults") + num("count") === 0) { $("status").textContent = "Add at least 1 adult or kid who’s coming."; $("adults").focus(); return; }
   if (sb) {
     if (!name) { $("status").textContent = "Please add your name first."; $("guest").focus(); return; }
     if (rsvpSending) return;
     rsvpSending = true; $("smsBtn").disabled = true; $("status").textContent = "Sending…";
-    const yes = answer === "yes";
+    const updating = !!(mine.get() && mine.get().name);
+    const device = deviceId();
     const row = { name: name.slice(0, 60), attending: yes, adults: yes ? Math.min(10, num("adults")) : 0, kids: yes ? Math.min(10, num("count")) : 0 };
     let error = null;
-    try { ({ error } = await sb.from("rsvps").insert(row)); } catch (e) { error = e; }
+    try {
+      ({ error } = await sb.from("rsvps").insert({ ...row, device_id: device }));
+      // Table not upgraded yet (no device_id column): save without it
+      if (error && /device_id/.test(error.message || "")) ({ error } = await sb.from("rsvps").insert(row));
+    } catch (e) { error = e; }
     rsvpSending = false; $("smsBtn").disabled = false;
     if (!error) {
       $("status").textContent = "";
-      showThanks(name, yes, row.adults, row.kids);
+      mine.set({ device, ...row, at: new Date().toISOString() });
+      showThanks(name, yes, row.adults, row.kids, updating);
+      showMine();
       if (session && $("rsvpList").open) loadRsvps();
       return;
     }
@@ -652,9 +724,17 @@ async function uploadPhoto(file){
 const ownerMode = /[?&#]owner\b/.test(location.search + location.hash);
 async function loadRsvps(){
   $("rsvpErr").textContent = "";
-  const { data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids").order("created_at", { ascending: false });
+  let { data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids,device_id").order("created_at", { ascending: false });
+  if (error && /device_id/.test(error.message || "")) ({ data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids").order("created_at", { ascending: false }));
   if (error) { $("rsvpErr").textContent = "Couldn’t load RSVPs. " + (error.message || ""); return; }
-  const rows = data || [];
+  // Keep only each device's latest reply (newest first), and note how many times it changed
+  const all = data || [];
+  const latest = new Map();
+  all.forEach(r => {
+    const key = r.device_id ? "d:" + r.device_id : "id:" + r.id;
+    if (!latest.has(key)) latest.set(key, { ...r, changes: 0 }); else latest.get(key).changes++;
+  });
+  const rows = [...latest.values()];
   const yes = rows.filter(r => r.attending);
   $("t-fam").textContent = yes.length;
   $("t-adults").textContent = yes.reduce((s, r) => s + (r.adults || 0), 0);
@@ -667,14 +747,17 @@ async function loadRsvps(){
     const n = document.createElement("b"); n.textContent = r.name;
     const meta = document.createElement("span");
     const when = new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    meta.textContent = r.attending ? `${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")} · ${when}` : when;
+    const changed = r.changes ? " · updated" : "";
+    meta.textContent = (r.attending ? `${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")} · ` : "") + when + changed;
     who.append(n, meta);
     const tag = document.createElement("span"); tag.className = "tag" + (r.attending ? "" : " no"); tag.textContent = r.attending ? "Coming" : "Can’t";
     const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "×";
     del.setAttribute("aria-label", `Delete reply from ${r.name}`);
     del.addEventListener("click", async () => {
       if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = "✓"; del.setAttribute("aria-label", `Confirm delete of ${r.name}`); setTimeout(() => { del.dataset.armed = ""; del.textContent = "×"; }, 3000); return; }
-      const { error } = await sb.from("rsvps").delete().eq("id", r.id);
+      const { error } = r.device_id
+        ? await sb.from("rsvps").delete().eq("device_id", r.device_id)
+        : await sb.from("rsvps").delete().eq("id", r.id);
       if (error) { $("rsvpErr").textContent = "Couldn’t delete. " + (error.message || ""); return; }
       loadRsvps();
     });
@@ -799,6 +882,7 @@ $("editSave").addEventListener("click", async () => {
   await Promise.race([loadParty(), new Promise(r => setTimeout(r, 3000))]);
   render();
   update();
+  showMine();
   setTimeout(hideSplash, calm ? 1500 : 2700);
   initOwner();
 })();
