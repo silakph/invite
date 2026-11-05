@@ -105,21 +105,16 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
       <div class="formgrid">
         <div>
           <label for="f-title">Party name</label><input id="f-title" autocomplete="off" placeholder="e.g. The Family Clan Christmas Party">
-          <label for="f-greeting">Greeting (script line at the top)</label><input id="f-greeting" autocomplete="off" placeholder="Merry Christmas">
+          <p class="hint" style="margin-top:4px">Shows as “and so the FAMILY CLAN CHRISTMAS PARTY”. A leading “The” is dropped so it isn’t said twice.</p>
           <div class="two">
             <div><label for="f-date">Date</label><input id="f-date" type="date"></div>
             <div><label for="f-start">Starts</label><input id="f-start" type="time"></div>
           </div>
           <label for="f-end">Ends (optional)</label><input id="f-end" type="time">
-          <label for="f-venue">Venue name</label><input id="f-venue" autocomplete="off">
-          <label for="f-address">Address</label><input id="f-address" autocomplete="off">
         </div>
         <div>
-          <label for="f-note">Good to know</label><textarea id="f-note"></textarea>
-          <div class="two">
-            <div><label for="f-signoff">Sign-off</label><input id="f-signoff" autocomplete="off" placeholder="with love,"></div>
-            <div><label for="f-host">Hosted by</label><input id="f-host" autocomplete="off"></div>
-          </div>
+          <label for="f-venue">Venue name</label><input id="f-venue" autocomplete="off">
+          <label for="f-address">Address</label><input id="f-address" autocomplete="off">
         </div>
       </div>
       <div class="savebar"><button class="btn red" type="button" id="saveDetails">Save details</button><span class="msg" id="detailsMsg" role="status" style="margin:0"></span></div>
@@ -209,7 +204,7 @@ async function saveEvent(patch){
 }
 
 // details
-const FIELDS = ["title","greeting","date","start","end","venue","address","note","signoff","host"];
+const FIELDS = ["title","date","start","end","venue","address"];
 
 // ---------- menu + program: one editable row per line ----------
 // Stored as text lines the invite reads: "Dish - brought by" and "6:30 PM - Dinner".
