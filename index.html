@@ -312,7 +312,7 @@ function render(){
     $("banner").innerHTML = bannerArt;
   }
   $("title").textContent = `${PARTY.name} is turning ${PARTY.age}!`;
-  $("splashName").textContent = `${PARTY.name} is turning`;
+  if ($("splashName")) $("splashName").textContent = `${PARTY.name} is turning`;
   document.title = `${PARTY.name}’s ${PARTY.age}th birthday build party`;
   $("when").textContent = fmtDate(d);
   $("time").textContent = `${fmtTime(PARTY.start)} to ${fmtTime(PARTY.end)}`;
