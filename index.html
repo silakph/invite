@@ -186,6 +186,15 @@ footer{padding:20px 24px 28px; display:flex; align-items:center; gap:12px; color
 .rlist .tag.no{background:var(--soft)}
 .rlist .del{flex:none; width:40px; height:40px; border-radius:8px; border:2px solid var(--line); background:transparent; color:var(--ink); font:800 1.1rem/1 "Nunito",sans-serif; cursor:pointer}
 .empty{color:var(--soft); font-weight:700; margin:.5rem 0 0}
+.rlist .tag.wait{background:var(--yellow); color:#16181C}
+.sub-h{font-family:"Lilita One",sans-serif; font-weight:400; font-size:1.2rem; margin:1.2rem 0 .3rem}
+.sub-h[hidden],#pendingBox[hidden]{display:none}
+.addrow{display:flex; gap:8px; margin-top:.4rem}
+.addrow input{flex:1; min-width:0}
+.addrow button{flex:none; min-height:48px; padding:.5rem 1rem; border-radius:8px; border:0; background:var(--blue); color:#fff; font:800 1rem "Nunito",sans-serif; cursor:pointer; box-shadow:inset 0 -4px 0 var(--blue-dk)}
+.rlist .copy{flex:none; min-height:40px; padding:.3rem .8rem; border-radius:8px; border:2px solid var(--blue); background:transparent; color:var(--blue); font:800 .92rem "Nunito",sans-serif; cursor:pointer}
+.fam-hello{margin:0; padding:10px 12px; border-radius:8px; background:var(--bg); font-weight:800}
+.fam-hello[hidden]{display:none}
 dialog.thanks{width:min(100% - 2rem,22rem); text-align:center; overflow:visible}
 dialog.thanks::backdrop{background:rgba(0,0,0,.35)}
 .thanks .panel{padding:1.6rem 1.4rem 1.4rem; display:flex; flex-direction:column; align-items:center; gap:.5rem}
@@ -213,7 +222,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 .panel textarea{min-height:80px; resize:vertical; background:var(--field); border-color:transparent}
 .two{display:grid; grid-template-columns:1fr 1fr; gap:0 .6rem}
 .err{color:var(--red); font-weight:700; min-height:1.3em; margin:.6rem 0 0}
-.actions{display:flex; gap:.6rem; justify-content:flex-end; padding:.9rem 1.3rem; border-top:2px solid var(--line); position:sticky; bottom:0; background:var(--bg)}
+.actions{display:flex; flex-wrap:wrap; gap:.6rem; justify-content:flex-end; padding:.9rem 1.3rem; border-top:2px solid var(--line); position:sticky; bottom:0; background:var(--bg)}
 .actions button{min-height:46px; padding:.5rem 1.1rem; border-radius:8px; cursor:pointer; font:800 1rem "Nunito",system-ui,sans-serif}
 .actions .cancel{background:transparent; color:var(--ink); border:2px solid var(--line)}
 .actions .save{background:var(--blue); color:#fff; border:0; box-shadow:inset 0 -4px 0 var(--blue-dk)}
@@ -332,6 +341,7 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
     <section class="rsvp">
       <h2 class="display">RSVP</h2>
       <p class="s" id="rsvpBy"></p>
+      <p class="fam-hello" id="famHello" hidden=""></p>
       <div class="replied" id="replied" hidden="">
         <p id="repliedText"></p>
         <button type="button" id="changeReply">Change my reply</button>
@@ -400,11 +410,29 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
       <div><b id="t-no">0</b>CAN’T</div>
     </div>
     <ul class="rlist" id="rlist"></ul>
+    <div id="pendingBox" hidden="">
+      <h3 class="sub-h" id="pendingTitle">Not replied yet</h3>
+      <ul class="rlist" id="plist"></ul>
+    </div>
     <p class="err" id="rsvpErr" role="alert"></p>
   </div>
   <div class="actions">
     <button class="cancel" type="button" id="rsvpRefresh">Refresh</button>
+    <button class="cancel" type="button" id="famOpen">Family links</button>
     <button class="save" type="button" id="rsvpClose">Close</button>
+  </div>
+</dialog>
+<dialog id="famList" aria-labelledby="famTitle">
+  <div class="panel">
+    <h2 id="famTitle">Family links</h2>
+    <p class="hint">Each family gets its own link. Everyone who opens it sees the same reply and can change it. The family sees its own name, e.g. “Hi, Family A!”</p>
+    <label for="famLabel">Family name</label>
+    <div class="addrow"><input id="famLabel" maxlength="60" autocomplete="off" placeholder="e.g. Family A"><button type="button" id="famAdd">Add</button></div>
+    <ul class="rlist" id="flist" style="margin-top:1rem"></ul>
+    <p class="err" id="famErr" role="alert"></p>
+  </div>
+  <div class="actions">
+    <button class="save" type="button" id="famClose">Done</button>
   </div>
 </dialog>
 <button class="edit-fab" id="editBtn" type="button" hidden="">Edit details</button>
@@ -672,19 +700,35 @@ function deviceId(){
   const id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
   return id.slice(0, 40);
 }
+// Family link (?f=CODE): the whole family shares one reply, looked up from the server
+const famCode = (() => { const c = new URLSearchParams(location.search).get("f"); return c && /^[A-Za-z0-9]{8,24}$/.test(c) ? c : null; })();
+let FAMILY = null; // { label, reply } once the code is confirmed
+async function loadFamily(){
+  if (!sb || !famCode) return;
+  try {
+    const { data, error } = await sb.rpc("family_status", { p_code: famCode });
+    if (!error && data && data.label) FAMILY = data;
+  } catch {}
+}
+// The reply to show: the family's (on a family link) or this device's own
+const currentReply = () => FAMILY ? FAMILY.reply : mine.get();
 function showMine(){
-  const m = mine.get();
+  $("famHello").hidden = !FAMILY;
+  if (FAMILY) $("famHello").textContent = `Hi, ${FAMILY.label}! This link is just for your family.`;
+  const m = currentReply();
+  $("changeReply").textContent = FAMILY ? "Change our reply" : "Change my reply";
   if (!m || !m.name) { $("replied").hidden = true; $("rsvpForm").hidden = false; $("smsBtn").textContent = "Send RSVP"; return; }
   const parts = [];
   if (m.adults) parts.push(plural(m.adults, "adult", "adults"));
   if (m.kids) parts.push(plural(m.kids, "kid", "kids"));
+  const lead = FAMILY ? `Your family already replied (sent by ${m.name})` : `You replied as ${m.name}`;
   $("repliedText").textContent = m.attending
-    ? `You replied as ${m.name}: coming${parts.length ? ", " + parts.join(" and ") : ""}.`
-    : `You replied as ${m.name}: can’t make it.`;
+    ? `${lead}: coming${parts.length ? ", " + parts.join(" and ") : ""}.`
+    : `${lead}: can’t make it.`;
   $("replied").hidden = false; $("rsvpForm").hidden = true;
 }
 $("changeReply").addEventListener("click", () => {
-  const m = mine.get() || {};
+  const m = currentReply() || {};
   $("guest").value = m.name || "";
   $("adults").value = m.attending ? (m.adults ?? 1) : 1;
   $("count").value = m.attending ? (m.kids ?? 1) : 1;
@@ -703,19 +747,25 @@ $("smsBtn").addEventListener("click", async () => {
     if (!name) { warn("Please add your name first.", "guest"); return; }
     if (rsvpSending) return;
     rsvpSending = true; $("smsBtn").disabled = true; update(); $("status").textContent = "Sending…";
-    const updating = !!(mine.get() && mine.get().name);
+    const prev = currentReply();
+    const updating = !!(prev && prev.name);
     const device = deviceId();
     const row = { name: name.slice(0, 60), attending: yes, adults: yes ? Math.min(10, num("adults")) : 0, kids: yes ? Math.min(10, num("count")) : 0 };
     let error = null;
     try {
-      ({ error } = await sb.from("rsvps").insert({ ...row, device_id: device }));
-      // Table not upgraded yet (no device_id column): save without it
-      if (error && /device_id/.test(error.message || "")) ({ error } = await sb.from("rsvps").insert(row));
+      // Try the fullest row first; if the table hasn't been upgraded yet, drop the newer columns
+      const tries = [{ ...row, device_id: device }, row];
+      if (FAMILY) tries.unshift({ ...row, device_id: device, family_code: famCode });
+      for (const t of tries) {
+        ({ error } = await sb.from("rsvps").insert(t));
+        if (!error || !/device_id|family_code/.test(error.message || "")) break;
+      }
     } catch (e) { error = e; }
     rsvpSending = false; $("smsBtn").disabled = false;
     if (!error) {
       $("status").textContent = "";
       mine.set({ device, ...row, at: new Date().toISOString() });
+      if (FAMILY) FAMILY.reply = { ...row, created_at: new Date().toISOString() };
       showThanks(name, yes, row.adults, row.kids, updating);
       showMine();
       if (session && $("rsvpList").open) loadRsvps();
@@ -833,19 +883,42 @@ async function uploadPhoto(file){
 }
 
 const ownerMode = /[?&#]owner\b/.test(location.search + location.hash);
-async function loadRsvps(){
-  $("rsvpErr").textContent = "";
-  let { data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids,device_id").order("created_at", { ascending: false });
+// Replies + families, fetched together. Falls back cleanly if families.sql hasn't been run yet.
+async function fetchReplies(){
+  let { data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids,device_id,family_code").order("created_at", { ascending: false });
+  if (error && /family_code/.test(error.message || "")) ({ data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids,device_id").order("created_at", { ascending: false }));
   if (error && /device_id/.test(error.message || "")) ({ data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids").order("created_at", { ascending: false }));
-  if (error) { $("rsvpErr").textContent = "Couldn’t load RSVPs. " + (error.message || ""); return; }
-  // Keep only each device's latest reply (newest first), and note how many times it changed
-  const all = data || [];
+  if (error) return { error };
+  const fam = await sb.from("families").select("code,label,created_at").order("created_at", { ascending: true });
+  const families = fam.error ? null : (fam.data || []);
+  // Keep only each family's (or device's) latest reply, newest first, and count the changes
   const latest = new Map();
-  all.forEach(r => {
-    const key = r.device_id ? "d:" + r.device_id : "id:" + r.id;
+  (data || []).forEach(r => {
+    const key = r.family_code ? "f:" + r.family_code : r.device_id ? "d:" + r.device_id : "id:" + r.id;
     if (!latest.has(key)) latest.set(key, { ...r, changes: 0 }); else latest.get(key).changes++;
   });
-  const rows = [...latest.values()];
+  return { rows: [...latest.values()], families, labels: new Map((families || []).map(f => [f.code, f.label])) };
+}
+async function loadRsvps(){
+  $("rsvpErr").textContent = "";
+  const res = await fetchReplies();
+  if (res.error) { $("rsvpErr").textContent = "Couldn’t load RSVPs. " + (res.error.message || ""); return; }
+  const { rows, families, labels } = res;
+  $("famOpen").hidden = !families;
+  // Families with a link but no reply yet
+  const replied = new Set(rows.map(r => r.family_code).filter(Boolean));
+  const waiting = (families || []).filter(f => !replied.has(f.code));
+  $("pendingBox").hidden = !waiting.length;
+  $("pendingTitle").textContent = `Not replied yet (${waiting.length})`;
+  $("plist").replaceChildren(...waiting.map(f => {
+    const li = document.createElement("li");
+    const who = document.createElement("div"); who.className = "who";
+    const n = document.createElement("b"); n.textContent = f.label;
+    who.append(n);
+    const tag = document.createElement("span"); tag.className = "tag wait"; tag.textContent = "Waiting";
+    li.append(who, tag);
+    return li;
+  }));
   const yes = rows.filter(r => r.attending);
   $("t-fam").textContent = yes.length;
   $("t-adults").textContent = yes.reduce((s, r) => s + (r.adults || 0), 0);
@@ -859,14 +932,17 @@ async function loadRsvps(){
     const meta = document.createElement("span");
     const when = new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
     const changed = r.changes ? " · updated" : "";
-    meta.textContent = (r.attending ? `${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")} · ` : "") + when + changed;
+    const famLabel = r.family_code && labels.get(r.family_code) ? labels.get(r.family_code) + " · " : "";
+    meta.textContent = famLabel + (r.attending ? `${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")} · ` : "") + when + changed;
     who.append(n, meta);
     const tag = document.createElement("span"); tag.className = "tag" + (r.attending ? "" : " no"); tag.textContent = r.attending ? "Coming" : "Can’t";
     const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "×";
     del.setAttribute("aria-label", `Delete reply from ${r.name}`);
     del.addEventListener("click", async () => {
       if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = "✓"; del.setAttribute("aria-label", `Confirm delete of ${r.name}`); setTimeout(() => { del.dataset.armed = ""; del.textContent = "×"; }, 3000); return; }
-      const { error } = r.device_id
+      const { error } = r.family_code
+        ? await sb.from("rsvps").delete().eq("family_code", r.family_code)
+        : r.device_id
         ? await sb.from("rsvps").delete().eq("device_id", r.device_id)
         : await sb.from("rsvps").delete().eq("id", r.id);
       if (error) { $("rsvpErr").textContent = "Couldn’t delete. " + (error.message || ""); return; }
@@ -879,6 +955,74 @@ async function loadRsvps(){
 $("rsvpBtn").addEventListener("click", () => { $("rsvpList").showModal(); loadRsvps(); });
 $("rsvpRefresh").addEventListener("click", loadRsvps);
 $("rsvpClose").addEventListener("click", () => $("rsvpList").close());
+
+// ---------- family links (owner) ----------
+const famLink = code => `${location.origin}${location.pathname}?f=${code}`;
+function newCode(){
+  const abc = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  return [...crypto.getRandomValues(new Uint8Array(10))].map(x => abc[x % abc.length]).join("");
+}
+function armDelete(btn, label, run){
+  btn.addEventListener("click", async () => {
+    if (btn.dataset.armed !== "1") {
+      btn.dataset.armed = "1"; btn.textContent = "✓"; btn.setAttribute("aria-label", `Confirm delete of ${label}`);
+      setTimeout(() => { btn.dataset.armed = ""; btn.textContent = "×"; btn.setAttribute("aria-label", `Delete ${label}`); }, 3000);
+      return;
+    }
+    run();
+  });
+}
+async function shareLink(btn, f){
+  const url = famLink(f.code);
+  const text = `You’re invited to ${PARTY.name}’s birthday build party! Tap to see the details and RSVP:`;
+  if (navigator.share && matchMedia("(pointer: coarse)").matches) {
+    try { await navigator.share({ title: document.title, text, url }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  try { await navigator.clipboard.writeText(url); btn.textContent = "Copied!"; }
+  catch { $("famErr").textContent = `Copy this link for ${f.label}: ${url}`; }
+  setTimeout(() => { btn.textContent = "Copy link"; }, 1800);
+}
+async function loadFamilies(){
+  $("famErr").textContent = "";
+  const res = await fetchReplies();
+  if (res.error || !res.families) { $("famErr").textContent = "Couldn’t load families. " + ((res.error && res.error.message) || "Run families.sql in Supabase first."); return; }
+  const byFam = new Map(res.rows.filter(r => r.family_code).map(r => [r.family_code, r]));
+  if (!res.families.length) { const p = document.createElement("li"); p.className = "empty"; p.textContent = "No families yet. Add one above."; $("flist").replaceChildren(p); return; }
+  $("flist").replaceChildren(...res.families.map(f => {
+    const li = document.createElement("li");
+    const who = document.createElement("div"); who.className = "who";
+    const n = document.createElement("b"); n.textContent = f.label;
+    const meta = document.createElement("span");
+    const r = byFam.get(f.code);
+    meta.textContent = !r ? "No reply yet" : r.attending ? `Coming · ${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")}` : "Can’t make it";
+    who.append(n, meta);
+    const copy = document.createElement("button"); copy.type = "button"; copy.className = "copy"; copy.textContent = "Copy link";
+    copy.addEventListener("click", () => shareLink(copy, f));
+    const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "×";
+    del.setAttribute("aria-label", `Delete ${f.label}`);
+    armDelete(del, f.label, async () => {
+      const { error } = await sb.from("families").delete().eq("code", f.code);
+      if (error) { $("famErr").textContent = "Couldn’t delete. " + (error.message || ""); return; }
+      loadFamilies();
+    });
+    li.append(who, copy, del);
+    return li;
+  }));
+}
+$("famOpen").addEventListener("click", () => { $("famList").showModal(); $("famLabel").value = ""; loadFamilies(); });
+$("famClose").addEventListener("click", () => { $("famList").close(); if ($("rsvpList").open) loadRsvps(); });
+$("famAdd").addEventListener("click", async () => {
+  const label = $("famLabel").value.trim().slice(0, 60);
+  if (!label) { $("famErr").textContent = "Type a family name first."; $("famLabel").focus(); return; }
+  const btn = $("famAdd"); btn.disabled = true;
+  const { error } = await sb.from("families").insert({ code: newCode(), label });
+  btn.disabled = false;
+  if (error) { $("famErr").textContent = "Couldn’t add. " + (error.message || ""); return; }
+  $("famLabel").value = "";
+  loadFamilies();
+  $("famLabel").focus();
+});
+$("famLabel").addEventListener("keydown", e => { if (e.key === "Enter") $("famAdd").click(); });
 
 function showOwnerButtons(){
   $("editBtn").hidden = !session;
@@ -991,7 +1135,7 @@ $("editSave").addEventListener("click", async () => {
 
 // ---------- start ----------
 (async () => {
-  await Promise.race([loadParty(), new Promise(r => setTimeout(r, 3000))]);
+  await Promise.race([Promise.all([loadParty(), loadFamily()]), new Promise(r => setTimeout(r, 3000))]);
   render();
   update();
   showMine();
