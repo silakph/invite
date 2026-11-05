@@ -141,6 +141,7 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
       <div class="rows" id="progRows"></div>
       <div class="savebar">
         <button class="btn ghost" type="button" id="progAdd">+ Add an item</button>
+        <button class="btn ghost" type="button" id="progSample">Fill with a sample program</button>
         <button class="btn red" type="button" id="progSave">Save program</button>
         <span class="msg" id="progMsg" role="status" style="margin:0"></span>
       </div>
@@ -275,6 +276,39 @@ async function saveList(key, btn){
 }
 $("menuAdd").addEventListener("click", () => addRow("menu"));
 $("progAdd").addEventListener("click", () => addRow("program"));
+
+// A typical family Christmas party, timed from the party's start (6:00 PM if none is set yet)
+const SAMPLE_PROGRAM = [
+  [0, "Arrival and welcome drinks"],
+  [30, "Family photos by the Christmas tree"],
+  [60, "Opening prayer and Christmas dinner"],
+  [120, "Games for the kids"],
+  [165, "Parlor games for everyone"],
+  [210, "Kris Kringle gift exchange"],
+  [255, "Christmas carols and dessert"],
+  [null, "Group photo and goodbyes"]
+];
+function sampleProgram(){
+  const [h, m] = String(EV.start || "18:00").split(":").map(Number);
+  const base = (h || 0) * 60 + (m || 0);
+  return SAMPLE_PROGRAM.map(([mins, what]) => {
+    if (mins === null) return ["", what];
+    const t = (base + mins) % 1440;
+    return [`${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`, what];
+  });
+}
+$("progSample").addEventListener("click", e => {
+  const btn = e.currentTarget;
+  // replacing a list you've already started takes a second tap
+  if (listRows.program.some(([, b]) => b) && btn.dataset.armed !== "1") {
+    btn.dataset.armed = "1"; btn.textContent = "Replace your list? Tap again";
+    setTimeout(() => { btn.dataset.armed = ""; btn.textContent = "Fill with a sample program"; }, 3000);
+    return;
+  }
+  btn.dataset.armed = ""; btn.textContent = "Fill with a sample program";
+  listRows.program = sampleProgram(); drawRows("program");
+  say("progMsg", "Sample added. Edit anything you like, then tap Save program.");
+});
 $("menuSave").addEventListener("click", e => saveList("menu", e.currentTarget));
 $("progSave").addEventListener("click", e => saveList("program", e.currentTarget));
 function fillDetails(){ FIELDS.forEach(f => { $("f-" + f).value = EV[f] || ""; }); }
