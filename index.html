@@ -449,6 +449,7 @@ const DEFAULT_THANKS = "Thank you for building, playing and eating cake with us!
 const isAfter = () => forceAfter || Date.now() >= zonedToUtc(PARTY.date, PARTY.end, PARTY.timezone);
 function setAfter(on){
   document.body.classList.toggle("after", on);
+  if (on) loadDrive();
   $("lede").textContent = on ? "What a build! Thanks for coming." : "1 party · 3 easy steps · countdown is on!";
   $("thanksNote").textContent = PARTY.thanksNote || DEFAULT_THANKS;
   if ($("splashName")) $("splashName").textContent = on ? `${PARTY.name} turned` : `${PARTY.name} is turning`;
@@ -677,23 +678,46 @@ const lbImg = new Image(); lbImg.alt = "Party photo";
 lb.appendChild(lbImg);
 lb.addEventListener("click", () => lb.close());
 document.body.appendChild(lb);
-function photoButton(u, i){
+function photoButton(u, i, full){
   const b = document.createElement("button");
   b.type = "button";
   b.setAttribute("aria-label", `Open photo ${i + 1}`);
-  const img = new Image(); img.src = u; img.alt = ""; img.loading = "lazy";
+  const img = new Image(); img.referrerPolicy = "no-referrer"; img.alt = ""; img.loading = "lazy";
+  // a photo that can't load just drops out; if none are left, show the empty note again
+  img.onerror = () => {
+    const box = b.parentElement; b.remove();
+    if (box && !box.children.length) { if (box.id === "partyGrid") $("partyEmpty").hidden = false; else $("gallery").hidden = true; }
+  };
+  img.src = u;
   b.appendChild(img);
   addStuds(b, 2);
-  b.addEventListener("click", () => { lbImg.src = u; lb.showModal(); });
+  b.addEventListener("click", () => { lbImg.referrerPolicy = "no-referrer"; lbImg.src = full || u; lb.showModal(); });
   return b;
+}
+// Party photos can also come from a Google Drive folder, listed by an Apps Script web app (see drive-photos.gs)
+let DRIVE = [], driveLoaded = false;
+const isFeed = u => typeof u === "string" && /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u);
+const driveImg = (id, w) => `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w}`;
+async function loadDrive(){
+  if (driveLoaded || !isFeed(PARTY.driveFeed)) return;
+  driveLoaded = true;
+  try {
+    const j = await (await fetch(PARTY.driveFeed)).json();
+    if (j && j.ok && Array.isArray(j.photos)) {
+      DRIVE = j.photos.map(p => p && p.id).filter(id => typeof id === "string" && /^[\w-]{10,}$/.test(id));
+      renderGallery();
+    }
+  } catch {}
 }
 function renderGallery(){
   const pre = listOf("photos");
   $("gallery").hidden = !pre.length;
-  $("strip").replaceChildren(...pre.map(photoButton));
+  $("strip").replaceChildren(...pre.map((u, i) => photoButton(u, i)));
   const party = listOf("partyPhotos");
-  $("partyGrid").replaceChildren(...party.map(photoButton));
-  $("partyEmpty").hidden = party.length > 0;
+  $("partyGrid").replaceChildren(
+    ...party.map((u, i) => photoButton(u, i)),
+    ...DRIVE.map((id, k) => photoButton(driveImg(id, 800), party.length + k, driveImg(id, 2000))));
+  $("partyEmpty").hidden = party.length + DRIVE.length > 0;
 }
 
 // ---------- Supabase: load, sign-in, photos, save ----------

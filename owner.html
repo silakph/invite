@@ -222,6 +222,10 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
         <input id="p-partyPhotos" type="file" accept="image/*" multiple="" aria-label="Upload party photos">
         <div class="thumbs" id="thumbs-partyPhotos"></div>
         <p class="msg" id="msg-partyPhotos" role="status"></p>
+        <label for="p-drive">Google Drive folder (web app link from drive-photos.gs)</label>
+        <input id="p-drive" type="url" inputmode="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec">
+        <div class="savebar" style="margin-top:10px"><button class="btn" type="button" id="driveSave">Save &amp; test</button></div>
+        <p class="msg" id="driveMsg" role="status"></p>
         <a class="link" href="./?after" target="_blank" rel="noopener">Preview the after-party page</a>
       </div>
     </div>
@@ -492,6 +496,7 @@ async function uploadPhoto(file){
 }
 function renderPhotos(){
   $("headerPrev").src = PARTY.photo || CAKE;
+  if (document.activeElement !== $("p-drive")) $("p-drive").value = PARTY.driveFeed || "";
   $("headerReset").hidden = !PARTY.photo;
   Object.keys(SETS).forEach(key => {
     const list = listOf(key);
@@ -535,6 +540,24 @@ $("p-header").addEventListener("change", async e => {
   catch (err) { say("headerMsg", "Couldn’t upload that photo. " + errText(err), true); }
   e.target.disabled = false; e.target.value = "";
   renderPhotos();
+});
+// Google Drive folder feed (Apps Script web app). Leave empty to turn it off.
+const isFeed = u => /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(u);
+$("driveSave").addEventListener("click", async () => {
+  const url = $("p-drive").value.trim();
+  const btn = $("driveSave"); btn.disabled = true;
+  try {
+    if (!url) { await saveParty({ driveFeed: "" }); say("driveMsg", "Drive folder disconnected."); return; }
+    if (!isFeed(url)) { say("driveMsg", "That doesn’t look like a web app link. It should start with https://script.google.com/macros/s/ and end in /exec.", true); return; }
+    say("driveMsg", "Checking the folder…");
+    let j = null;
+    try { j = await (await fetch(url)).json(); } catch {}
+    if (!j) { say("driveMsg", "Couldn’t reach the script. In the deployment, set “Who has access” to Anyone, then try again.", true); return; }
+    if (!j.ok) { say("driveMsg", j.error || "The script couldn’t read the folder.", true); return; }
+    await saveParty({ driveFeed: url });
+    say("driveMsg", `Connected. ${j.count} photo${j.count === 1 ? "" : "s"} found${j.count > (j.photos || []).length ? `; the first ${j.photos.length} will show` : ""}. They appear on the invite after the party.`);
+  } catch (e) { say("driveMsg", "Couldn’t save. " + errText(e), true); }
+  finally { btn.disabled = false; }
 });
 $("headerReset").addEventListener("click", async () => {
   try { await saveParty({ photo: "" }); say("headerMsg", "Back to the cake graphic."); }
