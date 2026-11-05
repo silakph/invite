@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>You’re invited to a 7th birthday build party!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&amp;family=Nunito:wght@500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#DA291C; --red-dk:#A11E14;
+  --blue:#0055BF; --blue-dk:#003C88;
+  --yellow:#FFD100; --yellow-dk:#CCA700;
+  --bg:#FFFFFF; --ink:#16181C; --soft:#5C6370; --line:#E6E8EC; --field:#F5F6F8;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#121418; --ink:#F4F5F7; --soft:#A3AAB6; --line:#2A2E35; --field:#1C1F25; color-scheme:dark; }
+}
+:root[data-theme="dark"]{ --bg:#121418; --ink:#F4F5F7; --soft:#A3AAB6; --line:#2A2E35; --field:#1C1F25; color-scheme:dark; }
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0; background:var(--bg); color:var(--ink); font:500 1.0625rem/1.5 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif}
+main{max-width:26rem; margin:0 auto; padding:2.5rem 1.4rem 5rem}
+.display{font-family:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",sans-serif; font-weight:400}
+
+/* brick primitive: colour via --c / --cd, stud on top */
+.b{position:relative; background:var(--c); border-radius:3px; box-shadow:inset 0 -4px 0 var(--cd)}
+.b::before{content:""; position:absolute; left:50%; top:-22%; width:44%; height:26%; transform:translateX(-50%);
+  border-radius:3px 3px 1px 1px; background:var(--c); box-shadow:inset 0 -2px 0 var(--cd)}
+.r{--c:var(--red); --cd:var(--red-dk)} .u{--c:var(--blue); --cd:var(--blue-dk)} .y{--c:var(--yellow); --cd:var(--yellow-dk)}
+
+/* banner */
+.banner{margin:0 0 2rem; border-radius:12px; overflow:hidden; aspect-ratio:2/1; background:var(--blue)}
+.banner svg,.banner img{display:block; width:100%; height:100%; object-fit:cover}
+.photo-row{display:flex; align-items:center; justify-content:space-between; gap:.6rem; margin-top:.4rem; color:var(--soft); font-weight:700; font-size:.92rem}
+.mini{min-height:40px; padding:.35rem .8rem; border-radius:8px; border:2px solid var(--line); background:transparent; color:var(--ink); font:800 .92rem "Nunito",system-ui,sans-serif; cursor:pointer}
+.mini[hidden]{display:none}
+input[type=file]{padding:.5rem; min-height:auto}
+
+/* hero */
+.hero{text-align:left}
+.seven{display:grid; grid-template-columns:repeat(5,1fr); gap:5px; width:min(58vw,240px); margin:1.8rem auto 0}
+/* splash */
+.splash{position:fixed; inset:0; z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:env(safe-area-inset-top,0px) 1.5rem env(safe-area-inset-bottom,0px); background:var(--bg); text-align:center; cursor:pointer; transition:opacity .5s ease; animation:autohide .01s 6s forwards}
+.splash.out{opacity:0; pointer-events:none}
+@keyframes autohide{to{opacity:0; visibility:hidden}}
+.splash-name{font-size:clamp(1.9rem,8.5vw,2.8rem); line-height:1.05; margin:0; animation:fadein .45s ease both}
+@keyframes fadein{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+.seven > div{aspect-ratio:1/0.85}
+.seven .b{animation:drop .5s cubic-bezier(.3,1.5,.6,1) both; animation-delay:var(--d)}
+@keyframes drop{from{transform:translateY(-90px); opacity:0} to{transform:none; opacity:1}}
+@media (prefers-reduced-motion: reduce){ .seven .b, .splash-name{animation:none} }
+h1{font-size:clamp(2.4rem,11vw,3.2rem); line-height:1; margin:0 0 .6rem}
+.lede{margin:0; color:var(--soft); font-weight:700; font-size:1.1rem}
+.countdown{margin:1rem 0 0; font-weight:800}
+
+/* details */
+.details{margin:2.75rem 0 0; padding:0; list-style:none}
+.details li{display:grid; grid-template-columns:34px 1fr; gap:0 1rem; padding:1.25rem 0; border-top:2px solid var(--line)}
+.details li:last-child{border-bottom:2px solid var(--line)}
+.chip{width:30px; height:20px; margin-top:.55rem}
+.chip.b::before{width:30%; left:30%; transform:none; top:-5px; height:6px}
+.chip.b::after{content:""; position:absolute; right:12%; top:-5px; width:30%; height:6px; border-radius:3px 3px 1px 1px; background:var(--c)}
+.chip.b::before{left:12%}
+.k{font-size:.9rem; color:var(--soft); font-weight:700; margin:0}
+.v{font-weight:800; font-size:1.2rem; margin:0; line-height:1.3}
+.s{margin:.15rem 0 0; color:var(--soft); font-weight:600}
+.link{display:inline-block; margin-top:.5rem; font-weight:800; color:var(--blue); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:2px}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .link{color:#6FA8FF} }
+
+/* rsvp */
+.rsvp{margin-top:2.75rem}
+.rsvp h2{font-size:1.9rem; margin:0}
+.rsvp .s{margin-bottom:1.1rem}
+.choice{display:grid; grid-template-columns:1fr 1fr; gap:.5rem}
+.choice button{min-height:48px; border-radius:8px; border:2px solid var(--line); background:transparent; color:var(--ink); font:800 1rem "Nunito",system-ui,sans-serif; cursor:pointer}
+.choice button[aria-pressed="true"]{background:var(--blue); border-color:var(--blue); color:#fff}
+label{display:block; font-weight:700; font-size:.92rem; margin:1rem 0 .3rem}
+input,textarea{width:100%; min-height:48px; padding:.6rem .8rem; border:2px solid transparent; border-radius:8px; background:var(--field); color:var(--ink); font:600 1rem "Nunito",system-ui,sans-serif}
+input:disabled{opacity:.5}
+.btns{display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-top:1.25rem}
+.btn{display:flex; align-items:center; justify-content:center; min-height:50px; border-radius:8px; font:800 1rem "Nunito",system-ui,sans-serif; text-decoration:none; cursor:pointer; border:2px solid var(--ink); background:transparent; color:var(--ink)}
+.btn.primary{background:var(--red); border-color:var(--red); color:#fff; box-shadow:inset 0 -4px 0 var(--red-dk)}
+.btn:active{transform:translateY(1px)}
+.status{min-height:1.4em; margin-top:.75rem; font-weight:700; color:var(--soft)}
+:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+
+/* footer tower */
+footer{margin-top:3.5rem; display:flex; align-items:flex-end; gap:1rem; color:var(--soft); font-weight:700; font-size:.95rem}
+.tower{display:flex; flex-direction:column; gap:3px; flex:none}
+.tower .b{width:30px; height:14px}
+.tower .b::before{top:-4px; height:5px}
+
+/* owner editor */
+.edit-fab{position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); z-index:20; min-height:48px; padding:.6rem 1.1rem; border:0; border-radius:999px; cursor:pointer; font:800 1rem "Nunito",system-ui,sans-serif; background:var(--ink); color:var(--bg)}
+.edit-fab[hidden]{display:none}
+dialog{width:min(100% - 1.5rem,28rem); max-height:90vh; border:0; border-radius:12px; padding:0; background:var(--bg); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.panel{padding:1.3rem 1.3rem 1rem}
+.panel h2{font-family:"Lilita One","Arial Rounded MT Bold",sans-serif; font-weight:400; font-size:1.6rem; margin:0 0 .2rem}
+.panel .hint{margin:0; color:var(--soft); font-size:.95rem}
+.panel textarea{min-height:80px; resize:vertical}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:0 .6rem}
+.err{color:var(--red); font-weight:700; min-height:1.3em; margin:.6rem 0 0}
+.actions{display:flex; gap:.6rem; justify-content:flex-end; padding:.9rem 1.3rem; border-top:2px solid var(--line); position:sticky; bottom:0; background:var(--bg)}
+.actions button{min-height:46px; padding:.5rem 1.1rem; border-radius:8px; cursor:pointer; font:800 1rem "Nunito",system-ui,sans-serif}
+.actions .cancel{background:transparent; color:var(--ink); border:2px solid var(--line)}
+.actions .save{background:var(--blue); color:#fff; border:0; box-shadow:inset 0 -4px 0 var(--blue-dk)}
+
+/* ===== fun layer ===== */
+:root{--stud:#ECEEF2}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--stud:#1C2027} }
+:root[data-theme="dark"]{--stud:#1C2027}
+body{background-image:radial-gradient(circle, var(--stud) 0 7px, transparent 7.5px); background-size:24px 24px}
+.banner{box-shadow:6px 6px 0 var(--red)}
+h1{text-shadow:3px 3px 0 var(--yellow), 6px 6px 0 var(--red)}
+.countdown{display:inline-block; position:relative; margin-top:1.4rem; padding:.45rem 1.1rem; border-radius:6px; background:var(--blue); color:#fff; box-shadow:inset 0 -4px 0 var(--blue-dk); --c:var(--blue); --cd:var(--blue-dk)}
+.countdown .studs{left:18%; right:18%}
+.studs{position:absolute; left:7%; right:7%; top:-10px; display:flex; justify-content:space-between; pointer-events:none}
+.studs span{width:15%; max-width:44px; min-width:14px; height:11px; border-radius:5px 5px 2px 2px; background:var(--c); box-shadow:inset 0 -3px 0 var(--cd), inset 0 1px 0 rgba(255,255,255,.35)}
+.details{margin-top:3rem}
+.details li{grid-template-columns:1fr; position:relative; border:0 !important; border-radius:8px; padding:1.1rem 1.25rem 1.35rem; margin-bottom:28px; background:var(--c); color:#fff; box-shadow:inset 0 -7px 0 var(--cd), inset 0 2px 0 rgba(255,255,255,.3)}
+.details li:nth-child(1){--c:var(--red); --cd:var(--red-dk)}
+.details li:nth-child(2){--c:var(--blue); --cd:var(--blue-dk)}
+.details li:nth-child(3){--c:var(--yellow); --cd:var(--yellow-dk); color:#16181C}
+.details .chip{display:none}
+.details .k{color:inherit; opacity:.85; font-family:"Lilita One","Arial Rounded MT Bold",sans-serif; font-weight:400; font-size:1.05rem}
+.details li .s, .details li .link{color:inherit !important; opacity:.95}
+.rsvp{position:relative; margin-top:2.5rem; padding:1.4rem 1.3rem 1.2rem; border-radius:12px; background:var(--bg); border:3px solid var(--ink); box-shadow:6px 6px 0 var(--blue)}
+.rsvp h2{text-shadow:2px 2px 0 var(--yellow)}
+.confetti{position:fixed; inset:0; pointer-events:none; z-index:40; overflow:hidden}
+.confetti .b{position:absolute; top:-30px; animation:fall var(--t) cubic-bezier(.25,.6,.45,1) var(--d) forwards}
+@keyframes fall{to{transform:translateY(112vh) rotate(var(--rot))}}
+
+/* pre-birthday gallery */
+.gallery{margin-top:2.75rem}
+.gallery[hidden]{display:none}
+.gallery h2{font-size:1.9rem; margin:0 0 .15rem; text-shadow:2px 2px 0 var(--red)}
+.gallery .s{margin:0 0 .6rem}
+.strip{display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; padding:14px 4px 16px; margin:0 -4px}
+.strip button{position:relative; flex:0 0 72%; max-width:260px; scroll-snap-align:start; border:0; border-radius:8px; padding:8px 8px 15px; background:var(--c); box-shadow:inset 0 -6px 0 var(--cd); cursor:pointer}
+.strip button:nth-child(3n+1){--c:var(--red); --cd:var(--red-dk)}
+.strip button:nth-child(3n+2){--c:var(--blue); --cd:var(--blue-dk)}
+.strip button:nth-child(3n){--c:var(--yellow); --cd:var(--yellow-dk)}
+.strip button .studs{left:16%; right:16%}
+.strip img{display:block; width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:4px; background:var(--field)}
+.thumbs{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:.5rem}
+.thumbs div{position:relative}
+.thumbs img{display:block; width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px}
+.thumbs button{position:absolute; top:3px; right:3px; width:28px; height:28px; border-radius:50%; border:0; background:rgba(0,0,0,.72); color:#fff; font:800 1rem/1 "Nunito",system-ui,sans-serif; cursor:pointer}
+dialog.lightbox{width:auto; max-width:94vw; padding:0; background:transparent; box-shadow:none}
+dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
+.lightbox img{display:block; max-width:94vw; max-height:86vh; border-radius:8px}
+</style>
+</head>
+<body>
+<div class="splash" id="splash" aria-hidden="true">
+  <p class="display splash-name" id="splashName"></p>
+  <div class="seven" id="seven"></div>
+</div>
+<main>
+  <section class="hero">
+    <div class="banner" id="banner"><svg viewBox="0 0 600 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Balloons and toy bricks"><rect width="600" height="300" fill="#0055BF"></rect><path d="M95 136 q-14 40 6 80" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"></path><ellipse cx="95" cy="90" rx="46" ry="52" fill="#DA291C"></ellipse><ellipse cx="79" cy="72" rx="8" ry="13" fill="#fff" fill-opacity=".35"></ellipse><path d="M175 98 q-14 40 6 80" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"></path><ellipse cx="175" cy="62" rx="36" ry="40" fill="#FFD100"></ellipse><ellipse cx="162" cy="48" rx="6" ry="10" fill="#fff" fill-opacity=".35"></ellipse><path d="M480 126 q-14 40 6 80" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"></path><ellipse cx="480" cy="78" rx="48" ry="54" fill="#FFD100"></ellipse><ellipse cx="463" cy="59" rx="9" ry="13" fill="#fff" fill-opacity=".35"></ellipse><path d="M540 184 q-14 40 6 80" stroke="#fff" stroke-opacity=".55" stroke-width="2" fill="none"></path><ellipse cx="540" cy="150" rx="34" ry="38" fill="#DA291C"></ellipse><ellipse cx="528" cy="136" rx="6" ry="10" fill="#fff" fill-opacity=".35"></ellipse><rect x="200" y="236" width="100" height="64" rx="3" fill="#DA291C"></rect><rect x="200" y="293" width="100" height="7" fill="#A11E14"></rect><rect x="215" y="228" width="20" height="9" rx="2" fill="#DA291C"></rect><rect x="265" y="228" width="20" height="9" rx="2" fill="#DA291C"></rect><rect x="300" y="236" width="100" height="64" rx="3" fill="#FFD100"></rect><rect x="300" y="293" width="100" height="7" fill="#CCA700"></rect><rect x="315" y="228" width="20" height="9" rx="2" fill="#FFD100"></rect><rect x="365" y="228" width="20" height="9" rx="2" fill="#FFD100"></rect><rect x="250" y="186" width="100" height="50" rx="3" fill="#FFD100"></rect><rect x="250" y="229" width="100" height="7" fill="#CCA700"></rect><rect x="265" y="178" width="20" height="9" rx="2" fill="#FFD100"></rect><rect x="315" y="178" width="20" height="9" rx="2" fill="#FFD100"></rect><rect x="275" y="138" width="50" height="48" rx="3" fill="#DA291C"></rect><rect x="275" y="179" width="50" height="7" fill="#A11E14"></rect><rect x="290" y="130" width="20" height="9" rx="2" fill="#DA291C"></rect><rect x="470" y="256" width="90" height="44" rx="3" fill="#DA291C"></rect><rect x="470" y="293" width="90" height="7" fill="#A11E14"></rect><rect x="482" y="248" width="20" height="9" rx="2" fill="#DA291C"></rect><rect x="528" y="248" width="20" height="9" rx="2" fill="#DA291C"></rect><rect x="40" y="262" width="70" height="38" rx="3" fill="#FFD100"></rect><rect x="40" y="293" width="70" height="7" fill="#CCA700"></rect><rect x="48" y="254" width="20" height="9" rx="2" fill="#FFD100"></rect><rect x="82" y="254" width="20" height="9" rx="2" fill="#FFD100"></rect></svg></div>
+    <h1 class="display" id="title">Come build with us!</h1>
+    <p class="lede">Join us for a brick-building birthday party.</p>
+    <p class="countdown" id="countdown"></p>
+  </section>
+
+  <ul class="details">
+    <li>
+      <span class="chip b r" aria-hidden="true"></span>
+      <div><p class="k">When</p><p class="v" id="when"></p><p class="s" id="time"></p>
+      <a class="link" id="calBtn" target="_blank" rel="noopener">Add to calendar</a></div>
+    </li>
+    <li>
+      <span class="chip b u" aria-hidden="true"></span>
+      <div><p class="k">Where</p><p class="v" id="venue"></p><p class="s" id="address"></p>
+      <a class="link" id="mapBtn" target="_blank" rel="noopener">Open map</a></div>
+    </li>
+    <li>
+      <span class="chip b y" aria-hidden="true"></span>
+      <div><p class="k">Good to know</p><p class="s" id="note" style="color:var(--ink);font-weight:700;margin-top:.1rem"></p></div>
+    </li>
+  </ul>
+
+  <section class="gallery" id="gallery" hidden="">
+    <h2 class="display">Before the big day</h2>
+    <p class="s">Swipe through the countdown snaps.</p>
+    <div class="strip" id="strip"></div>
+  </section>
+
+  <section class="rsvp">
+    <h2 class="display">RSVP</h2>
+    <p class="s" id="rsvpBy"></p>
+    <div class="choice" role="group" aria-label="Can you come?">
+      <button type="button" data-ans="yes" aria-pressed="true">We’ll be there</button>
+      <button type="button" data-ans="no" aria-pressed="false">Can’t make it</button>
+    </div>
+    <label for="guest">Your child’s name</label>
+    <input id="guest" autocomplete="off" placeholder="e.g. Sam">
+    <label for="count">How many kids are coming?</label>
+    <input id="count" type="number" inputmode="numeric" min="1" max="6" value="1">
+    <div class="btns">
+      <button class="btn primary" type="button" id="smsBtn">Send RSVP</button>
+      <button class="btn" type="button" id="copyBtn">Copy message</button>
+    </div>
+    <div class="status" id="status" role="status"></div>
+  </section>
+
+  <footer>
+    <div class="tower" aria-hidden="true"><span class="b y"></span><span class="b u"></span><span class="b r"></span></div>
+    <span id="footer"></span>
+  </footer>
+</main>
+
+<button class="edit-fab" id="editBtn" type="button" hidden="">Edit details</button>
+<dialog id="editor" aria-labelledby="editTitle">
+  <div class="panel">
+    <h2 id="editTitle">Party details</h2>
+    <p class="hint">Only you see this button. Saving updates the invitation for everyone with the link.</p>
+    <div id="photoField">
+      <label for="f-photo">Banner photo</label>
+      <input id="f-photo" type="file" accept="image/*">
+      <div class="photo-row"><span id="photoState"></span><button class="mini" type="button" id="photoRemove" hidden="">Use the illustration</button></div>
+    </div>
+    <div id="galleryField">
+      <label for="f-gallery">Pre-birthday photos</label>
+      <input id="f-gallery" type="file" accept="image/*" multiple="">
+      <div class="photo-row"><span id="galleryState"></span></div>
+      <div class="thumbs" id="thumbs"></div>
+    </div>
+    <label for="f-name">Birthday child’s name</label><input id="f-name" autocomplete="off">
+    <div class="two">
+      <div><label for="f-date">Party date</label><input id="f-date" type="date"></div>
+      <div><label for="f-rsvpBy">Reply by</label><input id="f-rsvpBy" type="date"></div>
+      <div><label for="f-start">Starts</label><input id="f-start" type="time"></div>
+      <div><label for="f-end">Ends</label><input id="f-end" type="time"></div>
+    </div>
+    <label for="f-venue">Venue name</label><input id="f-venue" autocomplete="off">
+    <label for="f-address">Address</label><input id="f-address" autocomplete="off">
+    <label for="f-note">Good to know</label><textarea id="f-note"></textarea>
+    <label for="f-host">Hosted by</label><input id="f-host" autocomplete="off">
+    <label for="f-rsvpPhone">RSVP phone number</label><input id="f-rsvpPhone" type="tel" autocomplete="off">
+    <p class="err" id="editErr" role="alert"></p>
+  </div>
+  <div class="actions">
+    <button class="cancel" type="button" id="editCancel">Cancel</button>
+    <button class="save" type="button" id="editSave">Save invitation</button>
+  </div>
+</dialog>
+
+<button class="edit-fab" id="signinBtn" type="button" hidden="">Owner sign-in</button>
+<dialog id="signin" aria-labelledby="signinTitle">
+  <div class="panel">
+    <h2 id="signinTitle">Owner sign-in</h2>
+    <p class="hint">We’ll email you a sign-in link. Only the owner account can sign in.</p>
+    <label for="s-email">Email</label><input id="s-email" type="email" autocomplete="email">
+    <p class="err" id="signinErr" role="alert"></p>
+  </div>
+  <div class="actions">
+    <button class="cancel" type="button" id="signinCancel">Cancel</button>
+    <button class="save" type="button" id="signinSend">Send link</button>
+  </div>
+</dialog>
+
+<!-- Fallback only. The real details live in Supabase and are entered through "Edit details". -->
+<script type="application/json" id="party-data">{"name":"Birthday Kid","age":7,"date":"2027-06-12","start":"16:30","end":"19:00","timezone":"Asia/Manila","venue":"Party Venue","address":"123 Example Street, Example City","note":"Come ready to build, play and eat cake. Bright colours encouraged!","rsvpBy":"2027-05-31","rsvpPhone":"0900 000 0000","host":"Host Name","photo":"","photos":[]}</script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const FALLBACK = JSON.parse(document.getElementById("party-data").textContent);
+let PARTY = { ...FALLBACK };
+const $ = id => document.getElementById(id);
+
+const configured = window.supabase && typeof window.SUPABASE_URL === "string" && !/YOUR_/.test(window.SUPABASE_URL + window.SUPABASE_ANON_KEY);
+const sb = configured ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
+let session = null;
+
+// Build the "7" from bricks, dropping in from the bottom up
+const shape = ["XXXXX","....X","...X.","...X.","..X..","..X..","..X.."];
+const colors = ["r","u","y"];
+const seven = $("seven");
+let k = 0;
+shape.forEach((row, r) => [...row].forEach((ch, c) => {
+  const el = document.createElement("div");
+  if (ch === "X") {
+    el.className = "b " + colors[k++ % colors.length];
+    el.style.setProperty("--d", `${450 + (shape.length - 1 - r) * 90 + c * 30}ms`);
+  }
+  seven.appendChild(el);
+}));
+
+const fmtDate = x => x.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+const fmtTime = t => { const [h, m] = String(t || "00:00").split(":").map(Number); return new Date(2000,0,1,h,m).toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}); };
+const bannerArt = $("banner").innerHTML;
+
+function render(){
+  const d = new Date(PARTY.date + "T00:00:00");
+  if (typeof PARTY.photo === "string" && PARTY.photo) {
+    const img = new Image();
+    img.src = PARTY.photo;
+    img.alt = `${PARTY.name} at their birthday`;
+    img.onerror = () => { $("banner").innerHTML = bannerArt; };
+    $("banner").replaceChildren(img);
+  } else {
+    $("banner").innerHTML = bannerArt;
+  }
+  $("title").textContent = `${PARTY.name} is turning ${PARTY.age}!`;
+  $("splashName").textContent = `${PARTY.name} is turning`;
+  document.title = `${PARTY.name}’s ${PARTY.age}th birthday build party`;
+  $("when").textContent = fmtDate(d);
+  $("time").textContent = `${fmtTime(PARTY.start)} to ${fmtTime(PARTY.end)}`;
+  $("venue").textContent = PARTY.venue;
+  $("address").textContent = PARTY.address;
+  $("note").textContent = PARTY.note;
+  $("rsvpBy").textContent = `Please reply by ${fmtDate(new Date((PARTY.rsvpBy || PARTY.date) + "T00:00:00"))}`;
+  $("footer").textContent = `Hosted by ${PARTY.host}, ${PARTY.rsvpPhone}`;
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days = Math.round((d - today) / 86400000);
+  $("countdown").textContent = days > 1 ? `${days} days to go` : days === 1 ? "Tomorrow!" : days === 0 ? "It’s party day!" : "Thanks for celebrating with us!";
+  addStuds($("countdown"), 2);
+
+  const stamp = t => PARTY.date.replace(/-/g,"") + "T" + t.replace(":","") + "00";
+  $("calBtn").href = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+    + "&text=" + encodeURIComponent(`${PARTY.name}’s ${PARTY.age}th birthday party`)
+    + "&dates=" + stamp(PARTY.start) + "/" + stamp(PARTY.end)
+    + "&ctz=" + encodeURIComponent(PARTY.timezone)
+    + "&location=" + encodeURIComponent(`${PARTY.venue}, ${PARTY.address}`);
+  $("mapBtn").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(`${PARTY.venue} ${PARTY.address}`);
+  renderGallery();
+}
+
+// Splash: name, then the brick 7 drops in, then fade to the invitation (tap to skip)
+const splash = $("splash");
+const hideSplash = () => { if (!splash.isConnected || splash.classList.contains("out")) return; splash.classList.add("out"); setTimeout(() => splash.remove(), 550); };
+splash.addEventListener("click", hideSplash);
+
+// RSVP
+let answer = "yes";
+document.querySelectorAll(".choice button").forEach(b => b.addEventListener("click", () => {
+  answer = b.dataset.ans;
+  document.querySelectorAll(".choice button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  $("count").disabled = answer === "no";
+  update();
+}));
+function message(){
+  const who = $("guest").value.trim() || "We";
+  const n = Math.max(1, parseInt($("count").value, 10) || 1);
+  return answer === "yes"
+    ? `Hi! ${who} will be at ${PARTY.name}’s birthday party${n > 1 ? ` (${n} kids)` : ""}. See you there!`
+    : `Hi! Sorry, ${who} can’t make it to ${PARTY.name}’s birthday party. Have a great day!`;
+}
+function update(){ $("status").textContent = ""; }
+$("guest").addEventListener("input", update);
+$("count").addEventListener("input", update);
+async function copyMsg(){
+  try {
+    await navigator.clipboard.writeText(message());
+    $("status").textContent = `Copied. Paste it into Messenger, Viber or a text to ${PARTY.rsvpPhone}.`;
+  } catch {
+    $("status").textContent = `Send this to ${PARTY.rsvpPhone}: ${message()}`;
+  }
+}
+$("smsBtn").addEventListener("click", async () => {
+  if (navigator.share) {
+    try { await navigator.share({ text: message() }); $("status").textContent = "Thanks for replying!"; return; }
+    catch (e) { if (e && e.name === "AbortError") return; }
+  }
+  copyMsg();
+});
+$("copyBtn").addEventListener("click", copyMsg);
+
+// ---------- fun layer: studs + brick confetti ----------
+function addStuds(el, n){
+  el.querySelectorAll(":scope > .studs").forEach(s => s.remove());
+  const s = document.createElement("div"); s.className = "studs"; s.setAttribute("aria-hidden", "true");
+  for (let i = 0; i < n; i++) s.appendChild(document.createElement("span"));
+  el.prepend(s);
+}
+document.querySelectorAll(".details li").forEach(li => addStuds(li, 4));
+const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function burst(n){
+  if (calm) return;
+  const box = document.createElement("div"); box.className = "confetti"; box.setAttribute("aria-hidden", "true");
+  const tones = ["r", "u", "y"];
+  for (let i = 0; i < n; i++) {
+    const b = document.createElement("span");
+    b.className = "b " + tones[i % 3];
+    const w = Math.random() < .5 ? 16 : 28;
+    b.style.cssText = `left:${Math.random() * 96}%;width:${w}px;height:13px;--t:${1.6 + Math.random()}s;--d:${Math.random() * .45}s;--rot:${(Math.random() * 540 - 270) | 0}deg`;
+    box.appendChild(b);
+  }
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 3400);
+}
+splash.addEventListener("transitionend", () => burst(40), { once: true });
+document.querySelector('[data-ans="yes"]').addEventListener("click", () => burst(26));
+
+// ---------- pre-birthday gallery ----------
+let pendingPhotos = [];
+const MAX_PHOTOS = 12;
+const isAsset = u => typeof u === "string" && u.length > 0;
+const lb = document.createElement("dialog");
+lb.className = "lightbox";
+const lbImg = new Image(); lbImg.alt = "Pre-birthday photo";
+lb.appendChild(lbImg);
+lb.addEventListener("click", () => lb.close());
+document.body.appendChild(lb);
+function renderGallery(){
+  const list = (Array.isArray(PARTY.photos) ? PARTY.photos : []).filter(isAsset);
+  $("gallery").hidden = !list.length;
+  $("strip").replaceChildren(...list.map((u, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", `Open photo ${i + 1}`);
+    const img = new Image(); img.src = u; img.alt = ""; img.loading = "lazy";
+    b.appendChild(img);
+    addStuds(b, 2);
+    b.addEventListener("click", () => { lbImg.src = u; lb.showModal(); });
+    return b;
+  }));
+}
+function renderThumbs(){
+  $("thumbs").replaceChildren(...pendingPhotos.map((u, i) => {
+    const d = document.createElement("div");
+    const img = new Image(); img.src = u; img.alt = "";
+    const x = document.createElement("button");
+    x.type = "button"; x.textContent = "×";
+    x.setAttribute("aria-label", `Remove photo ${i + 1}`);
+    x.addEventListener("click", () => { pendingPhotos.splice(i, 1); renderThumbs(); });
+    d.append(img, x);
+    return d;
+  }));
+  $("galleryState").textContent = pendingPhotos.length ? `${pendingPhotos.length} of ${MAX_PHOTOS} photos` : "No photos yet";
+}
+
+// ---------- Supabase: load, sign-in, photos, save ----------
+async function loadParty(){
+  if (!sb) return;
+  try {
+    const { data, error } = await sb.from("party").select("data").eq("id", 1).maybeSingle();
+    if (!error && data && data.data) PARTY = { ...FALLBACK, ...data.data };
+  } catch {}
+}
+async function shrink(file){
+  try {
+    const bmp = await createImageBitmap(file);
+    const k = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+    return await new Promise(r => c.toBlob(b => r(b || file), "image/jpeg", 0.85));
+  } catch { return file; }
+}
+async function uploadPhoto(file){
+  const blob = await shrink(file);
+  const type = blob.type || "image/jpeg";
+  const ext = type === "image/png" ? "png" : type === "image/webp" ? "webp" : "jpg";
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await sb.storage.from("photos").upload(path, blob, { contentType: type });
+  if (error) throw error;
+  return sb.storage.from("photos").getPublicUrl(path).data.publicUrl;
+}
+
+const ownerMode = /[?&#]owner\b/.test(location.search + location.hash);
+function showOwnerButtons(){
+  $("editBtn").hidden = !session;
+  $("signinBtn").hidden = !!session || !ownerMode || !sb;
+}
+async function initOwner(){
+  if (!sb) return;
+  const { data } = await sb.auth.getSession();
+  session = data.session;
+  sb.auth.onAuthStateChange((_e, s) => { session = s; showOwnerButtons(); });
+  showOwnerButtons();
+}
+$("signinBtn").addEventListener("click", () => { $("signinErr").textContent = ""; $("signin").showModal(); $("s-email").focus(); });
+$("signinCancel").addEventListener("click", () => $("signin").close());
+$("signinSend").addEventListener("click", async () => {
+  const email = $("s-email").value.trim();
+  if (!email) { $("signinErr").textContent = "Enter your email."; return; }
+  const btn = $("signinSend"); btn.disabled = true;
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname }
+  });
+  btn.disabled = false;
+  $("signinErr").textContent = error ? "That email can’t sign in here." : "Check your email for the sign-in link.";
+});
+
+const FIELDS = ["name","date","rsvpBy","start","end","venue","address","note","host","rsvpPhone"];
+const dlg = $("editor");
+let pendingPhoto = "", uploading = false;
+$("editBtn").addEventListener("click", () => {
+  FIELDS.forEach(f => { $("f-" + f).value = PARTY[f] || ""; });
+  $("editErr").textContent = "";
+  pendingPhoto = PARTY.photo || "";
+  pendingPhotos = Array.isArray(PARTY.photos) ? PARTY.photos.filter(isAsset) : [];
+  renderThumbs();
+  $("f-photo").value = "";
+  showPhotoState();
+  $("editSave").textContent = "Save invitation"; $("editSave").disabled = false;
+  dlg.showModal();
+  $("f-name").focus();
+});
+function showPhotoState(msg){
+  $("photoState").textContent = msg || (pendingPhoto ? "Your photo is set" : "Showing the illustration");
+  $("photoRemove").hidden = !pendingPhoto;
+}
+$("f-photo").addEventListener("change", async e => {
+  const file = e.target.files && e.target.files[0];
+  if (!file || !session) return;
+  uploading = true; $("editSave").disabled = true; showPhotoState("Uploading photo…");
+  try {
+    pendingPhoto = await uploadPhoto(file);
+    showPhotoState("Photo ready. Save to show it.");
+  } catch {
+    showPhotoState("Couldn’t upload that photo. Try a smaller JPG or PNG.");
+  } finally {
+    uploading = false; $("editSave").disabled = false;
+  }
+});
+$("f-gallery").addEventListener("change", async e => {
+  const files = [...(e.target.files || [])].slice(0, MAX_PHOTOS - pendingPhotos.length);
+  if (!files.length || !session) { e.target.value = ""; return; }
+  uploading = true; $("editSave").disabled = true;
+  let failed = 0;
+  for (const [i, f] of files.entries()) {
+    $("galleryState").textContent = `Uploading ${i + 1} of ${files.length}…`;
+    try { pendingPhotos.push(await uploadPhoto(f)); } catch { failed++; }
+  }
+  uploading = false; $("editSave").disabled = false; e.target.value = "";
+  renderThumbs();
+  if (failed) $("galleryState").textContent += `. ${failed} couldn’t upload.`;
+});
+$("photoRemove").addEventListener("click", () => { pendingPhoto = ""; $("f-photo").value = ""; showPhotoState(); });
+$("editCancel").addEventListener("click", () => dlg.close());
+$("editSave").addEventListener("click", async () => {
+  const next = { ...PARTY };
+  FIELDS.forEach(f => { next[f] = $("f-" + f).value.trim(); });
+  if (!next.name || !next.date || !next.start || !next.end) {
+    $("editErr").textContent = "Add the name, date and start and end times to save.";
+    return;
+  }
+  if (!next.rsvpBy) next.rsvpBy = next.date;
+  if (uploading) return;
+  next.photo = pendingPhoto;
+  next.photos = pendingPhotos;
+  const btn = $("editSave");
+  btn.disabled = true; btn.textContent = "Saving…";
+  try {
+    const { data, error } = await sb.from("party")
+      .update({ data: next, updated_at: new Date().toISOString() })
+      .eq("id", 1).select("id");
+    if (error) throw error;
+    if (!data || !data.length) throw { code: "not_owner" };
+    PARTY = next;
+    render();
+    btn.textContent = "Saved";
+    setTimeout(() => dlg.close(), 600);
+  } catch (e) {
+    btn.disabled = false; btn.textContent = "Save invitation";
+    $("editErr").textContent = e && e.code === "not_owner"
+      ? "This account isn’t set up as the owner, so changes can’t be saved."
+      : "Couldn’t save. Check your connection and try again.";
+  }
+});
+
+// ---------- start ----------
+(async () => {
+  await Promise.race([loadParty(), new Promise(r => setTimeout(r, 3000))]);
+  render();
+  update();
+  setTimeout(hideSplash, calm ? 1500 : 2700);
+  initOwner();
+})();
+</script></body></html>
