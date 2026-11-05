@@ -45,7 +45,7 @@ main{max-width:28rem; margin:0 auto; padding:0 0 5rem}
 .topbar{display:flex; justify-content:space-between; align-items:center; padding:12px 24px; background:var(--blue); color:#fff; font-weight:800; font-size:.8rem; letter-spacing:2px}
 .topbar .age{background:var(--yellow); color:#16181C; font-family:"Lilita One",sans-serif; font-size:1.25rem; letter-spacing:0; padding:4px 10px; border-radius:6px}
 .banner{display:flex; justify-content:center; padding:14px 24px 10px}
-.banner img{display:block; width:min(100%,320px); aspect-ratio:1/1; object-fit:contain}
+.banner img{display:block; width:min(100%,320px); height:auto; aspect-ratio:1/1; object-fit:contain}
 .banner img.photo{object-fit:cover; border-radius:12px}
 .hero{padding:4px 24px 0; text-align:center}
 h1{font-size:clamp(2.1rem,10vw,2.5rem); line-height:1.02; margin:0 0 .5rem}
@@ -201,6 +201,28 @@ input[type=file]{padding:.5rem; min-height:auto}
 dialog.lightbox{width:auto; max-width:94vw; padding:0; background:transparent; box-shadow:none}
 dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 .lightbox img{display:block; max-width:94vw; max-height:86vh; border-radius:8px}
+
+/* ===== tablet: invite as a card on a soft background ===== */
+@media (min-width: 600px){
+  body{background:var(--field)}
+  main{margin:32px auto; background:var(--bg); border-radius:16px; overflow:hidden; box-shadow:0 10px 40px rgba(22,24,28,.10); padding-bottom:0}
+}
+/* ===== desktop: two columns, intro stays in view while the details scroll ===== */
+@media (min-width: 960px){
+  main{max-width:1080px; margin:40px auto; display:grid; grid-template-columns:minmax(360px, 420px) minmax(0, 1fr); grid-template-areas:"top top" "intro steps" "intro foot"}
+  .topbar{grid-area:top; padding:16px 36px; font-size:.9rem}
+  .intro{grid-area:intro; align-self:start; position:sticky; top:24px; padding:20px 12px 24px}
+  .banner{padding:8px 24px 0}
+  .banner img{width:min(100%,320px)}
+  h1{font-size:2.6rem}
+  .steps{grid-area:steps; min-width:0; padding:40px 48px 24px; border-left:2px solid var(--line)}
+  footer{grid-area:foot; padding:16px 48px 36px; border-left:2px solid var(--line)}
+  .strip button{flex:0 0 220px}
+  .rsvp{padding:28px}
+}
+@media (min-width: 960px) and (max-height: 760px){
+  .intro{position:static}
+}
 </style>
 </head>
 <body>
@@ -210,6 +232,7 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 </div>
 <main>
   <div class="topbar"><span id="setNo">BUILD SET Nº 7</span><span class="age" id="ageBadge">7+</span></div>
+  <div class="intro">
   <div class="banner" id="banner"></div>
   <section class="hero">
     <h1 class="display" id="title">Come build with us!</h1>
@@ -222,6 +245,7 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
     </div>
     <p class="cd-done" id="cdDone" hidden=""></p>
   </section>
+  </div>
 
   <div class="steps">
     <div class="step">
