@@ -216,16 +216,18 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
     </section>
 
     <section class="rsvp">
-      <h2 class="display">Step 4: RSVP</h2>
+      <h2 class="display">RSVP</h2>
       <p class="s" id="rsvpBy"></p>
       <div class="choice" role="group" aria-label="Can you come?">
         <button type="button" data-ans="yes" aria-pressed="true">We’ll be there</button>
         <button type="button" data-ans="no" aria-pressed="false">Can’t make it</button>
       </div>
-      <label for="guest">Your child’s name</label>
-      <input id="guest" autocomplete="off" placeholder="e.g. Sam">
+      <label for="guest">Your name</label>
+      <input id="guest" autocomplete="name" placeholder="e.g. Alex">
+      <label for="adults">How many adults are coming?</label>
+      <input id="adults" type="number" inputmode="numeric" min="0" max="10" value="1">
       <label for="count">How many kids are coming?</label>
-      <input id="count" type="number" inputmode="numeric" min="1" max="6" value="1">
+      <input id="count" type="number" inputmode="numeric" min="0" max="10" value="1">
       <div class="btns">
         <button class="btn primary" type="button" id="smsBtn">Send RSVP</button>
         <button class="btn" type="button" id="copyBtn">Copy message</button>
@@ -415,19 +417,23 @@ let answer = "yes";
 document.querySelectorAll(".choice button").forEach(b => b.addEventListener("click", () => {
   answer = b.dataset.ans;
   document.querySelectorAll(".choice button").forEach(x => x.setAttribute("aria-pressed", x === b));
-  $("count").disabled = answer === "no";
+  $("count").disabled = $("adults").disabled = answer === "no";
   update();
 }));
+const num = id => Math.max(0, parseInt($(id).value, 10) || 0);
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 function message(){
   const who = $("guest").value.trim() || "We";
-  const n = Math.max(1, parseInt($("count").value, 10) || 1);
-  return answer === "yes"
-    ? `Hi! ${who} will be at ${PARTY.name}’s birthday party${n > 1 ? ` (${n} kids)` : ""}. See you there!`
-    : `Hi! Sorry, ${who} can’t make it to ${PARTY.name}’s birthday party. Have a great day!`;
+  if (answer !== "yes") return `Hi! Sorry, ${who} can’t make it to ${PARTY.name}’s birthday party. Have a great day!`;
+  const parts = [];
+  const a = num("adults"), c = num("count");
+  if (a) parts.push(plural(a, "adult", "adults"));
+  if (c) parts.push(plural(c, "kid", "kids"));
+  const group = parts.length ? ` (${parts.join(" and ")})` : "";
+  return `Hi! ${who} will be at ${PARTY.name}’s birthday party${group}. See you there!`;
 }
 function update(){ $("status").textContent = ""; }
-$("guest").addEventListener("input", update);
-$("count").addEventListener("input", update);
+["guest", "adults", "count"].forEach(id => $(id).addEventListener("input", update));
 async function copyMsg(){
   try {
     await navigator.clipboard.writeText(message());
