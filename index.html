@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="only light">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>You’re invited to a 7th birthday build party!</title>
 <meta name="description" content="Come build, play and eat cake with us! Tap to see the details and RSVP.">
 <meta property="og:type" content="website">
@@ -31,6 +31,7 @@
   color-scheme:only light;
 }
 *,*::before,*::after{box-sizing:border-box}
+html{touch-action:manipulation; -webkit-text-size-adjust:100%; text-size-adjust:100%}
 body{margin:0; background:var(--bg); color:var(--ink); font:600 1.0625rem/1.5 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)}
 main{max-width:28rem; margin:0 auto; padding:0 0 5rem}
@@ -113,6 +114,7 @@ input:disabled{opacity:.5}
 .btn:active{transform:translateY(1px)}
 .status{min-height:1.4em; font-weight:700; color:var(--soft)}
 .status:empty{min-height:0}
+.status.bad{color:var(--red); font-weight:800; padding:10px 12px; border-radius:8px; background:#FDECEA; border:2px solid var(--red)}
 .rform{display:flex; flex-direction:column; gap:12px}
 .rform[hidden],.replied[hidden]{display:none}
 .replied{display:flex; flex-direction:column; gap:10px; padding:14px 16px; border-radius:8px; background:var(--bg); border:2px solid var(--blue)}
@@ -387,6 +389,8 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 const FALLBACK = JSON.parse(document.getElementById("party-data").textContent);
 let PARTY = { ...FALLBACK };
 const $ = id => document.getElementById(id);
+// iOS Safari ignores user-scalable=no, so block its pinch-zoom gesture too
+document.addEventListener("gesturestart", e => e.preventDefault());
 const HEADER_ART = "assets/cake-header.webp";
 const HEADER_ART_PNG = "assets/cake-header.png";
 
@@ -521,7 +525,8 @@ function message(){
   const group = parts.length ? ` (${parts.join(" and ")})` : "";
   return `Hi! ${who} will be at ${PARTY.name}’s birthday party${group}. See you there!`;
 }
-function update(){ $("status").textContent = ""; }
+function update(){ $("status").textContent = ""; $("status").classList.remove("bad"); }
+function warn(msg, focusId){ $("status").textContent = msg; $("status").classList.add("bad"); if (focusId) $(focusId).focus(); }
 ["guest", "adults", "count"].forEach(id => $(id).addEventListener("input", update));
 async function copyMsg(){
   try {
@@ -597,11 +602,11 @@ let rsvpSending = false;
 $("smsBtn").addEventListener("click", async () => {
   const name = $("guest").value.trim();
   const yes = answer === "yes";
-  if (yes && num("adults") + num("count") === 0) { $("status").textContent = "Add at least 1 adult or kid who’s coming."; $("adults").focus(); return; }
+  if (yes && num("adults") + num("count") === 0) { warn("Add at least 1 adult or kid who’s coming.", "adults"); return; }
   if (sb) {
-    if (!name) { $("status").textContent = "Please add your name first."; $("guest").focus(); return; }
+    if (!name) { warn("Please add your name first.", "guest"); return; }
     if (rsvpSending) return;
-    rsvpSending = true; $("smsBtn").disabled = true; $("status").textContent = "Sending…";
+    rsvpSending = true; $("smsBtn").disabled = true; update(); $("status").textContent = "Sending…";
     const updating = !!(mine.get() && mine.get().name);
     const device = deviceId();
     const row = { name: name.slice(0, 60), attending: yes, adults: yes ? Math.min(10, num("adults")) : 0, kids: yes ? Math.min(10, num("count")) : 0 };
