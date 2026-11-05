@@ -124,6 +124,19 @@ footer{padding:20px 24px 28px; display:flex; align-items:center; gap:12px; color
 /* owner editor */
 .edit-fab{position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom,0px)); z-index:20; min-height:48px; padding:.6rem 1.1rem; border:0; border-radius:999px; cursor:pointer; font:800 1rem "Nunito",system-ui,sans-serif; background:var(--ink); color:var(--bg)}
 .edit-fab[hidden]{display:none}
+.edit-fab.second{bottom:calc(76px + env(safe-area-inset-bottom,0px)); background:var(--blue); color:#fff}
+.totals{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin:1rem 0 .5rem; text-align:center}
+.totals div{border-radius:8px; padding:8px 2px; background:var(--field); font-weight:800; font-size:.72rem; letter-spacing:.5px; color:var(--soft)}
+.totals b{display:block; font-family:"Lilita One",sans-serif; font-weight:400; font-size:1.6rem; line-height:1.1; color:var(--ink)}
+.rlist{list-style:none; margin:0; padding:0}
+.rlist li{display:flex; align-items:center; gap:10px; padding:10px 0; border-top:2px solid var(--line)}
+.rlist .who{flex:1; min-width:0}
+.rlist .who b{display:block; overflow-wrap:anywhere}
+.rlist .who span{color:var(--soft); font-size:.9rem; font-weight:700}
+.rlist .tag{flex:none; font-weight:800; font-size:.8rem; padding:3px 8px; border-radius:999px; color:#fff; background:var(--blue)}
+.rlist .tag.no{background:var(--soft)}
+.rlist .del{flex:none; width:40px; height:40px; border-radius:8px; border:2px solid var(--line); background:transparent; color:var(--ink); font:800 1.1rem/1 "Nunito",sans-serif; cursor:pointer}
+.empty{color:var(--soft); font-weight:700; margin:.5rem 0 0}
 dialog{width:min(100% - 1.5rem,28rem); max-height:90vh; border:0; border-radius:12px; padding:0; background:var(--bg); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(0,0,0,.5)}
 .panel{padding:1.3rem 1.3rem 1rem}
@@ -242,6 +255,25 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
   </footer>
 </main>
 
+<button class="edit-fab second" id="rsvpBtn" type="button" hidden="">RSVPs</button>
+<dialog id="rsvpList" aria-labelledby="rsvpTitle">
+  <div class="panel">
+    <h2 id="rsvpTitle">RSVPs</h2>
+    <p class="hint">Only you can see this list.</p>
+    <div class="totals">
+      <div><b id="t-fam">0</b>COMING</div>
+      <div><b id="t-adults">0</b>ADULTS</div>
+      <div><b id="t-kids">0</b>KIDS</div>
+      <div><b id="t-no">0</b>CAN’T</div>
+    </div>
+    <ul class="rlist" id="rlist"></ul>
+    <p class="err" id="rsvpErr" role="alert"></p>
+  </div>
+  <div class="actions">
+    <button class="cancel" type="button" id="rsvpRefresh">Refresh</button>
+    <button class="save" type="button" id="rsvpClose">Close</button>
+  </div>
+</dialog>
 <button class="edit-fab" id="editBtn" type="button" hidden="">Edit details</button>
 <dialog id="editor" aria-labelledby="editTitle">
   <div class="panel">
@@ -442,7 +474,27 @@ async function copyMsg(){
     $("status").textContent = `Send this to ${PARTY.rsvpPhone}: ${message()}`;
   }
 }
+let rsvpSending = false;
 $("smsBtn").addEventListener("click", async () => {
+  const name = $("guest").value.trim();
+  if (sb) {
+    if (!name) { $("status").textContent = "Please add your name first."; $("guest").focus(); return; }
+    if (rsvpSending) return;
+    rsvpSending = true; $("smsBtn").disabled = true; $("status").textContent = "Sending…";
+    const yes = answer === "yes";
+    const row = { name: name.slice(0, 60), attending: yes, adults: yes ? Math.min(10, num("adults")) : 0, kids: yes ? Math.min(10, num("count")) : 0 };
+    let error = null;
+    try { ({ error } = await sb.from("rsvps").insert(row)); } catch (e) { error = e; }
+    rsvpSending = false; $("smsBtn").disabled = false;
+    if (!error) {
+      $("status").textContent = yes ? `Thanks, ${name}! Your RSVP is in. See you there!` : `Thanks for letting us know, ${name}.`;
+      if (yes) burst(30);
+      if (session && $("rsvpList").open) loadRsvps();
+      return;
+    }
+    console.error("RSVP save failed", error);
+  }
+  // Fallback when saving isn't available: share or copy a message to the host
   if (navigator.share) {
     try { await navigator.share({ text: message() }); $("status").textContent = "Thanks for replying!"; return; }
     catch (e) { if (e && e.name === "AbortError") return; }
@@ -543,8 +595,45 @@ async function uploadPhoto(file){
 }
 
 const ownerMode = /[?&#]owner\b/.test(location.search + location.hash);
+async function loadRsvps(){
+  $("rsvpErr").textContent = "";
+  const { data, error } = await sb.from("rsvps").select("id,created_at,name,attending,adults,kids").order("created_at", { ascending: false });
+  if (error) { $("rsvpErr").textContent = "Couldn’t load RSVPs. " + (error.message || ""); return; }
+  const rows = data || [];
+  const yes = rows.filter(r => r.attending);
+  $("t-fam").textContent = yes.length;
+  $("t-adults").textContent = yes.reduce((s, r) => s + (r.adults || 0), 0);
+  $("t-kids").textContent = yes.reduce((s, r) => s + (r.kids || 0), 0);
+  $("t-no").textContent = rows.length - yes.length;
+  if (!rows.length) { const p = document.createElement("li"); p.className = "empty"; p.textContent = "No replies yet."; $("rlist").replaceChildren(p); return; }
+  $("rlist").replaceChildren(...rows.map(r => {
+    const li = document.createElement("li");
+    const who = document.createElement("div"); who.className = "who";
+    const n = document.createElement("b"); n.textContent = r.name;
+    const meta = document.createElement("span");
+    const when = new Date(r.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    meta.textContent = r.attending ? `${plural(r.adults, "adult", "adults")}, ${plural(r.kids, "kid", "kids")} · ${when}` : when;
+    who.append(n, meta);
+    const tag = document.createElement("span"); tag.className = "tag" + (r.attending ? "" : " no"); tag.textContent = r.attending ? "Coming" : "Can’t";
+    const del = document.createElement("button"); del.type = "button"; del.className = "del"; del.textContent = "×";
+    del.setAttribute("aria-label", `Delete reply from ${r.name}`);
+    del.addEventListener("click", async () => {
+      if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = "✓"; del.setAttribute("aria-label", `Confirm delete of ${r.name}`); setTimeout(() => { del.dataset.armed = ""; del.textContent = "×"; }, 3000); return; }
+      const { error } = await sb.from("rsvps").delete().eq("id", r.id);
+      if (error) { $("rsvpErr").textContent = "Couldn’t delete. " + (error.message || ""); return; }
+      loadRsvps();
+    });
+    li.append(who, tag, del);
+    return li;
+  }));
+}
+$("rsvpBtn").addEventListener("click", () => { $("rsvpList").showModal(); loadRsvps(); });
+$("rsvpRefresh").addEventListener("click", loadRsvps);
+$("rsvpClose").addEventListener("click", () => $("rsvpList").close());
+
 function showOwnerButtons(){
   $("editBtn").hidden = !session;
+  $("rsvpBtn").hidden = !session;
   $("signinBtn").hidden = !!session || !ownerMode || !sb;
 }
 async function initOwner(){
