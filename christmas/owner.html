@@ -100,6 +100,12 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
             <div><label for="f-signoff">Sign-off</label><input id="f-signoff" autocomplete="off" placeholder="with love,"></div>
             <div><label for="f-host">Hosted by</label><input id="f-host" autocomplete="off"></div>
           </div>
+          <label for="f-menu">What’s on our menu</label>
+          <p class="hint">One dish per line. Add who’s bringing it after a dash, if you like. Leave empty to hide the section.</p>
+          <textarea id="f-menu" rows="6" placeholder="Glazed ham&#10;Baked pasta - Family A&#10;Fruit salad&#10;Christmas cookies - the kids"></textarea>
+          <label for="f-program">Program</label>
+          <p class="hint">One item per line: the time, a dash, then what’s happening. Leave empty to hide the section.</p>
+          <textarea id="f-program" rows="6" placeholder="6:00 PM - Welcome and family photos&#10;6:30 PM - Dinner&#10;7:30 PM - Games&#10;8:30 PM - Gift exchange"></textarea>
         </div>
       </div>
       <div class="savebar"><button class="btn red" type="button" id="saveDetails">Save details</button><span class="msg" id="detailsMsg" role="status" style="margin:0"></span></div>
@@ -163,7 +169,7 @@ async function saveEvent(patch){
 }
 
 // details
-const FIELDS = ["title","greeting","date","start","end","venue","address","note","signoff","host"];
+const FIELDS = ["title","greeting","date","start","end","venue","address","note","signoff","host","menu","program"];
 function fillDetails(){ FIELDS.forEach(f => { $("f-" + f).value = EV[f] || ""; }); }
 $("saveDetails").addEventListener("click", async () => {
   const patch = {};

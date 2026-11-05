@@ -30,13 +30,13 @@
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
 body{margin:0; min-height:100vh; color:var(--ink); font:600 1rem/1.5 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
-  background:#0E1B33; padding:0 14px 14px;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+  background:#0E1B33; padding:14px;
+  padding-top:calc(14px + env(safe-area-inset-top,0px)); padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
 
-/* a string of Christmas lights across the top of the page */
-.lights{display:flex; justify-content:space-between; height:58px; margin:0 -14px; padding:0 10px; overflow:hidden}
+/* Christmas lights: the header of the Program section */
+.lights{display:flex; justify-content:space-between; height:54px; padding:0 4px; overflow:hidden}
 .bulb{position:relative; flex:1; display:flex; justify-content:center}
-.bulb::before{content:""; position:absolute; top:-12px; left:0; right:0; height:24px; border-bottom:2px solid #3E5A48; border-radius:0 0 50% 50%}
+.bulb::before{content:""; position:absolute; top:-12px; left:0; right:0; height:24px; border-bottom:2px solid #5E7C6A; border-radius:0 0 50% 50%}
 .bulb i{position:relative; margin-top:12px; width:14px; height:22px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c);
   box-shadow:0 0 10px 2px var(--c), 0 0 22px 6px var(--glow); animation:twinkle 2.6s ease-in-out infinite; animation-delay:var(--d)}
 .bulb i::before{content:""; position:absolute; top:-6px; left:3px; width:8px; height:7px; border-radius:2px; background:#56705F}
@@ -53,7 +53,7 @@ a{color:#0B5CC4; font-weight:800; text-underline-offset:3px}
 a:hover{color:#084391}
 :focus-visible{outline:3px solid var(--blue); outline-offset:2px}
 
-.card{max-width:32rem; margin:6px auto 0; background:var(--card); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.card{max-width:32rem; margin:0 auto; background:var(--card); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .intro,.details{min-width:0}
 .details{display:flex; flex-direction:column}
 .baubles{display:block; width:100%; max-width:460px; height:auto; margin:0 auto}
@@ -80,6 +80,24 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(2.1rem, 9vw, 2.
 .note{margin:10px 28px 0; text-align:center; font-weight:700; line-height:1.5; color:#33363F; white-space:pre-line}
 .sign{margin:8px 0 0; text-align:center; font-size:1.7rem; color:var(--navy)}
 
+.extras{display:grid; grid-template-columns:minmax(0,1fr); gap:30px; padding:30px 22px 0}
+.block{min-width:0}
+.block > h2{margin:6px 0 0; text-align:center; font-weight:800; font-size:1.65rem; color:var(--red-dk)}
+.menu-art{display:block; width:100%; max-width:400px; height:auto; margin:0 auto}
+.menu-list{list-style:none; margin:12px 0 0; padding:0; display:grid; grid-template-columns:minmax(0,1fr); column-gap:26px}
+.menu-list li{display:flex; gap:12px; align-items:baseline; padding:10px 2px; border-bottom:1px dashed #DCD3C3}
+.menu-list li::before{content:""; flex:none; width:10px; height:10px; border-radius:50%; background:var(--dot); transform:translateY(-1px)}
+.menu-list li:nth-child(3n+1){--dot:var(--red)} .menu-list li:nth-child(3n+2){--dot:var(--green)} .menu-list li:nth-child(3n){--dot:var(--blue)}
+.menu-list .dish{font-weight:800}
+.menu-list .by{margin-left:auto; padding-left:8px; text-align:right; color:var(--soft); font-size:.9rem; font-weight:700}
+.prog-head{background:#0E1B33; border-radius:12px 12px 0 0; padding-bottom:14px; text-align:center}
+.prog-head h2{margin:0; font-weight:800; font-size:1.65rem; color:#FFFFFF}
+.prog{list-style:none; margin:0; padding:4px 18px 8px; border:2px solid #0E1B33; border-top:0; border-radius:0 0 12px 12px}
+.prog li{display:grid; grid-template-columns:5.6rem minmax(0,1fr); gap:12px; align-items:baseline; padding:11px 0; border-bottom:1px dashed #DCD3C3}
+.prog li:last-child{border-bottom:0}
+.prog .t{font-weight:800; color:var(--green); white-space:nowrap}
+.prog .what{font-weight:700}
+@media (min-width:560px){ .menu-list.many{grid-template-columns:repeat(2,minmax(0,1fr))} }
 .photos-h{margin:30px 22px 0; display:flex; align-items:center; gap:12px}
 .photos-h span{flex:1; height:2px; background:var(--green)}
 .photos-h h2{margin:0; font-weight:800; font-size:1.65rem; color:var(--red-dk)}
@@ -118,11 +136,13 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 /* computers: full width, invitation on the left, details on the right, photos across the bottom */
 @media (min-width:900px){
   body{padding-left:24px; padding-right:24px}
-  .lights{margin:0 -24px; height:66px}
   .card{max-width:none; width:100%; max-width:1800px; margin-top:10px; display:grid; grid-template-columns:minmax(340px, 1fr) minmax(0, 1.25fr);
     grid-template-areas:"intro details" "photos photos" "foot foot"}
   .intro{grid-area:intro; padding:10px 0 34px; border-right:2px dashed #E3DCCF}
-  .card{grid-template-areas:"intro details" "intro more" "photos photos" "foot foot"}
+  .card{grid-template-areas:"intro details" "intro more" "extras extras" "photos photos" "foot foot"}
+  .extras{grid-area:extras; grid-template-columns:repeat(2,minmax(0,1fr)); gap:40px; padding:34px clamp(24px, 3vw, 48px) 6px; border-top:2px dashed #E3DCCF}
+  .extras.one{grid-template-columns:minmax(0,1fr)}
+  .menu-list.many{grid-template-columns:minmax(0,1fr)}
   .details{grid-area:details; justify-content:flex-end; padding:40px clamp(24px, 4vw, 64px) 0}
   .details .ticket{margin:0}
   .more{grid-area:more; padding:4px clamp(24px, 4vw, 64px) 34px}
@@ -135,7 +155,8 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 }
 /* wide screens: three columns, the details split into the ticket and the note */
 @media (min-width:1280px){
-  .card{grid-template-columns:minmax(360px, 1fr) minmax(0, 1fr) minmax(300px, .8fr); grid-template-areas:"intro details more" "photos photos photos" "foot foot foot"}
+  .card{grid-template-columns:minmax(360px, 1fr) minmax(0, 1fr) minmax(300px, .8fr); grid-template-areas:"intro details more" "extras extras extras" "photos photos photos" "foot foot foot"}
+  .menu-list.many{grid-template-columns:repeat(2,minmax(0,1fr))}
   .details{justify-content:center; padding:36px 28px 34px clamp(24px, 3vw, 48px)}
   .more{grid-area:more; display:flex; flex-direction:column; justify-content:center; padding:36px 48px 34px 28px}
   .more .note{margin:0; text-align:left; font-size:1.08rem}
@@ -145,7 +166,6 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 </style>
 </head>
 <body>
-<div class="lights" id="lights" aria-hidden="true"></div>
 <main class="card">
   <div class="intro">
   <svg class="baubles" aria-hidden="true" viewBox="0 0 362 150">
@@ -207,6 +227,49 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
     <p class="sign script" id="sign"></p>
   </div>
 
+  <div class="extras" id="extras">
+    <section class="block" id="menuBlock" aria-labelledby="menuTitle">
+      <svg class="menu-art" aria-hidden="true" viewBox="0 0 360 92">
+        <line x1="10" y1="84" x2="350" y2="84" stroke="#13774A" stroke-width="2.5" stroke-linecap="round"></line>
+        <path d="M30 82 L30 32 A12 12 0 0 1 54 32 L54 40" stroke="#E3DCCF" stroke-width="14" fill="none" stroke-linecap="round"></path>
+        <path d="M30 82 L30 32 A12 12 0 0 1 54 32 L54 40" stroke="#FFFFFF" stroke-width="10" fill="none" stroke-linecap="round"></path>
+        <path d="M30 82 L30 32 A12 12 0 0 1 54 32 L54 40" stroke="#D7263D" stroke-width="10" fill="none" stroke-dasharray="7 7"></path>
+        <g fill="#B5763A" stroke="#B5763A" stroke-linecap="round">
+          <circle cx="110" cy="27" r="11" stroke="none"></circle>
+          <rect x="97" y="37" width="26" height="28" rx="10" stroke="none"></rect>
+          <line x1="99" y1="45" x2="87" y2="55" stroke-width="10"></line><line x1="121" y1="45" x2="133" y2="55" stroke-width="10"></line>
+          <line x1="104" y1="62" x2="99" y2="80" stroke-width="10"></line><line x1="116" y1="62" x2="121" y2="80" stroke-width="10"></line>
+        </g>
+        <circle cx="106" cy="25" r="1.8" fill="#FFFFFF"></circle><circle cx="114" cy="25" r="1.8" fill="#FFFFFF"></circle>
+        <path d="M106 30 Q110 33 114 30" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linecap="round"></path>
+        <circle cx="110" cy="45" r="2.6" fill="#D7263D"></circle><circle cx="110" cy="54" r="2.6" fill="#13774A"></circle>
+        <ellipse cx="180" cy="80" rx="34" ry="5" fill="#E3DCCF"></ellipse>
+        <path d="M152 78 A28 28 0 0 1 208 78 Z" fill="#6B3A1E"></path>
+        <path d="M156 60 Q164 50 180 50 Q196 50 204 60 Q199 65 195 60 Q190 67 184 61 Q178 68 172 61 Q166 66 162 61 Q158 64 156 60 Z" fill="#FFF6E5"></path>
+        <ellipse cx="171" cy="45" rx="9" ry="4.5" fill="#13774A" transform="rotate(-25 171 45)"></ellipse>
+        <ellipse cx="189" cy="45" rx="9" ry="4.5" fill="#169055" transform="rotate(25 189 45)"></ellipse>
+        <circle cx="177" cy="48" r="3.6" fill="#D7263D"></circle><circle cx="184" cy="48" r="3.6" fill="#B3172B"></circle><circle cx="180.5" cy="43" r="3.6" fill="#D7263D"></circle>
+        <polygon points="250,30 255.9,45.9 272.8,46.6 259.5,57.1 264.1,73.4 250,64 235.9,73.4 240.5,57.1 227.2,46.6 244.1,45.9" fill="#E0A93B" stroke="#C98D22" stroke-width="2" stroke-linejoin="round"></polygon>
+        <circle cx="250" cy="54" r="3" fill="#FFFFFF"></circle><circle cx="243" cy="51" r="1.6" fill="#FFFFFF"></circle><circle cx="257" cy="51" r="1.6" fill="#FFFFFF"></circle>
+        <path d="M313 36 q-4 -6 0 -12 q4 -6 0 -12 M325 36 q-4 -6 0 -12 q4 -6 0 -12" stroke="#B9B2A6" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+        <path d="M335 54 h5 a8 8 0 0 1 0 16 h-5" stroke="#1F6FE5" stroke-width="5" fill="none"></path>
+        <rect x="303" y="44" width="33" height="38" rx="5" fill="#1F6FE5"></rect>
+        <rect x="303" y="60" width="33" height="6" fill="#FFFFFF" opacity=".75"></rect>
+        <ellipse cx="319.5" cy="45" rx="15" ry="3.5" fill="#6B3A1E"></ellipse>
+        <rect x="311" y="40" width="6" height="5" rx="1" fill="#FFFFFF"></rect><rect x="320" y="39" width="6" height="5" rx="1" fill="#FFFFFF"></rect>
+      </svg>
+      <h2 class="serif" id="menuTitle">What’s on our menu</h2>
+      <ul class="menu-list" id="menuList"></ul>
+    </section>
+    <section class="block" id="progBlock" aria-labelledby="progTitle">
+      <div class="prog-head">
+        <div class="lights" id="lights" aria-hidden="true"></div>
+        <h2 class="serif" id="progTitle">Program</h2>
+      </div>
+      <ol class="prog" id="progList"></ol>
+    </section>
+  </div>
+
   <section class="photos" aria-labelledby="photosTitle">
     <div class="photos-h"><span aria-hidden="true"></span><h2 class="serif" id="photosTitle">Party photos</h2><span aria-hidden="true"></span></div>
     <p class="photos-sub" id="photosSub">Snaps from the night show up here after the party.</p>
@@ -217,7 +280,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 </main>
 
 <!-- Fallback only. The real details live in Supabase and are entered in owner.html. -->
-<script type="application/json" id="event-data">{"title":"The Family Clan Christmas Party","greeting":"Merry Christmas","date":"2026-12-20","start":"18:00","end":"","timezone":"Asia/Manila","venue":"Party Venue","address":"123 Example Street, Example City","note":"Bring a dish to share and a wrapped gift for the exchange. Festive outfits encouraged.","signoff":"with love,","host":"Host Name","photos":[],"driveFeed":""}</script>
+<script type="application/json" id="event-data">{"title":"The Family Clan Christmas Party","greeting":"Merry Christmas","date":"2026-12-20","start":"18:00","end":"","timezone":"Asia/Manila","venue":"Party Venue","address":"123 Example Street, Example City","note":"Bring a dish to share and a wrapped gift for the exchange. Festive outfits encouraged.","signoff":"with love,","host":"Host Name","menu":"","program":"","photos":[],"driveFeed":""}</script>
 <script src="../config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
@@ -228,9 +291,11 @@ let EV = { ...FALLBACK };
 const configured = window.supabase && typeof window.SUPABASE_URL === "string" && !/YOUR_/.test(window.SUPABASE_URL + window.SUPABASE_ANON_KEY);
 const sb = configured ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
 
-// Christmas lights: one bulb per ~54px of screen width, rebuilt when the width changes
+// Christmas lights across the Program header: one bulb per ~44px, rebuilt when the width changes
 function hangLights(){
-  const n = Math.max(6, Math.round(innerWidth / 54));
+  const w = $("lights").clientWidth;
+  if (!w) return;
+  const n = Math.max(5, Math.round(w / 44));
   const box = $("lights");
   if (box.children.length === n) return;
   box.replaceChildren(...Array.from({ length: n }, (_, i) => {
@@ -239,7 +304,6 @@ function hangLights(){
     b.appendChild(g); return b;
   }));
 }
-hangLights();
 let lightsT; addEventListener("resize", () => { clearTimeout(lightsT); lightsT = setTimeout(hangLights, 150); });
 
 // old ?owner links go to the owner page
@@ -277,7 +341,25 @@ function render(){
     + "&details=" + encodeURIComponent(EV.note || "");
   $("mapBtn").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([EV.venue, EV.address].filter(Boolean).join(" "));
   $("mapBtn").hidden = !(EV.venue || EV.address);
+  renderLists();
   renderGallery();
+}
+
+// Menu ("Dish - note") and program ("6:00 PM - Dinner"), one per line, typed in owner.html
+const lines = v => String(v || "").split("\n").map(x => x.trim()).filter(Boolean);
+const pair = l => { const m = l.match(/^(.*?)\s+[-–—|]\s+(.*)$/); return m ? [m[1].trim(), m[2].trim()] : [l, ""]; };
+function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+function renderLists(){
+  const menu = lines(EV.menu).map(pair), prog = lines(EV.program).map(pair);
+  $("menuList").replaceChildren(...menu.map(([dish, by]) => { const li = el("li"); li.append(el("span", "dish", dish)); if (by) li.append(el("span", "by", by)); return li; }));
+  $("menuList").classList.toggle("many", menu.length > 5);
+  // a program line with no " - " is just an activity, with no time
+  $("progList").replaceChildren(...prog.map(([a, b]) => { const li = el("li"); li.append(el("span", "t", b ? a : ""), el("span", "what", b || a)); return li; }));
+  $("menuBlock").hidden = !menu.length;
+  $("progBlock").hidden = !prog.length;
+  $("extras").hidden = !menu.length && !prog.length;
+  $("extras").classList.toggle("one", !menu.length || !prog.length);
+  hangLights();
 }
 
 // ---------- photo viewer: swipe or arrows, counter, download ----------
