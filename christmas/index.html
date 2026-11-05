@@ -30,13 +30,13 @@
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%; text-size-adjust:100%}
 body{margin:0; min-height:100vh; color:var(--ink); font:600 1rem/1.5 "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
-  background:var(--night); padding:14px; padding-top:calc(14px + env(safe-area-inset-top,0px)); padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+  background:var(--night); padding:0 14px 14px; padding-top:env(safe-area-inset-top,0px); padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
 .serif{font-family:"Playfair Display", Georgia, serif}
 .script{font-family:"Great Vibes", "Segoe Script", cursive; font-weight:400}
 [hidden]{display:none !important}
 :focus-visible{outline:3px solid var(--blue); outline-offset:2px}
 
-.card{max-width:32rem; margin:0 auto; background:var(--card); border-radius:14px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.card{max-width:32rem; margin:0 auto; background:var(--card); border-radius:0 0 14px 14px; overflow:hidden; box-shadow:0 10px 40px rgba(0,0,0,.35)}
 .cols{display:flex; flex-direction:column}
 .col{min-width:0; padding:0 22px 30px}
 .col + .col{border-top:2px dashed var(--rule); padding-top:28px}
@@ -140,7 +140,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 @media (min-width:700px){ .grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
 /* laptops: invitation across the top, menu and program side by side under it */
 @media (min-width:760px){
-  body{padding:24px}
+  body{padding:0 24px 24px; padding-top:env(safe-area-inset-top,0px)}
   .card{max-width:1800px; width:100%}
   .cols{flex-direction:row; flex-wrap:wrap}
   .col{flex:1 1 0; padding:0 clamp(22px, 2.6vw, 40px) 34px}
