@@ -137,6 +137,23 @@ footer{padding:20px 24px 28px; display:flex; align-items:center; gap:12px; color
 .rlist .tag.no{background:var(--soft)}
 .rlist .del{flex:none; width:40px; height:40px; border-radius:8px; border:2px solid var(--line); background:transparent; color:var(--ink); font:800 1.1rem/1 "Nunito",sans-serif; cursor:pointer}
 .empty{color:var(--soft); font-weight:700; margin:.5rem 0 0}
+dialog.thanks{width:min(100% - 2rem,22rem); text-align:center; overflow:visible}
+dialog.thanks::backdrop{background:rgba(0,0,0,.35)}
+.thanks .panel{padding:1.6rem 1.4rem 1.4rem; display:flex; flex-direction:column; align-items:center; gap:.5rem}
+.stack{display:flex; flex-direction:column; align-items:center; margin:-3.2rem 0 .4rem}
+.stack .b{height:26px; border-radius:3px; animation:drop .5s cubic-bezier(.3,1.5,.6,1) both}
+.stack .b::before{content:""; position:absolute; top:-7px; left:14%; width:24%; height:7px; border-radius:3px 3px 0 0; background:var(--c)}
+.stack .b::after{content:""; position:absolute; top:-7px; right:14%; width:24%; height:7px; border-radius:3px 3px 0 0; background:var(--c)}
+.stack .b:nth-child(1){width:52px; animation-delay:.45s} .stack .b:nth-child(2){width:84px; animation-delay:.25s} .stack .b:nth-child(3){width:116px; animation-delay:.05s}
+.thanks h2{font-family:"Lilita One",sans-serif; font-weight:400; font-size:2rem; line-height:1.05; margin:.4rem 0 0}
+.thanks .sum{margin:0; font-weight:800; font-size:1.06rem}
+.thanks .sub{margin:0; color:var(--soft); font-weight:700}
+.thanks .row{display:grid; grid-template-columns:1fr; gap:8px; width:100%; margin-top:.8rem}
+.thanks .row a,.thanks .row button{display:flex; align-items:center; justify-content:center; min-height:50px; border-radius:8px; font:800 1rem "Nunito",sans-serif; text-decoration:none; cursor:pointer}
+.thanks .row a{background:var(--blue); color:#fff; box-shadow:inset 0 -4px 0 var(--blue-dk)}
+.thanks .row a[hidden]{display:none}
+.thanks .row button{background:transparent; color:var(--ink); border:2px solid var(--line)}
+@media (prefers-reduced-motion: reduce){ .stack .b{animation:none} }
 dialog{width:min(100% - 1.5rem,28rem); max-height:90vh; border:0; border-radius:12px; padding:0; background:var(--bg); color:var(--ink); box-shadow:0 20px 60px rgba(0,0,0,.35)}
 dialog::backdrop{background:rgba(0,0,0,.5)}
 .panel{padding:1.3rem 1.3rem 1rem}
@@ -255,6 +272,18 @@ dialog.lightbox::backdrop{background:rgba(0,0,0,.85)}
 </main>
 
 <button class="edit-fab second" id="rsvpBtn" type="button" hidden="">RSVPs</button>
+<dialog class="thanks" id="thanks" aria-labelledby="thanksTitle">
+  <div class="panel">
+    <div class="stack" aria-hidden="true"><span class="b y"></span><span class="b u"></span><span class="b r"></span></div>
+    <h2 id="thanksTitle"></h2>
+    <p class="sum" id="thanksSum"></p>
+    <p class="sub" id="thanksSub"></p>
+    <div class="row">
+      <a id="thanksCal" target="_blank" rel="noopener">Add to calendar</a>
+      <button type="button" id="thanksClose">Done</button>
+    </div>
+  </div>
+</dialog>
 <dialog id="rsvpList" aria-labelledby="rsvpTitle">
   <div class="panel">
     <h2 id="rsvpTitle">RSVPs</h2>
@@ -473,6 +502,34 @@ async function copyMsg(){
     $("status").textContent = `Send this to ${PARTY.rsvpPhone}: ${message()}`;
   }
 }
+function showThanks(name, yes, adults, kids){
+  const dlgT = $("thanks");
+  const first = name.split(/\s+/)[0];
+  const d = new Date(PARTY.date + "T00:00:00");
+  if (yes) {
+    const parts = [];
+    if (adults) parts.push(plural(adults, "adult", "adults"));
+    if (kids) parts.push(plural(kids, "kid", "kids"));
+    $("thanksTitle").textContent = `You’re in, ${first}!`;
+    $("thanksSum").textContent = parts.length ? `RSVP saved for ${parts.join(" and ")}.` : "Your RSVP is saved.";
+    $("thanksSub").textContent = `See you ${fmtDate(d)} at ${fmtTime(PARTY.start)}. Come ready to build!`;
+    $("thanksCal").href = $("calBtn").href;
+    $("thanksCal").hidden = false;
+  } else {
+    $("thanksTitle").textContent = `Thanks, ${first}!`;
+    $("thanksSum").textContent = "We’ll miss you at the party.";
+    $("thanksSub").textContent = `Thanks for letting ${PARTY.host || "us"} know.`;
+    $("thanksCal").hidden = true;
+  }
+  // restart the brick-stack animation each time
+  dlgT.querySelectorAll(".stack .b").forEach(b => { b.style.animation = "none"; void b.offsetWidth; b.style.animation = ""; });
+  dlgT.showModal();
+  if (yes) burst(30);
+  $("guest").value = ""; $("adults").value = "1"; $("count").value = "1";
+}
+$("thanksClose").addEventListener("click", () => $("thanks").close());
+$("thanks").addEventListener("click", e => { if (e.target === $("thanks")) $("thanks").close(); });
+
 let rsvpSending = false;
 $("smsBtn").addEventListener("click", async () => {
   const name = $("guest").value.trim();
@@ -486,8 +543,8 @@ $("smsBtn").addEventListener("click", async () => {
     try { ({ error } = await sb.from("rsvps").insert(row)); } catch (e) { error = e; }
     rsvpSending = false; $("smsBtn").disabled = false;
     if (!error) {
-      $("status").textContent = yes ? `Thanks, ${name}! Your RSVP is in. See you there!` : `Thanks for letting us know, ${name}.`;
-      if (yes) burst(30);
+      $("status").textContent = "";
+      showThanks(name, yes, row.adults, row.kids);
       if (session && $("rsvpList").open) loadRsvps();
       return;
     }
