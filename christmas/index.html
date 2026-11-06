@@ -571,10 +571,14 @@ async function loadEvent(){
 }
 // Splash: stays until the details are in and the fonts have loaded (at least a moment, at most a few seconds); tap to skip
 const splashStart = performance.now();
+// always open at the very top: phones otherwise restore the last scroll position behind the splash
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+const toTop = () => { if (!PV) window.scrollTo(0, 0); };
+toTop();
 function hideSplash(){
   const sp = $("splash");
   if (!sp || sp.classList.contains("out")) return;
-  setTimeout(() => { sp.classList.add("out"); setTimeout(() => sp.remove(), 600); }, Math.max(0, 900 - (performance.now() - splashStart)));
+  setTimeout(() => { toTop(); sp.classList.add("out"); setTimeout(() => sp.remove(), 600); }, Math.max(0, 900 - (performance.now() - splashStart)));
 }
 $("splash").addEventListener("click", hideSplash);
 (async () => {
