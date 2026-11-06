@@ -49,19 +49,19 @@ body{margin:0; min-height:100vh; color:var(--ink); font:600 1rem/1.5 "Nunito", s
 .head{text-align:center; display:flex; flex-direction:column; align-items:center}
 .coming{margin:0; font-size:2.5rem; line-height:1.05; color:var(--red-dk)}
 .andso{margin:8px 0 2px; font-weight:800; font-size:.95rem; letter-spacing:1px; color:var(--green)}
-h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.9rem, 8vw, 2.4rem); line-height:1.08; letter-spacing:.5px; text-transform:uppercase; color:var(--navy)}
+h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.45rem, 6.4vw, 2.3rem); line-height:1.08; letter-spacing:.5px; text-transform:uppercase; color:var(--navy)}
 
 .cd-title{margin:26px 0 14px; text-align:center; font-weight:800; font-size:.78rem; letter-spacing:4px; color:var(--soft)}
 /* countdown as wrapped presents: a box, a wider lid with a gold ribbon, and a bow on top */
-.countdown{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; padding-top:40px}
-.gift{position:relative; margin:0 4px; padding:16px 2px 10px; border-radius:2px 2px 6px 6px; text-align:center; color:#fff; background:var(--c);
+.countdown{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:16px; padding-top:40px}
+.gift{position:relative; margin:0 4px; padding:9px 2px 6px; border-radius:2px 2px 6px 6px; text-align:center; color:#fff; background:var(--c);
   box-shadow:inset 0 -6px 0 rgba(0,0,0,.16), 0 4px 10px rgba(14,27,51,.18)}
 .gift .lid{position:absolute; left:-5px; right:-5px; top:-13px; height:15px; border-radius:3px; background:var(--lid);
   box-shadow:0 3px 0 rgba(0,0,0,.18)}
 .gift .lid::before{content:""; position:absolute; left:50%; top:0; bottom:0; width:12px; margin-left:-6px; background:#F2C14E; box-shadow:inset 2px 0 0 rgba(255,255,255,.35), inset -2px 0 0 rgba(0,0,0,.12)}
 .gift .bow{position:absolute; left:50%; top:-44px; width:58px; height:35px; margin-left:-29px}
-.gift b{position:relative; display:block; font-family:"Playfair Display", Georgia, serif; font-weight:800; font-size:clamp(1.6rem, 7vw, 2rem); line-height:1.05; font-variant-numeric:tabular-nums}
-.gift small{position:relative; font-weight:800; font-size:.64rem; letter-spacing:1.5px; opacity:.92}
+.gift b{position:relative; display:block; font-family:"Playfair Display", Georgia, serif; font-weight:800; font-size:clamp(1.3rem, 5.6vw, 1.7rem); line-height:1; font-variant-numeric:tabular-nums}
+.gift small{position:relative; font-weight:800; font-size:.6rem; letter-spacing:1.5px; opacity:.92}
 .gift.r{--c:#D7263D; --lid:#B3172B} .gift.g{--c:#169055; --lid:#13774A} .gift.n{--c:#1A4C8F; --lid:#0B2E5C}
 .cd-done{margin:24px 0 0; padding:14px; border-radius:10px; text-align:center; background:var(--green); color:#fff; font-family:"Playfair Display", Georgia, serif; font-weight:800; font-size:1.3rem}
 
@@ -245,7 +245,6 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
           <h1 class="serif" id="title">Family Christmas Party</h1>
         </header>
 
-        <p class="cd-title" id="cdTitle">COUNTDOWN</p>
         <div class="countdown" id="countdown" role="timer" aria-label="Time until the party">
           <div class="gift r"><span class="lid"></span><svg class="bow" aria-hidden="true" viewBox="0 0 46 28"><path d="M23 22 C14 4 2 4 3 13 C4 21 15 22 23 22 Z" fill="#F2C14E" stroke="#C99A2E" stroke-width="1.5"/><path d="M23 22 C32 4 44 4 43 13 C42 21 31 22 23 22 Z" fill="#F2C14E" stroke="#C99A2E" stroke-width="1.5"/><path d="M10 12 C14 11 18 15 21 20 M36 12 C32 11 28 15 25 20" stroke="#C99A2E" stroke-width="1.2" fill="none"/><rect x="19" y="17" width="8" height="10" rx="3" fill="#E0A93B"/></svg><b id="cd-d">0</b><small>DAYS</small></div>
           <div class="gift g"><span class="lid"></span><svg class="bow" aria-hidden="true" viewBox="0 0 46 28"><path d="M23 22 C14 4 2 4 3 13 C4 21 15 22 23 22 Z" fill="#F2C14E" stroke="#C99A2E" stroke-width="1.5"/><path d="M23 22 C32 4 44 4 43 13 C42 21 31 22 23 22 Z" fill="#F2C14E" stroke="#C99A2E" stroke-width="1.5"/><path d="M10 12 C14 11 18 15 21 20 M36 12 C32 11 28 15 25 20" stroke="#C99A2E" stroke-width="1.2" fill="none"/><rect x="19" y="17" width="8" height="10" rx="3" fill="#E0A93B"/></svg><b id="cd-h">00</b><small>HOURS</small></div>
@@ -352,16 +351,16 @@ function startCountdown(){
   if (end <= start) end += 24 * 3600e3;
   const step = () => {
     const now = Date.now();
-    if (isNaN(start)) { $("countdown").hidden = $("cdTitle").hidden = true; return; }
+    if (isNaN(start)) { $("countdown").hidden = true; return; }
     if (now >= start) {
-      $("countdown").hidden = $("cdTitle").hidden = true;
+      $("countdown").hidden = true;
       $("cdDone").hidden = false;
       $("cdDone").textContent = now < end ? "The party is on!" : "Merry Christmas! Thanks for celebrating with us.";
       if (now >= end) clearInterval(cdTimer);
       return;
     }
     const t = Math.floor((start - now) / 1000);
-    $("countdown").hidden = $("cdTitle").hidden = false; $("cdDone").hidden = true;
+    $("countdown").hidden = false; $("cdDone").hidden = true;
     $("cd-d").textContent = Math.floor(t / 86400);
     $("cd-h").textContent = pad(Math.floor(t % 86400 / 3600));
     $("cd-m").textContent = pad(Math.floor(t % 3600 / 60));
