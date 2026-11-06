@@ -140,7 +140,17 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.9rem, 8vw, 2.
 .photos-h span{flex:1; height:2px; background:var(--green)}
 .photos-h h2{margin:0; font-weight:800; font-size:1.65rem; color:var(--red-dk)}
 .photos-sub{margin:6px 0 0; text-align:center; font-weight:700; color:var(--soft)}
-.grid{margin:20px 0 0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px 14px}
+/* party photos: one sideways-scrolling strip that snaps photo by photo */
+.strip-wrap{position:relative; margin-top:12px}
+.grid{display:flex; gap:16px; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x mandatory; scroll-padding:0 4px;
+  padding:16px 4px 18px; scrollbar-width:thin; scrollbar-color:#D9CFBF transparent}
+.grid:focus-visible{outline:3px solid var(--blue); outline-offset:2px; border-radius:6px}
+.grid button{flex:0 0 66%; max-width:260px; scroll-snap-align:start}
+.sbtn{position:absolute; z-index:2; top:50%; width:46px; height:46px; margin-top:-23px; border-radius:50%; border:0; cursor:pointer;
+  background:#FFFFFF; color:var(--navy); font:800 1.8rem/1 "Nunito",sans-serif; box-shadow:0 4px 14px rgba(14,27,51,.22); display:flex; align-items:center; justify-content:center}
+.sbtn.prev{left:-6px} .sbtn.next{right:-6px}
+.sbtn:hover{background:var(--navy); color:#FFFFFF}
+@media (hover:none){ .sbtn{display:none !important} }
 .grid button{position:relative; display:block; width:100%; border:0; padding:6px; background:#FFFFFF; box-shadow:0 3px 10px rgba(0,0,0,.14); cursor:pointer}
 .grid button::before{content:""; position:absolute; z-index:1; top:-9px; left:50%; width:54px; height:16px; margin-left:-27px; background:var(--tape); opacity:.85; transform:rotate(var(--tilt))}
 .grid button:nth-child(3n+1){--tape:var(--red); --tilt:-4deg}
@@ -168,7 +178,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 
 @media (prefers-reduced-motion: reduce){ .orn,.bulb i,.menu-art *,.cane-frame::before{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
 
-@media (min-width:700px){ .grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
+@media (min-width:700px){ .grid button{flex-basis:240px} }
 /* laptops: invitation across the top, menu and program side by side under it */
 @media (min-width:760px){
   body{padding:0 24px 24px; padding-top:env(safe-area-inset-top,0px)}
@@ -181,14 +191,12 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
   .invite .inner{max-width:560px; margin:0 auto}
   .menu + .program{border-left:2px dashed var(--rule)}
   .photos{padding:30px clamp(22px, 2.6vw, 40px) 6px}
-  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
 /* computers: three columns side by side, photos below all three */
 @media (min-width:1150px){
   .invite{flex:1.15 1 0; border-bottom:0; margin-bottom:0}
   .menu,.program{padding-top:34px}
   .col + .col{border-left:2px dashed var(--rule)}
-  .grid{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
 </style>
 </head>
@@ -277,7 +285,11 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
   <section class="photos" aria-labelledby="photosTitle">
     <div class="photos-h"><span aria-hidden="true"></span><h2 class="serif" id="photosTitle">Party photos</h2><span aria-hidden="true"></span></div>
     <p class="photos-sub" id="photosSub">Snaps from the night show up here after the party.</p>
-    <div class="grid" id="grid"></div>
+    <div class="strip-wrap">
+      <button type="button" class="sbtn prev" id="stripPrev" aria-label="Scroll photos left" hidden="">‹</button>
+      <div class="grid" id="grid" tabindex="0" aria-label="Party photos, scroll sideways"></div>
+      <button type="button" class="sbtn next" id="stripNext" aria-label="Scroll photos right" hidden="">›</button>
+    </div>
   </section>
 
   <p class="foot script">Happy Holidays</p>
@@ -488,7 +500,19 @@ function renderGallery(){
     ...DRIVE.map(id => ({ thumb: driveImg(id, 800), full: driveImg(id, 2000), dl: `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}` }))];
   $("grid").replaceChildren(...items.map((it, i) => photoButton(it, i, items)));
   $("photosSub").textContent = subText("photosNote", items.length ? SUBS.photosSome : SUBS.photosNone);
+  $("grid").scrollLeft = 0;
+  requestAnimationFrame(updateArrows); setTimeout(updateArrows, 300);
 }
+
+function updateArrows(){
+  const g = $("grid"), max = g.scrollWidth - g.clientWidth;
+  $("stripPrev").hidden = g.scrollLeft <= 4;
+  $("stripNext").hidden = max <= 4 || g.scrollLeft >= max - 4;
+}
+$("grid").addEventListener("scroll", updateArrows, { passive: true });
+addEventListener("resize", updateArrows);
+$("stripPrev").addEventListener("click", () => $("grid").scrollBy({ left: -$("grid").clientWidth * .8, behavior: "smooth" }));
+$("stripNext").addEventListener("click", () => $("grid").scrollBy({ left: $("grid").clientWidth * .8, behavior: "smooth" }));
 
 // ---------- start ----------
 async function loadEvent(){
