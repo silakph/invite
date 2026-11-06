@@ -50,7 +50,10 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
 .thumbs{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:10px}
 .thumbs div{position:relative}
 .thumbs img{display:block; width:100%; aspect-ratio:1; object-fit:cover; border-radius:6px; background:var(--field)}
-.thumbs button{position:absolute; top:3px; right:3px; width:30px; height:30px; border-radius:50%; border:0; background:rgba(0,0,0,.72); color:#fff; font-weight:800; cursor:pointer}
+.thumbs .x{position:absolute; top:3px; right:3px; width:30px; height:30px; border-radius:50%; border:0; background:rgba(0,0,0,.72); color:#fff; font-weight:800; cursor:pointer}
+.thumbs .star{position:absolute; top:3px; left:3px; min-width:30px; height:30px; padding:0 6px; border-radius:999px; border:0; background:rgba(255,255,255,.92); color:#8A6A10; font-weight:800; font-size:.95rem; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.thumbs .star.on{background:#F2B92E; color:#1A1C22}
+.thumbs .src{position:absolute; bottom:4px; left:4px; padding:1px 6px; border-radius:4px; background:rgba(0,0,0,.6); color:#fff; font-size:.7rem; font-weight:800}
 .signin{max-width:24rem; margin:10vh auto 0}
 .tabs button{padding:.6rem .3rem}
 .btn.ghost{background:transparent; color:var(--green); border:2px solid var(--green)}
@@ -164,7 +167,7 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
     <div class="photos">
       <div class="card">
         <h2 class="serif">Party photos</h2>
-        <p class="hint">Up to 60. They save as soon as they upload and show on the invite right away.</p>
+        <p class="hint">Up to 60. They save as soon as they upload and show on the invite right away. Tap ☆ on any photo, including Drive ones, to show it first. Starred photos lead in the order you star them.</p>
         <label for="f-photosNote">Text under “Party photos”</label>
         <div class="savebar" style="margin-top:0"><input id="f-photosNote" autocomplete="off" maxlength="160" placeholder="Snaps from the night show up here after the party." style="flex:1; min-width:12rem"><button class="btn" type="button" id="photosNoteSave">Save text</button></div>
         <p class="msg" id="photosNoteMsg" role="status"></p>
@@ -174,7 +177,7 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
       </div>
       <div class="card">
         <h2 class="serif">Google Drive folder</h2>
-        <p class="hint">Optional. Use a separate Drive folder and a separate copy of the photo script (drive-photos.gs) for Christmas, then paste its web app link here. Drive photos show after the uploaded ones.</p>
+        <p class="hint">Optional. Use a separate Drive folder and a separate copy of the photo script (drive-photos.gs) for Christmas, then paste its web app link here. Drive photos show after the uploaded ones, unless you star them.</p>
         <label for="p-drive">Web app link</label>
         <input id="p-drive" type="url" inputmode="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec">
         <div class="savebar" style="margin-top:10px"><button class="btn" type="button" id="driveSave">Save &amp; test</button></div>
@@ -376,20 +379,60 @@ async function uploadPhoto(file){
   if (error) throw error;
   return sb.storage.from("photos").getPublicUrl(path).data.publicUrl;
 }
+// Photos from the connected Google Drive folder, so they can be starred too (fetched once per visit)
+let DRIVE_IDS = null;
+const driveThumb = id => `https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w400`;
+async function loadDriveIds(){
+  DRIVE_IDS = [];
+  if (!isFeed(EV.driveFeed || "")) return;
+  try {
+    const j = await (await fetch(EV.driveFeed)).json();
+    if (j && j.ok && Array.isArray(j.photos)) DRIVE_IDS = j.photos.map(p => p && p.id).filter(id => typeof id === "string" && /^[\w-]{10,}$/.test(id));
+  } catch {}
+}
+// Starred photos show first on the invite, in the order they were starred.
+// Keys: an uploaded photo's address, or "drive:<id>" for a Drive photo.
+const featured = () => (Array.isArray(EV.featured) ? EV.featured : []).filter(k => typeof k === "string");
+async function toggleStar(key, btn){
+  const now = featured();
+  const next = now.includes(key) ? now.filter(k => k !== key) : [...now, key];
+  btn.disabled = true;
+  try { await saveEvent({ featured: next }); say("photosMsg", now.includes(key) ? "Unstarred." : `Starred. It shows ${ordinal(next.length)} on the invite.`); }
+  catch (e) { say("photosMsg", "Couldn’t save. " + errText(e), true); }
+  renderPhotos();
+}
+const ordinal = n => n + (["th", "st", "nd", "rd"][(n % 100 > 10 && n % 100 < 14) ? 0 : n % 10] || "th");
 function renderPhotos(){
   const list = listOf();
   if (document.activeElement !== $("p-drive")) $("p-drive").value = EV.driveFeed || "";
-  $("thumbs").replaceChildren(...list.map((u, i) => {
+  if (DRIVE_IDS === null) { loadDriveIds().then(renderPhotos); }
+  const feat = featured();
+  const all = [
+    ...list.map(u => ({ key: u, src: u, upload: true })),
+    ...(DRIVE_IDS || []).map(id => ({ key: "drive:" + id, src: driveThumb(id), upload: false }))];
+  $("thumbs").replaceChildren(...all.map((p, i) => {
     const d = document.createElement("div");
-    const img = new Image(); img.src = u; img.alt = ""; img.loading = "lazy";
-    const x = document.createElement("button"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", `Remove photo ${i + 1}`);
-    x.addEventListener("click", async () => {
-      x.disabled = true;
-      try { await saveEvent({ photos: list.filter((_, j) => j !== i) }); say("photosMsg", "Removed."); }
-      catch (e) { say("photosMsg", "Couldn’t remove. " + errText(e), true); }
-      renderPhotos();
-    });
-    d.append(img, x); return d;
+    const img = new Image(); img.src = p.src; img.alt = ""; img.loading = "lazy"; img.referrerPolicy = "no-referrer";
+    const rank = feat.indexOf(p.key);
+    const star = document.createElement("button"); star.type = "button";
+    star.className = "star" + (rank >= 0 ? " on" : "");
+    star.textContent = rank >= 0 ? `★${rank + 1}` : "☆";
+    star.setAttribute("aria-label", rank >= 0 ? `Photo ${i + 1} is shown ${ordinal(rank + 1)}. Unstar it` : `Star photo ${i + 1} to show it first`);
+    star.addEventListener("click", () => toggleStar(p.key, star));
+    d.append(img, star);
+    if (p.upload) {
+      const x = document.createElement("button"); x.type = "button"; x.className = "x"; x.textContent = "×"; x.setAttribute("aria-label", `Remove photo ${i + 1}`);
+      x.addEventListener("click", async () => {
+        x.disabled = true;
+        try { await saveEvent({ photos: list.filter(u => u !== p.key), featured: feat.filter(k => k !== p.key) }); say("photosMsg", "Removed."); }
+        catch (e) { say("photosMsg", "Couldn’t remove. " + errText(e), true); }
+        renderPhotos();
+      });
+      d.append(x);
+    } else {
+      const tag = document.createElement("span"); tag.className = "src"; tag.textContent = "Drive"; d.append(tag);
+    }
+    return d;
   }));
   if (!$("photosMsg").classList.contains("bad") && !$("photosMsg").textContent) say("photosMsg", list.length ? `${list.length} of ${MAX} photos` : "No photos yet");
 }
@@ -415,7 +458,7 @@ $("driveSave").addEventListener("click", async () => {
   const url = $("p-drive").value.trim();
   const btn = $("driveSave"); btn.disabled = true;
   try {
-    if (!url) { await saveEvent({ driveFeed: "" }); say("driveMsg", "Drive folder disconnected."); return; }
+    if (!url) { await saveEvent({ driveFeed: "" }); say("driveMsg", "Drive folder disconnected."); DRIVE_IDS = null; renderPhotos(); return; }
     if (!isFeed(url)) { say("driveMsg", "That doesn’t look like a web app link. It should start with https://script.google.com/macros/s/ and end in /exec.", true); return; }
     say("driveMsg", "Checking the folder…");
     let j = null;
@@ -424,6 +467,7 @@ $("driveSave").addEventListener("click", async () => {
     if (!j.ok) { say("driveMsg", j.error || "The script couldn’t read the folder.", true); return; }
     await saveEvent({ driveFeed: url });
     say("driveMsg", `Connected. ${j.count} photo${j.count === 1 ? "" : "s"} found. They show on the invite now.`);
+    DRIVE_IDS = null; renderPhotos();
   } catch (e) { say("driveMsg", "Couldn’t save. " + errText(e), true); }
   finally { btn.disabled = false; }
 });

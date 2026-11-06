@@ -145,7 +145,7 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.9rem, 8vw, 2.
 .grid{display:flex; gap:16px; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x mandatory; scroll-padding:0 4px;
   padding:16px 4px 18px; scrollbar-width:thin; scrollbar-color:#D9CFBF transparent}
 .grid:focus-visible{outline:3px solid var(--blue); outline-offset:2px; border-radius:6px}
-.grid button{flex:0 0 66%; max-width:260px; scroll-snap-align:start}
+.grid button{flex:0 0 auto; max-width:none; scroll-snap-align:start}
 .sbtn{position:absolute; z-index:2; top:50%; width:46px; height:46px; margin-top:-23px; border-radius:50%; border:0; cursor:pointer;
   background:#FFFFFF; color:var(--navy); font:800 1.8rem/1 "Nunito",sans-serif; box-shadow:0 4px 14px rgba(14,27,51,.22); display:flex; align-items:center; justify-content:center}
 .sbtn.prev{left:-6px} .sbtn.next{right:-6px}
@@ -156,7 +156,8 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.9rem, 8vw, 2.
 .grid button:nth-child(3n+1){--tape:var(--red); --tilt:-4deg}
 .grid button:nth-child(3n+2){--tape:var(--green); --tilt:3deg}
 .grid button:nth-child(3n){--tape:var(--blue); --tilt:-2deg}
-.grid img{display:block; width:100%; aspect-ratio:4/5; object-fit:cover; background:var(--ph)}
+/* each frame takes its photo's own shape: same height for all, width follows the photo */
+.grid img{display:block; height:clamp(220px, 62vw, 280px); width:auto; min-width:120px; max-width:82vw; object-fit:contain; background:var(--ph)}
 .foot{margin:0; padding:26px 0 24px; text-align:center; font-size:1.9rem; color:var(--green)}
 
 /* photo viewer */
@@ -178,7 +179,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 
 @media (prefers-reduced-motion: reduce){ .orn,.bulb i,.menu-art *,.cane-frame::before{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
 
-@media (min-width:700px){ .grid button{flex-basis:clamp(240px, 24vw, 340px); max-width:none} }
+@media (min-width:700px){ .grid img{height:clamp(280px, 24vw, 360px); max-width:none} }
 /* laptops: invitation across the top, menu and program side by side under it */
 @media (min-width:760px){
   body{padding:0 24px 24px; padding-top:env(safe-area-inset-top,0px)}
@@ -489,15 +490,20 @@ function photoButton(item, i, list){
   b.setAttribute("aria-label", `Open photo ${i + 1}`);
   const img = new Image(); img.referrerPolicy = "no-referrer"; img.alt = ""; img.loading = "lazy";
   img.onerror = () => { item.bad = true; b.remove(); if (!$("grid").children.length) $("photosSub").textContent = subText("photosNote", SUBS.photosNone); };
+  img.onload = () => updateArrows(); // the row gets wider as photos arrive
   img.src = item.thumb;
   b.appendChild(img);
   b.addEventListener("click", () => openViewer(list, item));
   return b;
 }
 function renderGallery(){
-  const items = [
-    ...listOf("photos").map(u => ({ thumb: u, full: u, dl: supaDownload(u) })),
-    ...DRIVE.map(id => ({ thumb: driveImg(id, 800), full: driveImg(id, 2000), dl: `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}` }))];
+  const all = [
+    ...listOf("photos").map(u => ({ key: u, thumb: u, full: u, dl: supaDownload(u) })),
+    ...DRIVE.map(id => ({ key: "drive:" + id, thumb: driveImg(id, 800), full: driveImg(id, 2000), dl: `https://drive.google.com/uc?export=download&id=${encodeURIComponent(id)}` }))];
+  // photos starred in Christmas HQ come first, in the order they were starred; the rest keep their order
+  const feat = Array.isArray(EV.featured) ? EV.featured : [];
+  const rank = it => { const r = feat.indexOf(it.key); return r < 0 ? Infinity : r; };
+  const items = all.map((it, i) => [it, i]).sort((a, b) => (rank(a[0]) - rank(b[0])) || (a[1] - b[1])).map(x => x[0]);
   $("grid").replaceChildren(...items.map((it, i) => photoButton(it, i, items)));
   $("photosSub").textContent = subText("photosNote", items.length ? SUBS.photosSome : SUBS.photosNone);
   $("grid").scrollLeft = 0;
