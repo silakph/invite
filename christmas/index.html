@@ -178,7 +178,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 
 @media (prefers-reduced-motion: reduce){ .orn,.bulb i,.menu-art *,.cane-frame::before{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
 
-@media (min-width:700px){ .grid button{flex-basis:240px} }
+@media (min-width:700px){ .grid button{flex-basis:clamp(240px, 24vw, 340px); max-width:none} }
 /* laptops: invitation across the top, menu and program side by side under it */
 @media (min-width:760px){
   body{padding:0 24px 24px; padding-top:env(safe-area-inset-top,0px)}
