@@ -48,8 +48,8 @@ body{margin:0; min-height:100vh; color:var(--ink); font:600 1rem/1.5 "Nunito", s
 @keyframes swing{from{transform:rotate(-3deg)} to{transform:rotate(3deg)}}
 .head{text-align:center; display:flex; flex-direction:column; align-items:center}
 .coming{margin:0; font-size:2.5rem; line-height:1.05; color:var(--red-dk)}
-.andso{margin:8px 0 2px; font-weight:800; font-size:.95rem; letter-spacing:1px; color:var(--green)}
-h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.45rem, 6.4vw, 2.3rem); line-height:1.08; letter-spacing:.5px; text-transform:uppercase; color:var(--navy)}
+.andso{margin:6px 0 4px; font-weight:700; font-size:1.15rem; color:var(--navy)}
+h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw, 3.1rem); line-height:1.12; color:var(--red-dk)}
 
 .cd-title{margin:26px 0 14px; text-align:center; font-weight:800; font-size:.78rem; letter-spacing:4px; color:var(--soft)}
 /* countdown as wrapped presents: a box, a wider lid with a gold ribbon, and a bow on top */
@@ -73,6 +73,7 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.45rem, 6.4vw,
 .lab{margin:0; font-size:.7rem; font-weight:800; letter-spacing:2px; color:var(--green)}
 .val{margin:0; font-weight:700; font-size:1.25rem; line-height:1.25}
 .sub{margin:0; font-size:.9rem; font-weight:700; color:var(--soft)}
+@media (max-width:380px){ .ticket .val{font-size:1.08rem} .ticket .cell{padding:12px 8px} }
 
 /* 2 · menu */
 .col h2{margin:6px 0 0; text-align:center; font-weight:800; font-size:1.65rem; color:var(--red-dk)}
@@ -257,9 +258,8 @@ body.capture .cane-frame::before{display:none}
         </svg>
 
         <header class="head">
-          <p class="coming script">Christmas is coming…</p>
-          <p class="andso">and so is the</p>
-          <h1 class="serif" id="title">Family Christmas Party</h1>
+          <p class="andso">Are you ready for the</p>
+          <h1 class="script" id="title">Family Christmas Party?</h1>
         </header>
 
         <div class="countdown" id="countdown" role="timer" aria-label="Time until the party">
@@ -337,7 +337,8 @@ const fmtTime = t => { const [h, m] = hm(t); return new Date(2000, 0, 1, h, m ||
 function render(){
   const d = new Date(EV.date + "T00:00:00");
   // "and so is the FAMILY CLAN CHRISTMAS PARTY": drop a leading "The" so it isn't said twice
-  $("title").textContent = String(EV.title || "Family Christmas Party").replace(/^\s*the\s+/i, "");
+  // "Are you ready for the Family Clan Christmas Party?": drop a leading "The" and finish with a question mark
+  $("title").textContent = String(EV.title || "Family Christmas Party").replace(/^\s*the\s+/i, "").replace(/[?!.\s]+$/, "") + "?";
   document.title = `${EV.title || "Christmas party"}: you’re invited!`;
   $("date").textContent = isNaN(d) ? "" : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
   $("time").textContent = EV.end ? `${fmtTime(EV.start)} – ${fmtTime(EV.end)}` : fmtTime(EV.start);
