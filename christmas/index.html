@@ -4,16 +4,16 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="color-scheme" content="only light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>You’re invited to our Christmas party!</title>
-<meta name="description" content="Christmas is coming… Tap to see the details, menu and program.">
+<title>Are you ready for our Christmas Party 2026?</title>
+<meta name="description" content="Tap to see the details: date, place, menu and program.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://silakph.github.io/invite/christmas/">
-<meta property="og:title" content="You’re invited to our Christmas party!">
-<meta property="og:description" content="Christmas is coming… Tap to see the details, menu and program.">
+<meta property="og:title" content="Are you ready for our Christmas Party 2026?">
+<meta property="og:description" content="Tap to see the details: date, place, menu and program.">
 <meta property="og:image" content="https://silakph.github.io/invite/christmas/assets/share.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Red, blue and green Christmas baubles">
+<meta property="og:image:alt" content="Christmas baubles and gift boxes: Are you ready for our Christmas Party 2026?">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0E1B33">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -199,10 +199,27 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
   .menu,.program{padding-top:34px}
   .col + .col{border-left:2px dashed var(--rule)}
 }
+/* ===== one-section preview (Christmas HQ) and card capture ===== */
+body.pv{min-height:0; padding:14px}
+body.pv .card{max-width:540px; width:100%; margin:0 auto}
+body.pv .cols{display:block}
+body.pv .col, body.pv .photos{display:none; border:0 !important; margin:0 !important; padding:26px 22px 22px !important}
+body.pv[data-pv="invite"] .invite, body.pv[data-pv="menu"] .menu, body.pv[data-pv="program"] .program, body.pv[data-pv="photos"] .photos{display:block}
+body.pv[data-pv="invite"] .invite{padding-top:0 !important}
+body.pv .invite .inner{max-width:none}
+body.pv .foot{padding:4px 0 20px; font-size:1.6rem}
+body.pv[data-pv="photos"] .grid{flex-wrap:wrap; justify-content:center; overflow:visible; padding:16px 0 6px}
+body.pv[data-pv="photos"] .grid img{width:132px}
+body.pv .sbtn{display:none !important}
+.pv-empty{margin:0; padding:40px 24px; text-align:center; font-weight:700; color:var(--soft)}
+body.capture{width:572px}
+body.capture *, body.capture *::before, body.capture *::after{animation:none !important; transition:none !important}
+body.capture .cane-frame::before{display:none}
 </style>
 </head>
 <body>
 <main class="card">
+  <p class="pv-empty" id="pvEmpty" hidden=""></p>
   <div class="cols">
     <section class="col invite" aria-labelledby="title">
       <div class="inner">
@@ -301,6 +318,10 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 const SLUG = "christmas";
+// Christmas HQ shows one section at a time in a preview frame: ./?preview=invite|menu|program|photos
+const PV_SECTIONS = { invite: "the invitation", menu: "the menu", program: "the program", photos: "the party photos" };
+const PV = (() => { const v = new URLSearchParams(location.search).get("preview"); return v && PV_SECTIONS[v] ? v : ""; })();
+if (PV) { document.body.classList.add("pv"); document.body.dataset.pv = PV; }
 const $ = id => document.getElementById(id);
 const FALLBACK = JSON.parse($("event-data").textContent);
 let EV = { ...FALLBACK };
@@ -308,7 +329,7 @@ const configured = window.supabase && typeof window.SUPABASE_URL === "string" &&
 const sb = configured ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY) : null;
 
 // old ?owner links go to the owner page
-if (/[?&#]owner\b/.test(location.search + location.hash)) location.replace("owner.html");
+if (!PV && /[?&#]owner\b/.test(location.search + location.hash)) location.replace("owner.html");
 
 const hm = t => String(t || "").split(":").map(Number);
 const fmtTime = t => { const [h, m] = hm(t); return new Date(2000, 0, 1, h, m || 0).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
@@ -531,6 +552,74 @@ async function loadEvent(){
   await Promise.race([loadEvent(), new Promise(r => setTimeout(r, 3000))]);
   render();
   loadDrive();
+  if (PV && parent !== window) pvSetup();
 })();
+
+// ---------- preview frame: talks only to Christmas HQ on this same site ----------
+function pvSetup(){
+  const send = m => parent.postMessage(m, location.origin);
+  const fit = () => send({ type: "xmas-height", h: Math.ceil(document.documentElement.getBoundingClientRect().height) });
+  new ResizeObserver(fit).observe(document.body);
+  addEventListener("message", e => {
+    if (e.origin !== location.origin || e.source !== parent) return;
+    const m = e.data || {};
+    if (m.type === "xmas-section" && PV_SECTIONS[m.name]) document.body.dataset.pv = m.name;
+    if (m.type === "xmas-draft" && m.data && typeof m.data === "object" && !Array.isArray(m.data)) {
+      const feedChanged = m.data.driveFeed !== EV.driveFeed;
+      EV = { ...FALLBACK, ...m.data };
+      render();
+      if (feedChanged) { DRIVE = []; renderGallery(); loadDrive(); }
+    }
+    pvEmptyNote(); fit();
+  });
+  pvEmptyNote();
+  send({ type: "xmas-ready" });
+}
+// a section with nothing in it yet says so, instead of showing an empty card
+function pvEmptyNote(){
+  const sec = document.body.dataset.pv;
+  const empty = (sec === "menu" && $("menuBlock").hidden) || (sec === "program" && $("progBlock").hidden);
+  $("pvEmpty").hidden = !empty;
+  $("pvEmpty").textContent = sec === "menu" ? "Add dishes to see the menu here." : "Add program items to see the program here.";
+}
+// The invite's Google fonts, inlined so the card uses the same lettering (Latin set only, fetched once)
+let FONT_CSS = null;
+async function fontCSS(){
+  if (FONT_CSS !== null) return FONT_CSS;
+  try {
+    const href = [...document.querySelectorAll('link[rel="stylesheet"]')].map(l => l.href).find(h => h.startsWith("https://fonts.googleapis.com/"));
+    const css = await (await fetch(href)).text();
+    const blocks = css.split("/* ").filter(x => /^latin \*\//.test(x)).map(x => x.slice(x.indexOf("@font-face")));
+    const out = await Promise.all(blocks.map(async blk => {
+      const m = blk.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/);
+      if (!m) return "";
+      const bytes = new Uint8Array(await (await fetch(m[1])).arrayBuffer());
+      let bin = "";
+      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+      return blk.replace(m[1], "data:font/woff2;base64," + btoa(bin));
+    }));
+    FONT_CSS = out.join(" ");
+  } catch { FONT_CSS = ""; }
+  return FONT_CSS;
+}
+// Render the visible section as a JPEG card (data URL). Loaded on demand; photos that can't be read become blank.
+window.makeCard = async () => {
+  if (!window.htmlToImage) await new Promise((ok, fail) => {
+    const sc = document.createElement("script");
+    sc.src = "https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js";
+    sc.onload = ok; sc.onerror = () => fail(new Error("Couldn’t load the card maker. Check your connection."));
+    document.head.appendChild(sc);
+  });
+  const fonts = await fontCSS();
+  document.body.classList.add("capture");
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  try {
+    return await htmlToImage.toJpeg(document.body, {
+      quality: 0.95, pixelRatio: 2, backgroundColor: "#0E1B33", ...(fonts ? { fontEmbedCSS: fonts } : {}),
+      imagePlaceholder: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+      filter: n => !(n.tagName === "DIALOG" || n.tagName === "SCRIPT")
+    });
+  } finally { document.body.classList.remove("capture"); }
+};
 </script>
 </body></html>
