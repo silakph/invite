@@ -94,6 +94,17 @@ h1{margin:0; text-wrap:balance; font-weight:800; font-size:clamp(1.9rem, 8vw, 2.
 .menu-art .berry{transform-box:fill-box; transform-origin:center; animation:berry 2.4s ease-in-out infinite; animation-delay:var(--bd,0s)}
 @keyframes berry{0%,100%{transform:scale(1)} 50%{transform:scale(1.2)}}
 .sec-sub{margin:4px 0 0; text-align:center; font-weight:700; color:var(--soft); white-space:pre-line}
+/* the menu sits in a candy-cane frame; a soft shine glides across the stripes now and then */
+.cane-frame{position:relative; overflow:hidden; padding:11px; border-radius:14px;
+  background:repeating-linear-gradient(45deg, #D7263D 0 9px, #FFFFFF 9px 18px);
+  box-shadow:0 0 0 2px #E3DCCF, 0 6px 16px rgba(14,27,51,.10)}
+.cane-frame::before{content:""; position:absolute; top:-20%; bottom:-20%; left:0; width:26%;
+  background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.7), rgba(255,255,255,0));
+  transform:translateX(-140%) skewX(-18deg); animation:frameshine 4.5s ease-in-out infinite}
+@keyframes frameshine{0%{transform:translateX(-140%) skewX(-18deg)} 60%,100%{transform:translateX(520%) skewX(-18deg)}}
+.cane-inner{position:relative; z-index:1; background:var(--card); border-radius:6px; padding:22px 18px 12px;
+  box-shadow:inset 0 0 0 2px rgba(179,23,43,.12)}
+.cane-inner h2{margin-top:0}
 .menu-list{list-style:none; margin:12px 0 0; padding:0}
 .menu-list li{display:flex; gap:12px; align-items:baseline; padding:11px 2px; border-bottom:1px dashed #DCD3C3}
 .menu-list li::before{content:""; flex:none; width:10px; height:10px; border-radius:50%; background:var(--dot); transform:translateY(-1px)}
@@ -155,7 +166,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 .vdl{display:inline-flex; align-items:center; min-height:44px; padding:.4rem 1.1rem; border-radius:8px; background:#FFFFFF; color:var(--red-dk); text-decoration:none; font-weight:800}
 @media (max-width:600px){ .vprev,.vnext{width:44px; height:44px; font-size:1.6rem; background:rgba(255,255,255,.12)} .vprev{left:6px} .vnext{right:6px} }
 
-@media (prefers-reduced-motion: reduce){ .orn,.bulb i,.menu-art *{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
+@media (prefers-reduced-motion: reduce){ .orn,.bulb i,.menu-art *,.cane-frame::before{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
 
 @media (min-width:700px){ .grid{grid-template-columns:repeat(3,minmax(0,1fr))} }
 /* laptops: invitation across the top, menu and program side by side under it */
@@ -165,6 +176,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
   .cols{flex-direction:row; flex-wrap:wrap}
   .col{flex:1 1 0; padding:0 clamp(22px, 2.6vw, 40px) 34px}
   .col + .col{border-top:0; padding-top:0}
+  .col.menu{padding-top:28px} /* room above the candy-cane frame */
   .invite{flex-basis:100%; border-bottom:2px dashed var(--rule); margin-bottom:30px}
   .invite .inner{max-width:560px; margin:0 auto}
   .menu + .program{border-left:2px dashed var(--rule)}
@@ -244,26 +256,11 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
     </section>
 
     <section class="col menu" id="menuBlock" aria-labelledby="menuTitle">
-      <svg class="menu-art" aria-hidden="true" viewBox="0 0 360 100">
-        <defs>
-          <pattern id="caneStripes" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(40)">
-            <rect width="18" height="18" fill="#FFFFFF"></rect><rect width="8" height="18" fill="#D7263D"></rect>
-          </pattern>
-          <mask id="caneMask"><path d="M64 24 C50 12 30 18 30 33 C30 44 42 48 72 48 L288 48 C318 48 330 52 330 66 C330 81 310 88 296 76" stroke="#FFFFFF" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round"></path></mask>
-        </defs>
-        <path d="M64 24 C50 12 30 18 30 33 C30 44 42 48 72 48 L288 48 C318 48 330 52 330 66 C330 81 310 88 296 76" stroke="#0E1B33" stroke-opacity=".08" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(2 4)"></path>
-        <path d="M64 24 C50 12 30 18 30 33 C30 44 42 48 72 48 L288 48 C318 48 330 52 330 66 C330 81 310 88 296 76" stroke="#E3DCCF" stroke-width="20" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M64 24 C50 12 30 18 30 33 C30 44 42 48 72 48 L288 48 C318 48 330 52 330 66 C330 81 310 88 296 76" stroke="url(#caneStripes)" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
-        <path d="M64 24 C50 12 30 18 30 33 C30 44 42 48 72 48 L288 48 C318 48 330 52 330 66 C330 81 310 88 296 76" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-linecap="round" opacity=".5" transform="translate(0 -4)"></path>
-        <g mask="url(#caneMask)"><polygon class="glint" points="-40,0 -14,0 -34,100 -60,100" fill="#FFFFFF" opacity=".6"></polygon></g>
-        <path class="spark" style="--sd:0s" d="M84 12 L85.8 16.2 L90 18 L85.8 19.8 L84 24 L82.2 19.8 L78 18 L82.2 16.2 Z" fill="#F2B92E"></path>
-        <path class="spark" style="--sd:1.1s" d="M18 57.5 L19.35 60.65 L22.5 62 L19.35 63.35 L18 66.5 L16.65 63.35 L13.5 62 L16.65 60.65 Z" fill="#F2B92E"></path>
-        <path class="spark" style="--sd:0.6s" d="M312 87 L313.5 90.5 L317 92 L313.5 93.5 L312 97 L310.5 93.5 L307 92 L310.5 90.5 Z" fill="#F2B92E"></path>
-        <path class="spark" style="--sd:1.7s" d="M344 29.5 L345.35 32.65 L348.5 34 L345.35 35.35 L344 38.5 L342.65 35.35 L339.5 34 L342.65 32.65 Z" fill="#F2B92E"></path>
-      </svg>
+      <div class="cane-frame"><div class="cane-inner">
       <h2 class="serif" id="menuTitle">What’s on our menu</h2>
       <p class="sec-sub" id="menuSub"></p>
       <ul class="menu-list" id="menuList"></ul>
+      </div></div>
     </section>
 
     <section class="col program" id="progBlock" aria-labelledby="progTitle">
