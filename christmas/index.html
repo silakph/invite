@@ -121,24 +121,30 @@ h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw,
 .menu-list .dish{display:block; font-weight:800; font-size:1.22rem; line-height:1.3}
 .menu-list .cat{display:block; margin-top:2px; color:var(--soft); font-size:.78rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
 
-/* 3 · program, under a string of Christmas lights */
+/* 3 · program: big times on the left, a string of Christmas lights running down to each item */
 .prog-head{text-align:center}
-.prog-head h2{margin:6px 0 0}
-.lights{display:flex; justify-content:space-between; height:58px; padding:0 4px; overflow:hidden; max-width:420px; margin:0 auto}
-.bulb{position:relative; flex:1; display:flex; justify-content:center}
-.bulb::before{content:""; position:absolute; top:-12px; left:0; right:0; height:24px; border-bottom:2px solid #13774A; border-radius:0 0 50% 50%}
-.bulb i{position:relative; margin-top:12px; width:14px; height:22px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c);
+.prog-head h2{margin:0}
+.prog{list-style:none; margin:14px 0 0; padding:0}
+.prog li{display:grid; grid-template-columns:5.6rem 28px minmax(0,1fr); column-gap:10px; align-items:baseline}
+.prog li:nth-child(4n+1){--c:#E8283F; --glow:rgba(232,40,63,.45); --tc:#B3172B}
+.prog li:nth-child(4n+2){--c:#16A05E; --glow:rgba(22,160,94,.42); --tc:#13774A}
+.prog li:nth-child(4n+3){--c:#2477E8; --glow:rgba(36,119,232,.45); --tc:#1553B0}
+.prog li:nth-child(4n){--c:#F2B92E; --glow:rgba(242,185,46,.5); --tc:#8A6400}
+.prog .t,.prog .what{padding:12px 0}
+.prog .t{text-align:right; white-space:nowrap; color:var(--tc)}
+.prog .t b{font-family:"Playfair Display", Georgia, serif; font-weight:800; font-size:1.7rem; line-height:1}
+.prog .t small{margin-left:3px; font-weight:800; font-size:.7rem; letter-spacing:.08em}
+.prog .t .script{font-size:1.75rem; line-height:1}
+.prog .what{font-weight:800; font-size:1.1rem; line-height:1.3}
+.prog .node{position:relative; align-self:stretch}
+.prog .node::before{content:""; position:absolute; left:13px; top:0; bottom:0; width:2px; background:#13774A}
+.prog li:first-child .node::before{top:18px}
+.prog li:last-child .node::before{bottom:auto; height:18px}
+.prog li:only-child .node::before{display:none}
+.prog .node i{position:absolute; left:7px; top:15px; width:14px; height:20px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c);
   box-shadow:0 0 8px 2px var(--glow), 0 0 16px 4px var(--glow); animation:twinkle 2.6s ease-in-out infinite; animation-delay:var(--d)}
-.bulb i::before{content:""; position:absolute; top:-6px; left:3px; width:8px; height:7px; border-radius:2px; background:#8A7A3A}
-.bulb:nth-child(4n+1){--c:#E8283F; --glow:rgba(232,40,63,.45)}
-.bulb:nth-child(4n+2){--c:#16A05E; --glow:rgba(22,160,94,.42)}
-.bulb:nth-child(4n+3){--c:#2477E8; --glow:rgba(36,119,232,.45)}
-.bulb:nth-child(4n){--c:#F2B92E; --glow:rgba(242,185,46,.5)}
+.prog .node i::before{content:""; position:absolute; top:-5px; left:3px; width:8px; height:6px; border-radius:2px; background:#8A7A3A}
 @keyframes twinkle{0%,100%{opacity:1} 50%{opacity:.55; box-shadow:0 0 2px 0 var(--glow)}}
-.prog{list-style:none; margin:12px 0 0; padding:0}
-.prog li{display:grid; grid-template-columns:5.6rem minmax(0,1fr); gap:12px; align-items:baseline; padding:11px 2px; border-bottom:1px dashed #DCD3C3}
-.prog .t{font-weight:800; color:var(--green); white-space:nowrap}
-.prog .what{font-weight:700}
 .soon{margin:14px 0 0; padding:22px 16px 24px; text-align:center; border:2px dashed #DCD3C3; border-radius:12px}
 .soon p{margin:0; font-size:2.2rem; line-height:1.1; color:var(--green)}
 .soon span{display:block; margin-top:6px; font-weight:700; color:var(--soft)}
@@ -186,7 +192,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 .vdl{display:inline-flex; align-items:center; min-height:44px; padding:.4rem 1.1rem; border-radius:8px; background:#FFFFFF; color:var(--red-dk); text-decoration:none; font-weight:800}
 @media (max-width:600px){ .vprev,.vnext{width:44px; height:44px; font-size:1.6rem; background:rgba(255,255,255,.12)} .vprev{left:6px} .vnext{right:6px} }
 
-@media (prefers-reduced-motion: reduce){ .orn,.bulb i,.menu-art *,.cane-frame::before{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
+@media (prefers-reduced-motion: reduce){ .orn,.prog .node i,.menu-art *,.cane-frame::before{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
 
 @media (min-width:700px){ .grid img{width:clamp(250px, 21vw, 320px)} }
 /* laptops: invitation across the top, menu and program side by side under it */
@@ -318,7 +324,6 @@ body.capture .cane-frame::before{display:none}
 
     <section class="col program" id="progBlock" aria-labelledby="progTitle">
       <div class="prog-head">
-        <div class="lights" id="lights" aria-hidden="true"></div>
         <h2 class="serif" id="progTitle">Program</h2>
       </div>
       <p class="sec-sub" id="progSub"></p>
@@ -455,7 +460,16 @@ function renderLists(){
     return li;
   }));
   // a program line with no " - " is just an activity, with no time
-  $("progList").replaceChildren(...prog.map(([a, b]) => { const li = el("li"); li.append(el("span", "t", b ? a : ""), el("span", "what", b || a)); return li; }));
+  const timed = prog.map(([, b]) => !!b);
+  $("progList").replaceChildren(...prog.map(([a, b], i) => {
+    const li = el("li"), t = el("span", "t"), node = el("span", "node"), bulb = el("i");
+    if (b) {
+      const m = a.match(/^(\d{1,2}(?::\d{2})?)\s*([ap]\.?\s*m\.?)$/i);
+      if (m) t.append(el("b", "", m[1]), el("small", "", m[2].replace(/[.\s]/g, "").toUpperCase())); else t.append(el("b", "", a));
+    } else if (timed.slice(0, i).some(Boolean) && !timed.slice(i + 1).some(Boolean)) t.append(el("span", "script", "later…"));
+    bulb.style.setProperty("--d", `${((i * 7) % 11) * -0.37}s`); node.setAttribute("aria-hidden", "true"); node.append(bulb);
+    li.append(t, node, el("span", "what", b || a)); return li;
+  }));
   $("menuSub").textContent = subText("menuNote", SUBS.menu);
   $("progSub").textContent = subText("programNote", SUBS.program);
   $("menuBlock").hidden = !menu.length;
@@ -465,21 +479,7 @@ function renderLists(){
   $("progSoon").hidden = !soon;
   $("progSub").hidden = soon; // no subtitle while the program is under wraps
   $("progBlock").hidden = !soon && !prog.length;
-  hangLights();
 }
-// Christmas lights across the Program header: one bulb per ~44px, rebuilt when the width changes
-function hangLights(){
-  const box = $("lights"), w = box.clientWidth;
-  if (!w) return;
-  const n = Math.max(5, Math.round(w / 44));
-  if (box.children.length === n) return;
-  box.replaceChildren(...Array.from({ length: n }, (_, i) => {
-    const b = el("span", "bulb"), g = el("i");
-    g.style.setProperty("--d", `${((i * 7) % 11) * -0.37}s`);
-    b.appendChild(g); return b;
-  }));
-}
-let lightsT; addEventListener("resize", () => { clearTimeout(lightsT); lightsT = setTimeout(hangLights, 150); });
 
 // ---------- photo viewer: swipe or arrows, counter, download ----------
 const V = { list: [], i: 0 };
