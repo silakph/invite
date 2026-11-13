@@ -121,7 +121,7 @@ h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw,
 .menu-list .dish{display:block; font-weight:800; font-size:1.22rem; line-height:1.3}
 .menu-list .cat{display:block; margin-top:2px; color:var(--soft); font-size:.78rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
 
-/* 3 · program: a wavy string of Christmas lights over the heading; each item is its big time with the activity underneath */
+/* 3 · program: a wavy string of Christmas lights over the heading; each item is its big time with the activity beside it */
 .prog-head{text-align:center}
 .prog-head h2{margin:2px 0 0}
 .lights{position:relative; height:64px; max-width:440px; margin:0 auto}
@@ -130,15 +130,14 @@ h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw,
   box-shadow:0 0 8px 2px var(--glow), 0 0 16px 4px var(--glow); animation:twinkle 2.6s ease-in-out infinite; animation-delay:var(--d)}
 .lights i::before{content:""; position:absolute; top:-5px; left:3px; width:8px; height:6px; border-radius:2px; background:#8A7A3A}
 .prog{list-style:none; max-width:420px; margin:10px auto 0; padding:0; text-align:left} /* heading and subtitle stay centred */
-.prog li{padding:12px 4px}
+.prog li{display:grid; grid-template-columns:6.8rem minmax(0,1fr); column-gap:12px; align-items:baseline; padding:12px 4px} /* time, then the activity on the same row */
 .prog li + li{border-top:1px solid #ECE4D6} /* a quiet line between activities */
 .prog li:nth-child(4n+1){--tc:#B3172B} .prog li:nth-child(4n+2){--tc:#13774A} .prog li:nth-child(4n+3){--tc:#1553B0} .prog li:nth-child(4n){--tc:#8A6400}
 .prog .t{display:block; white-space:nowrap; color:var(--tc)}
-.prog .t:empty{display:none}
 .prog .t b{font-family:"Playfair Display", Georgia, serif; font-weight:800; font-size:1.7rem; line-height:1}
 .prog .t small{margin-left:3px; font-weight:800; font-size:.7rem; letter-spacing:.08em}
 .prog .t .script{font-size:1.75rem; line-height:1}
-.prog .what{display:block; margin-top:4px; font-weight:800; font-size:1.1rem; line-height:1.3}
+.prog .what{display:block; font-weight:800; font-size:1.1rem; line-height:1.3}
 @keyframes twinkle{0%,100%{opacity:1} 50%{opacity:.55; box-shadow:0 0 2px 0 var(--glow)}}
 .soon{margin:14px 0 0; padding:22px 16px 24px; text-align:center; border:2px dashed #DCD3C3; border-radius:12px}
 .soon p{margin:0; font-size:2.2rem; line-height:1.1; color:var(--green)}
