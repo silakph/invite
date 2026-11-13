@@ -139,7 +139,7 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
   <section id="menu" role="tabpanel" aria-labelledby="tab-menu" hidden="">
     <div class="card">
       <h2 class="serif">What’s on our menu</h2>
-      <p class="hint">One row per dish. “Brought by” is optional. Leave the list empty to hide the menu on the invite.</p>
+      <p class="hint">One row per dish: the dish name shows big on the invite, with its category (like Main or Dessert) small underneath. The category is optional. Leave the list empty to hide the menu on the invite.</p>
       <label for="f-menuNote">Text under “What’s on our menu”</label>
       <input id="f-menuNote" autocomplete="off" maxlength="160" placeholder="A little taste of what’s waiting on the table.">
       <div class="rows" id="menuRows"></div>
@@ -252,7 +252,7 @@ async function saveEvent(patch){
 const FIELDS = ["title","date","start","end","venue","address"];
 
 // ---------- menu + program: one editable row per line ----------
-// Stored as text lines the invite reads: "Dish - brought by" and "6:30 PM - Dinner".
+// Stored as text lines the invite reads: "Dish - Category" and "6:30 PM - Dinner".
 const lines = v => String(v || "").split("\n").map(x => x.trim()).filter(Boolean);
 const pair = l => { const m = l.match(/^(.*?)\s+[-–—|]\s+(.*)$/); return m ? [m[1].trim(), m[2].trim()] : [l, ""]; };
 function to24(t){
@@ -264,7 +264,7 @@ const to12 = t => { if (!t) return ""; const [h, m] = t.split(":").map(Number); 
 const LISTS = {
   menu: {
     box: "menuRows", msg: "menuMsg", note: "menuNote", empty: "No dishes yet. Tap “Add a dish”.", cls: "",
-    a: { ph: "Dish, e.g. Glazed ham", label: "Dish" }, b: { ph: "Brought by (optional)", label: "Brought by" },
+    a: { ph: "Dish, e.g. Glazed ham", label: "Dish" }, b: { ph: "Category, e.g. Main (optional)", label: "Category" },
     load: v => lines(v).map(pair),
     save: rows => rows.filter(([a]) => a).map(([a, b]) => b ? `${a} - ${b}` : a).join("\n")
   },
