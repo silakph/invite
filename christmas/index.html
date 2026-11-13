@@ -121,21 +121,22 @@ h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw,
 .menu-list .dish{display:block; font-weight:800; font-size:1.22rem; line-height:1.3}
 .menu-list .cat{display:block; margin-top:2px; color:var(--soft); font-size:.78rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
 
-/* 3 · program: big times on the left, a string of Christmas lights running down to each item */
+/* 3 · program: a string of Christmas lights down the left; each item is its time, then the activity underneath */
 .prog-head{text-align:center}
 .prog-head h2{margin:0}
-.prog{position:relative; list-style:none; margin:14px 0 0; padding:0}
-.prog li{display:grid; grid-template-columns:5.6rem 58px minmax(0,1fr); column-gap:6px; align-items:baseline}
+.prog{position:relative; list-style:none; max-width:360px; margin:14px auto 0; padding:0}
+.prog li{display:grid; grid-template-columns:58px minmax(0,1fr); column-gap:8px; align-items:start}
 .prog li:nth-child(4n+1){--c:#E8283F; --glow:rgba(232,40,63,.45); --tc:#B3172B}
 .prog li:nth-child(4n+2){--c:#16A05E; --glow:rgba(22,160,94,.42); --tc:#13774A}
 .prog li:nth-child(4n+3){--c:#2477E8; --glow:rgba(36,119,232,.45); --tc:#1553B0}
 .prog li:nth-child(4n){--c:#F2B92E; --glow:rgba(242,185,46,.5); --tc:#8A6400}
-.prog .t,.prog .what{padding:12px 0}
-.prog .t{text-align:right; white-space:nowrap; color:var(--tc)}
+.prog .body{padding:10px 0 12px}
+.prog .t{display:block; white-space:nowrap; color:var(--tc)}
+.prog .t:empty{display:none}
 .prog .t b{font-family:"Playfair Display", Georgia, serif; font-weight:800; font-size:1.7rem; line-height:1}
 .prog .t small{margin-left:3px; font-weight:800; font-size:.7rem; letter-spacing:.08em}
 .prog .t .script{font-size:1.75rem; line-height:1}
-.prog .what{font-weight:800; font-size:1.1rem; line-height:1.3}
+.prog .what{display:block; margin-top:3px; font-weight:800; font-size:1.1rem; line-height:1.3}
 /* one wavy wire down the list (drawn by drawWire); each bulb hangs off a bend, alternating left and right */
 .prog .wire{position:absolute; left:0; top:0; pointer-events:none; overflow:visible}
 .prog .node{position:relative; align-self:stretch; z-index:1}
@@ -469,7 +470,8 @@ function renderLists(){
       if (m) t.append(el("b", "", m[1]), el("small", "", m[2].replace(/[.\s]/g, "").toUpperCase())); else t.append(el("b", "", a));
     } else if (timed.slice(0, i).some(Boolean) && !timed.slice(i + 1).some(Boolean)) t.append(el("span", "script", "later…"));
     bulb.style.setProperty("--d", `${((i * 7) % 11) * -0.37}s`); node.setAttribute("aria-hidden", "true"); node.append(bulb);
-    li.append(t, node, el("span", "what", b || a)); return li;
+    const body = el("div", "body"); body.append(t, el("span", "what", b || a));
+    li.append(node, body); return li;
   }));
   $("menuSub").textContent = subText("menuNote", SUBS.menu);
   $("progSub").textContent = subText("programNote", SUBS.program);
