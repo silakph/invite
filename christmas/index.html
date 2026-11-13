@@ -124,8 +124,8 @@ h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw,
 /* 3 · program: big times on the left, a string of Christmas lights running down to each item */
 .prog-head{text-align:center}
 .prog-head h2{margin:0}
-.prog{list-style:none; margin:14px 0 0; padding:0}
-.prog li{display:grid; grid-template-columns:5.6rem 28px minmax(0,1fr); column-gap:10px; align-items:baseline}
+.prog{position:relative; list-style:none; margin:14px 0 0; padding:0}
+.prog li{display:grid; grid-template-columns:5.6rem 58px minmax(0,1fr); column-gap:6px; align-items:baseline}
 .prog li:nth-child(4n+1){--c:#E8283F; --glow:rgba(232,40,63,.45); --tc:#B3172B}
 .prog li:nth-child(4n+2){--c:#16A05E; --glow:rgba(22,160,94,.42); --tc:#13774A}
 .prog li:nth-child(4n+3){--c:#2477E8; --glow:rgba(36,119,232,.45); --tc:#1553B0}
@@ -136,12 +136,13 @@ h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw,
 .prog .t small{margin-left:3px; font-weight:800; font-size:.7rem; letter-spacing:.08em}
 .prog .t .script{font-size:1.75rem; line-height:1}
 .prog .what{font-weight:800; font-size:1.1rem; line-height:1.3}
-.prog .node{position:relative; align-self:stretch}
-.prog .node::before{content:""; position:absolute; left:13px; top:0; bottom:0; width:2px; background:#13774A}
-.prog li:first-child .node::before{top:18px}
-.prog li:last-child .node::before{bottom:auto; height:18px}
-.prog li:only-child .node::before{display:none}
-.prog .node i{position:absolute; left:7px; top:15px; width:14px; height:20px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c);
+/* one wavy wire down the list (drawn by drawWire); each bulb hangs off a bend, alternating left and right */
+.prog .wire{position:absolute; left:0; top:0; pointer-events:none; overflow:visible}
+.prog .node{position:relative; align-self:stretch; z-index:1}
+.prog li:nth-child(odd) .node i{--dx:-8px; --rot:42deg}
+.prog li:nth-child(even) .node i{--dx:8px; --rot:-42deg}
+.prog .node i{position:absolute; left:calc(50% - 7px + var(--dx)); top:19px; width:14px; height:20px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c);
+  transform-origin:50% 0; transform:rotate(var(--rot));
   box-shadow:0 0 8px 2px var(--glow), 0 0 16px 4px var(--glow); animation:twinkle 2.6s ease-in-out infinite; animation-delay:var(--d)}
 .prog .node i::before{content:""; position:absolute; top:-5px; left:3px; width:8px; height:6px; border-radius:2px; background:#8A7A3A}
 @keyframes twinkle{0%,100%{opacity:1} 50%{opacity:.55; box-shadow:0 0 2px 0 var(--glow)}}
@@ -479,7 +480,30 @@ function renderLists(){
   $("progSoon").hidden = !soon;
   $("progSub").hidden = soon; // no subtitle while the program is under wraps
   $("progBlock").hidden = !soon && !prog.length;
+  drawWire();
 }
+// the light string: a wave that swings to a bend at each bulb (left, right, left…), drawn over the whole list
+function drawWire(){
+  const ol = $("progList"), old = ol.querySelector(".wire"); if (old) old.remove();
+  const nodes = [...ol.querySelectorAll("li > .node")];
+  if (ol.hidden || !nodes.length || !ol.offsetHeight) return;
+  const cx = nodes[0].offsetLeft + nodes[0].offsetWidth / 2, amp = 8;
+  const pts = nodes.map((n, i) => [cx + (i % 2 ? amp : -amp), n.offsetTop + 17]);
+  const first = pts[0], last = pts[pts.length - 1];
+  let d = `M ${cx} ${first[1] - 16} C ${cx} ${first[1] - 8}, ${first[0]} ${first[1] - 6}, ${first[0]} ${first[1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [x1, y1] = pts[i - 1], [x2, y2] = pts[i], k = (y2 - y1) * .5;
+    d += ` C ${x1} ${y1 + k}, ${x2} ${y2 - k}, ${x2} ${y2}`;
+  }
+  d += ` C ${last[0]} ${last[1] + 6}, ${cx} ${last[1] + 8}, ${cx} ${last[1] + 16}`;
+  const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg"), path = document.createElementNS(ns, "path");
+  svg.setAttribute("class", "wire"); svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("width", ol.offsetWidth); svg.setAttribute("height", ol.offsetHeight);
+  path.setAttribute("d", d); path.setAttribute("fill", "none"); path.setAttribute("stroke", "#13774A"); path.setAttribute("stroke-width", "2"); path.setAttribute("stroke-linecap", "round");
+  svg.appendChild(path); ol.append(svg); // last, so the li:nth-child colours and sides stay in step
+}
+if ("ResizeObserver" in window) new ResizeObserver(() => drawWire()).observe($("progList"));
+else addEventListener("resize", drawWire);
 
 // ---------- photo viewer: swipe or arrows, counter, download ----------
 const V = { list: [], i: 0 };
