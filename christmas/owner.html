@@ -43,6 +43,11 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
 .btn.red{background:var(--red-dk)}
 .btn:disabled{opacity:.6; cursor:default}
 .savebar{display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-top:18px}
+/* phones: the finished card, to press and hold or save with one tap */
+#cardDlg{border:0; border-radius:14px; padding:16px; width:min(92vw, 520px); max-height:92vh; overflow:auto}
+#cardDlg::backdrop{background:rgba(14,27,51,.65)}
+#cardDlg img{display:block; width:100%; height:auto; border-radius:8px; -webkit-touch-callout:default}
+#cardDlg p{margin:12px 0 0; font-weight:700; color:var(--soft)}
 .msg{min-height:1.4em; margin:.6rem 0 0; font-weight:800; color:var(--soft)}
 .msg.bad{color:var(--red-dk)}
 .photos{display:grid; grid-template-columns:1fr; gap:16px}
@@ -210,6 +215,15 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
       <p class="msg" id="pvMsg" role="status"></p>
     </div>
   </aside>
+  <dialog id="cardDlg" aria-labelledby="cardDlgTitle">
+    <h2 class="serif" id="cardDlgTitle" style="margin:0 0 10px; font-size:1.3rem">Your card</h2>
+    <img id="cardImg" alt="The card you just made">
+    <p>Press and hold the card, then choose <b>Save to Photos</b>.</p>
+    <div class="savebar" style="margin-top:12px">
+      <button class="btn red" type="button" id="cardSave" hidden="">Save to Photos</button>
+      <button class="btn ghost" type="button" id="cardClose">Close</button>
+    </div>
+  </dialog>
   </div>
 </main>
 
@@ -549,28 +563,56 @@ async function makeCard(){
   return w.makeCard();
 }
 const cardName = () => `christmas-${pvCurrent}.jpg`;
+// A download on a phone lands in Files. Photos needs the phone's share sheet ("Save Image"), and the share
+// must carry the picture alone: with a title or text attached, iPhones leave "Save Image" out.
+const isPhone = matchMedia("(pointer: coarse)").matches;
+let canShareFiles = false;
+try {
+  const probe = new File([new Blob(["x"], { type: "image/jpeg" })], "card.jpg", { type: "image/jpeg" });
+  canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [probe] }));
+} catch {}
+if (isPhone) { $("pvDownload").textContent = "Save card to Photos"; if (canShareFiles) $("pvShare").hidden = false; }
+const cardFile = async url => new File([await (await fetch(url)).blob()], cardName(), { type: "image/jpeg" });
+let cardURL = null, cardReady = null;
+// the card in a box: press and hold to save, or one tap on "Save to Photos" (the file is ready, so the share opens at once)
+async function showCard(url){
+  if (cardURL) URL.revokeObjectURL(cardURL);
+  cardReady = await cardFile(url); cardURL = URL.createObjectURL(cardReady);
+  $("cardImg").src = cardURL; $("cardSave").hidden = !canShareFiles;
+  $("cardDlg").showModal();
+}
+$("cardSave").addEventListener("click", async () => {
+  try { await navigator.share({ files: [cardReady] }); $("cardDlg").close(); }
+  catch (err) { if (!err || err.name !== "AbortError") say("pvMsg", "Couldn’t open sharing. Press and hold the card instead.", true); }
+});
+$("cardClose").addEventListener("click", () => $("cardDlg").close());
 $("pvDownload").addEventListener("click", async e => {
   const btn = e.currentTarget; btn.disabled = true; say("pvMsg", "Making your card…");
   try {
     const url = await makeCard();
-    const a = document.createElement("a"); a.href = url; a.download = cardName();
-    document.body.appendChild(a); a.click(); a.remove();
-    say("pvMsg", "Downloaded. It’s in your Downloads folder, ready to send.");
+    if (isPhone) {
+      say("pvMsg", "");
+      if (!canShareFiles) await showCard(url);
+      else {
+        try { await navigator.share({ files: [await cardFile(url)] }); say("pvMsg", "Tip: choose “Save Image” to put it in Photos."); }
+        catch (err) { if (!err || err.name !== "AbortError") await showCard(url); } // the phone said no: show it to press and hold
+      }
+    } else {
+      const a = document.createElement("a"); a.href = url; a.download = cardName();
+      document.body.appendChild(a); a.click(); a.remove();
+      say("pvMsg", "Downloaded. It’s in your Downloads folder, ready to send.");
+    }
   } catch (err) { say("pvMsg", "Couldn’t make the card. " + errText(err), true); }
   btn.disabled = false;
 });
 // phones: send the card straight to Messenger, Viber, etc.
-try {
-  const probe = new File([new Blob(["x"], { type: "image/jpeg" })], "card.jpg", { type: "image/jpeg" });
-  if (navigator.canShare && navigator.canShare({ files: [probe] }) && matchMedia("(pointer: coarse)").matches) $("pvShare").hidden = false;
-} catch {}
 $("pvShare").addEventListener("click", async e => {
   const btn = e.currentTarget; btn.disabled = true; say("pvMsg", "Making your card…");
   try {
-    const blob = await (await fetch(await makeCard())).blob();
-    await navigator.share({ files: [new File([blob], cardName(), { type: "image/jpeg" })], title: "Our Christmas party" });
-    say("pvMsg", "");
-  } catch (err) { if (!err || err.name !== "AbortError") say("pvMsg", "Couldn’t share the card. " + errText(err), true); else say("pvMsg", ""); }
+    const url = await makeCard();
+    try { await navigator.share({ files: [await cardFile(url)] }); say("pvMsg", ""); }
+    catch (err) { if (!err || err.name !== "AbortError") await showCard(url); else say("pvMsg", ""); }
+  } catch (err) { say("pvMsg", "Couldn’t share the card. " + errText(err), true); }
   btn.disabled = false;
 });
 
