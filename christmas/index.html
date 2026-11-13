@@ -129,8 +129,8 @@ h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw,
 .lights i{position:absolute; width:14px; height:20px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c); transform-origin:50% 0;
   box-shadow:0 0 8px 2px var(--glow), 0 0 16px 4px var(--glow); animation:twinkle 2.6s ease-in-out infinite; animation-delay:var(--d)}
 .lights i::before{content:""; position:absolute; top:-5px; left:3px; width:8px; height:6px; border-radius:2px; background:#8A7A3A}
-.prog{list-style:none; max-width:420px; margin:10px auto 0; padding:0; text-align:center}
-.prog li{padding:12px 6px}
+.prog{list-style:none; max-width:420px; margin:10px auto 0; padding:0; text-align:left} /* heading and subtitle stay centred */
+.prog li{padding:12px 4px}
 .prog li + li{border-top:1px solid #ECE4D6} /* a quiet line between activities */
 .prog li:nth-child(4n+1){--tc:#B3172B} .prog li:nth-child(4n+2){--tc:#13774A} .prog li:nth-child(4n+3){--tc:#1553B0} .prog li:nth-child(4n){--tc:#8A6400}
 .prog .t{display:block; white-space:nowrap; color:var(--tc)}
