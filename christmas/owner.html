@@ -70,7 +70,8 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
 .row{display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) auto; grid-template-areas:"a b tools"; gap:8px; align-items:center; padding:8px; border-radius:10px; background:var(--field)}
 .row.prog{grid-template-columns:8.5rem minmax(0,1fr) auto}
 .row input{background:var(--bg); min-height:44px}
-.row .a{grid-area:a} .row .b{grid-area:b} .row .tools{grid-area:tools; display:flex; gap:4px}
+.row.dish3{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr) auto; grid-template-areas:"a b c tools"}
+.row .a{grid-area:a} .row .b{grid-area:b} .row .c{grid-area:c} .row .tools{grid-area:tools; display:flex; gap:4px}
 .row .tools button{width:40px; height:40px; border-radius:8px; border:2px solid var(--line); background:var(--bg); font-weight:800; cursor:pointer}
 .row .tools button:disabled{opacity:.35; cursor:default}
 .row .tools .x{color:var(--red-dk)}
@@ -82,6 +83,7 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
   .row,.row.prog{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"a tools" "b tools"}
   .row .tools{flex-direction:column}
   .row.prog{grid-template-areas:"b tools" "a tools"}
+  .row.dish3{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto; grid-template-areas:"a a tools" "b c tools"}
 }
 </style>
 </head>
@@ -139,7 +141,7 @@ input[type=file]{padding:.5rem; min-height:auto; margin-top:10px}
   <section id="menu" role="tabpanel" aria-labelledby="tab-menu" hidden="">
     <div class="card">
       <h2 class="serif">What’s on our menu</h2>
-      <p class="hint">One row per dish: the dish name shows big on the invite, with its category (like Main or Dessert) small underneath. The category is optional. Leave the list empty to hide the menu on the invite.</p>
+      <p class="hint">One row per dish: the dish name shows big on the invite, its category (like Main or Dessert) small underneath, and who’s bringing it on the right. Category and Brought by are optional. Leave the list empty to hide the menu on the invite.</p>
       <label for="f-menuNote">Text under “What’s on our menu”</label>
       <input id="f-menuNote" autocomplete="off" maxlength="160" placeholder="A little taste of what’s waiting on the table.">
       <div class="rows" id="menuRows"></div>
@@ -252,9 +254,16 @@ async function saveEvent(patch){
 const FIELDS = ["title","date","start","end","venue","address"];
 
 // ---------- menu + program: one editable row per line ----------
-// Stored as text lines the invite reads: "Dish - Category" and "6:30 PM - Dinner".
+// Stored as text lines the invite reads: "Dish | Category | Brought by" and "6:30 PM - Dinner".
 const lines = v => String(v || "").split("\n").map(x => x.trim()).filter(Boolean);
 const pair = l => { const m = l.match(/^(.*?)\s+[-–—|]\s+(.*)$/); return m ? [m[1].trim(), m[2].trim()] : [l, ""]; };
+// a menu line is "Dish | Category | Brought by". Older lines were "Dish - something": a food word there
+// (Main, Dessert, Drinks…) is the category, anything else is who brings it.
+const CATS = /^(mains?|main courses?|main dish(es)?|starters?|appeti[sz]ers?|entr[eé]es?|sides?|side dish(es)?|desserts?|sweets?|drinks?|beverages?|soups?|salads?|rice|pasta|noodles|snacks?|breads?|pulutan|merienda|ulam|viands?)$/i;
+function dishParts(l){
+  if (l.includes("|")) { const [a = "", b = "", c = ""] = l.split("|").map(x => x.trim()); return [a, b, c]; }
+  const [a, x] = pair(l); return x && CATS.test(x) ? [a, x, ""] : [a, "", x];
+}
 function to24(t){
   const m = String(t || "").trim().match(/^(\d{1,2})(?::(\d{2}))?\s*([ap])\.?m?\.?$/i);
   if (m) { let h = +m[1] % 12; if (/p/i.test(m[3])) h += 12; return `${String(h).padStart(2, "0")}:${m[2] || "00"}`; }
@@ -263,10 +272,11 @@ function to24(t){
 const to12 = t => { if (!t) return ""; const [h, m] = t.split(":").map(Number); return new Date(2000, 0, 1, h, m).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
 const LISTS = {
   menu: {
-    box: "menuRows", msg: "menuMsg", note: "menuNote", empty: "No dishes yet. Tap “Add a dish”.", cls: "",
-    a: { ph: "Dish, e.g. Glazed ham", label: "Dish" }, b: { ph: "Category, e.g. Main (optional)", label: "Category" },
-    load: v => lines(v).map(pair),
-    save: rows => rows.filter(([a]) => a).map(([a, b]) => b ? `${a} - ${b}` : a).join("\n")
+    box: "menuRows", msg: "menuMsg", note: "menuNote", empty: "No dishes yet. Tap “Add a dish”.", cls: "dish3",
+    a: { ph: "Dish, e.g. Glazed ham", label: "Dish" }, b: { ph: "Category, e.g. Main", label: "Category" }, c: { ph: "Brought by", label: "Brought by" },
+    load: v => lines(v).map(dishParts),
+    save: rows => rows.map(r => r.map(x => String(x || "").replace(/\|/g, "/").trim())).filter(([a]) => a)
+      .map(([a, b, c]) => b || c ? `${a} | ${b} | ${c}` : a).join("\n")
   },
   program: {
     box: "progRows", msg: "progMsg", note: "programNote", empty: "No program items yet. Tap “Add an item”.", cls: "prog", time: true,
@@ -298,7 +308,7 @@ function drawRows(key){
       btn("up", "↑", `Move row ${i + 1} up`, () => move(-1), i === 0),
       btn("down", "↓", `Move row ${i + 1} down`, () => move(1), i === rows.length - 1),
       btn("x", "×", `Remove row ${i + 1}`, () => { rows.splice(i, 1); drawRows(key); dirty(key); }));
-    row.append(mk("a", 0), mk("b", 1), tools);
+    row.append(mk("a", 0), mk("b", 1), ...(L.c ? [mk("c", 2)] : []), tools);
     return row;
   }));
   schedulePreview();
@@ -314,7 +324,7 @@ $("photosNoteSave").addEventListener("click", async e => {
   btn.disabled = false;
 });
 function addRow(key){
-  listRows[key].push(["", ""]); drawRows(key);
+  listRows[key].push(["", "", ""]); drawRows(key);
   const ins = $(LISTS[key].box).querySelectorAll(LISTS[key].time ? ".row:last-child .b" : ".row:last-child .a");
   if (ins[0]) ins[0].focus();
 }
