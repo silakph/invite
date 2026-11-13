@@ -110,42 +110,35 @@ h1{margin:0; text-wrap:balance; font-weight:400; font-size:clamp(2.3rem, 10.5vw,
 .menu-list li{display:flex; gap:12px; align-items:flex-start; padding:12px 2px; border-bottom:1px dashed #DCD3C3}
 .menu-list li::before{content:""; flex:none; width:10px; height:10px; border-radius:50%; background:var(--dot); margin-top:.62rem}
 .menu-list .item{min-width:0; flex:1}
-/* who's bringing it: a pill in the dish's own colour; "Open" when nobody has it yet */
+/* who's bringing it: a pill in the dish's own colour; a grey "Not assigned" pill when nobody has it yet */
 .menu-list .by{flex:none; align-self:center; display:inline-flex; align-items:center; gap:5px; max-width:48%; padding:5px 11px; border-radius:14px;
   background:var(--tint); color:var(--tink); font-weight:800; font-size:.86rem; line-height:1.2; overflow-wrap:anywhere}
 .menu-list .by svg{flex:none}
-.menu-list .by.open{background:transparent; color:var(--soft); border:1.5px dashed #9AA0AC; padding:4px 10px; font-size:.8rem}
+.menu-list .by.open{background:#ECECEF; color:#55585F; font-size:.8rem}
 .menu-list li:nth-child(3n+1){--dot:var(--red); --tint:#FBE3E6; --tink:#9E1324}
 .menu-list li:nth-child(3n+2){--dot:var(--green); --tint:#DDF1E6; --tink:#0E5C39}
 .menu-list li:nth-child(3n){--dot:var(--blue); --tint:#E1ECFD; --tink:#1553B0}
 .menu-list .dish{display:block; font-weight:800; font-size:1.22rem; line-height:1.3}
 .menu-list .cat{display:block; margin-top:2px; color:var(--soft); font-size:.78rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase}
 
-/* 3 · program: a string of Christmas lights down the left; each item is its time, then the activity underneath */
+/* 3 · program: a wavy string of Christmas lights over the heading; each item is its big time with the activity underneath */
 .prog-head{text-align:center}
-.prog-head h2{margin:0}
-.prog{position:relative; list-style:none; max-width:360px; margin:14px auto 0; padding:0}
-.prog li{display:grid; grid-template-columns:58px minmax(0,1fr); column-gap:8px; align-items:start}
-.prog li:nth-child(4n+1){--c:#E8283F; --glow:rgba(232,40,63,.45); --tc:#B3172B}
-.prog li:nth-child(4n+2){--c:#16A05E; --glow:rgba(22,160,94,.42); --tc:#13774A}
-.prog li:nth-child(4n+3){--c:#2477E8; --glow:rgba(36,119,232,.45); --tc:#1553B0}
-.prog li:nth-child(4n){--c:#F2B92E; --glow:rgba(242,185,46,.5); --tc:#8A6400}
-.prog .body{padding:10px 0 12px}
+.prog-head h2{margin:2px 0 0}
+.lights{position:relative; height:64px; max-width:440px; margin:0 auto}
+.lights svg{position:absolute; left:0; top:0; overflow:visible}
+.lights i{position:absolute; width:14px; height:20px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c); transform-origin:50% 0;
+  box-shadow:0 0 8px 2px var(--glow), 0 0 16px 4px var(--glow); animation:twinkle 2.6s ease-in-out infinite; animation-delay:var(--d)}
+.lights i::before{content:""; position:absolute; top:-5px; left:3px; width:8px; height:6px; border-radius:2px; background:#8A7A3A}
+.prog{list-style:none; max-width:420px; margin:10px auto 0; padding:0; text-align:center}
+.prog li{padding:12px 6px}
+.prog li + li{border-top:1px solid #ECE4D6} /* a quiet line between activities */
+.prog li:nth-child(4n+1){--tc:#B3172B} .prog li:nth-child(4n+2){--tc:#13774A} .prog li:nth-child(4n+3){--tc:#1553B0} .prog li:nth-child(4n){--tc:#8A6400}
 .prog .t{display:block; white-space:nowrap; color:var(--tc)}
 .prog .t:empty{display:none}
 .prog .t b{font-family:"Playfair Display", Georgia, serif; font-weight:800; font-size:1.7rem; line-height:1}
 .prog .t small{margin-left:3px; font-weight:800; font-size:.7rem; letter-spacing:.08em}
 .prog .t .script{font-size:1.75rem; line-height:1}
-.prog .what{display:block; margin-top:3px; font-weight:800; font-size:1.1rem; line-height:1.3}
-/* one wavy wire down the list (drawn by drawWire); each bulb hangs off a bend, alternating left and right */
-.prog .wire{position:absolute; left:0; top:0; pointer-events:none; overflow:visible}
-.prog .node{position:relative; align-self:stretch; z-index:1}
-.prog li:nth-child(odd) .node i{--dx:-8px; --rot:42deg}
-.prog li:nth-child(even) .node i{--dx:8px; --rot:-42deg}
-.prog .node i{position:absolute; left:calc(50% - 7px + var(--dx)); top:19px; width:14px; height:20px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:var(--c);
-  transform-origin:50% 0; transform:rotate(var(--rot));
-  box-shadow:0 0 8px 2px var(--glow), 0 0 16px 4px var(--glow); animation:twinkle 2.6s ease-in-out infinite; animation-delay:var(--d)}
-.prog .node i::before{content:""; position:absolute; top:-5px; left:3px; width:8px; height:6px; border-radius:2px; background:#8A7A3A}
+.prog .what{display:block; margin-top:4px; font-weight:800; font-size:1.1rem; line-height:1.3}
 @keyframes twinkle{0%,100%{opacity:1} 50%{opacity:.55; box-shadow:0 0 2px 0 var(--glow)}}
 .soon{margin:14px 0 0; padding:22px 16px 24px; text-align:center; border:2px dashed #DCD3C3; border-radius:12px}
 .soon p{margin:0; font-size:2.2rem; line-height:1.1; color:var(--green)}
@@ -194,7 +187,7 @@ dialog.viewer::backdrop{background:rgba(0,0,0,.9)}
 .vdl{display:inline-flex; align-items:center; min-height:44px; padding:.4rem 1.1rem; border-radius:8px; background:#FFFFFF; color:var(--red-dk); text-decoration:none; font-weight:800}
 @media (max-width:600px){ .vprev,.vnext{width:44px; height:44px; font-size:1.6rem; background:rgba(255,255,255,.12)} .vprev{left:6px} .vnext{right:6px} }
 
-@media (prefers-reduced-motion: reduce){ .orn,.prog .node i,.menu-art *,.cane-frame::before{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
+@media (prefers-reduced-motion: reduce){ .orn,.lights i,.menu-art *,.cane-frame::before{animation:none} .menu-art .steam{opacity:.6} .vstage img{transition:none} }
 
 @media (min-width:700px){ .grid img{width:clamp(250px, 21vw, 320px)} }
 /* laptops: invitation across the top, menu and program side by side under it */
@@ -326,6 +319,7 @@ body.capture .cane-frame::before{display:none}
 
     <section class="col program" id="progBlock" aria-labelledby="progTitle">
       <div class="prog-head">
+        <div class="lights" id="lights" aria-hidden="true"></div>
         <h2 class="serif" id="progTitle">Program</h2>
       </div>
       <p class="sec-sub" id="progSub"></p>
@@ -449,7 +443,7 @@ function el(tag, cls, text){ const e = document.createElement(tag); if (cls) e.c
 function renderLists(){
   const menu = lines(EV.menu).map(dishParts), prog = lines(EV.program).map(pair);
   // the dish name big, its category (Starter, Main, Dessert…) small underneath, who brings it on the right
-  // once anyone is assigned, a dish with nobody shows "Open"
+  // once anyone is assigned, a dish with nobody shows "Not assigned"
   const anyBy = menu.some(m => m[2]);
   $("menuList").replaceChildren(...menu.map(([dish, cat, by]) => {
     const li = el("li"), item = el("div", "item"); item.append(el("span", "dish", dish)); if (cat) item.append(el("span", "cat", cat)); li.append(item);
@@ -458,20 +452,18 @@ function renderLists(){
       pill.insertAdjacentHTML("beforeend", '<svg aria-hidden="true" width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="5" r="3"/><path d="M2.5 15c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6"/></svg>');
       pill.append(document.createTextNode(by)); pill.setAttribute("aria-label", "Brought by " + by);
       li.append(pill);
-    } else if (anyBy) li.append(el("span", "by open", "Open"));
+    } else if (anyBy) li.append(el("span", "by open", "Not assigned"));
     return li;
   }));
   // a program line with no " - " is just an activity, with no time
   const timed = prog.map(([, b]) => !!b);
   $("progList").replaceChildren(...prog.map(([a, b], i) => {
-    const li = el("li"), t = el("span", "t"), node = el("span", "node"), bulb = el("i");
+    const li = el("li"), t = el("span", "t");
     if (b) {
       const m = a.match(/^(\d{1,2}(?::\d{2})?)\s*([ap]\.?\s*m\.?)$/i);
       if (m) t.append(el("b", "", m[1]), el("small", "", m[2].replace(/[.\s]/g, "").toUpperCase())); else t.append(el("b", "", a));
     } else if (timed.slice(0, i).some(Boolean) && !timed.slice(i + 1).some(Boolean)) t.append(el("span", "script", "later…"));
-    bulb.style.setProperty("--d", `${((i * 7) % 11) * -0.37}s`); node.setAttribute("aria-hidden", "true"); node.append(bulb);
-    const body = el("div", "body"); body.append(t, el("span", "what", b || a));
-    li.append(node, body); return li;
+    li.append(t, el("span", "what", b || a)); return li;
   }));
   $("menuSub").textContent = subText("menuNote", SUBS.menu);
   $("progSub").textContent = subText("programNote", SUBS.program);
@@ -482,30 +474,33 @@ function renderLists(){
   $("progSoon").hidden = !soon;
   $("progSub").hidden = soon; // no subtitle while the program is under wraps
   $("progBlock").hidden = !soon && !prog.length;
-  drawWire();
+  drawLights();
 }
-// the light string: a wave that swings to a bend at each bulb (left, right, left…), drawn over the whole list
-function drawWire(){
-  const ol = $("progList"), old = ol.querySelector(".wire"); if (old) old.remove();
-  const nodes = [...ol.querySelectorAll("li > .node")];
-  if (ol.hidden || !nodes.length || !ol.offsetHeight) return;
-  const cx = nodes[0].offsetLeft + nodes[0].offsetWidth / 2, amp = 8;
-  const pts = nodes.map((n, i) => [cx + (i % 2 ? amp : -amp), n.offsetTop + 17]);
-  const first = pts[0], last = pts[pts.length - 1];
-  let d = `M ${cx} ${first[1] - 16} C ${cx} ${first[1] - 8}, ${first[0]} ${first[1] - 6}, ${first[0]} ${first[1]}`;
-  for (let i = 1; i < pts.length; i++) {
-    const [x1, y1] = pts[i - 1], [x2, y2] = pts[i], k = (y2 - y1) * .5;
-    d += ` C ${x1} ${y1 + k}, ${x2} ${y2 - k}, ${x2} ${y2}`;
-  }
-  d += ` C ${last[0]} ${last[1] + 6}, ${cx} ${last[1] + 8}, ${cx} ${last[1] + 16}`;
+// Christmas lights over the Program heading: a wavy wire across, one bulb per ~46px,
+// pointing up at each crest and hanging down at each dip; redrawn when the width changes
+const BULBS = [["#E8283F", "rgba(232,40,63,.45)"], ["#16A05E", "rgba(22,160,94,.42)"], ["#2477E8", "rgba(36,119,232,.45)"], ["#F2B92E", "rgba(242,185,46,.5)"]];
+function drawLights(){
+  const box = $("lights"), w = box.clientWidth;
+  if (!w || box.dataset.w === String(w)) return;
+  box.dataset.w = w;
+  const n = Math.max(5, Math.round(w / 46)), up = 22, down = 40, mid = (up + down) / 2;
+  const pts = Array.from({ length: n }, (_, i) => [(i + .5) * w / n, i % 2 ? up : down]);
+  let d = `M 0 ${mid}`, prev = [0, mid];
+  for (const q of [...pts, [w, mid]]) { const k = (q[0] - prev[0]) * .5; d += ` C ${prev[0] + k} ${prev[1]}, ${q[0] - k} ${q[1]}, ${q[0]} ${q[1]}`; prev = q; }
   const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg"), path = document.createElementNS(ns, "path");
-  svg.setAttribute("class", "wire"); svg.setAttribute("aria-hidden", "true");
-  svg.setAttribute("width", ol.offsetWidth); svg.setAttribute("height", ol.offsetHeight);
+  svg.setAttribute("width", w); svg.setAttribute("height", 64);
   path.setAttribute("d", d); path.setAttribute("fill", "none"); path.setAttribute("stroke", "#13774A"); path.setAttribute("stroke-width", "2"); path.setAttribute("stroke-linecap", "round");
-  svg.appendChild(path); ol.append(svg); // last, so the li:nth-child colours and sides stay in step
+  svg.appendChild(path);
+  box.replaceChildren(svg, ...pts.map(([x, y], i) => {
+    const b = el("i"), [c, g] = BULBS[i % 4], upward = i % 2 === 1;
+    b.style.setProperty("--c", c); b.style.setProperty("--glow", g); b.style.setProperty("--d", `${((i * 7) % 11) * -0.37}s`);
+    b.style.left = (x - 7) + "px"; b.style.top = (upward ? y - 3 : y + 3) + "px";
+    b.style.transform = upward ? "rotate(180deg)" : `rotate(${i % 4 === 0 ? 7 : -7}deg)`;
+    return b;
+  }));
 }
-if ("ResizeObserver" in window) new ResizeObserver(() => drawWire()).observe($("progList"));
-else addEventListener("resize", drawWire);
+if ("ResizeObserver" in window) new ResizeObserver(() => drawLights()).observe($("lights"));
+else addEventListener("resize", drawLights);
 
 // ---------- photo viewer: swipe or arrows, counter, download ----------
 const V = { list: [], i: 0 };
